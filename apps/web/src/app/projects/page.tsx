@@ -70,7 +70,9 @@ export default function ProjectsPage() {
   }, [api, showArchived]);
 
   useEffect(() => {
-    void load();
+    (async () => {
+      await load();
+    })();
   }, [load]);
 
   const departments = useMemo(() => {

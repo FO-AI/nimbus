@@ -1,23 +1,31 @@
-"""Bearer-token validation via Microsoft Graph introspection.
+"""Local validation for Microsoft Entra ID access tokens.
 
-The frontend acquires access tokens scoped to Microsoft Graph (`User.Read`),
-not to this API. Such tokens are audienced for Graph and Microsoft does not
-publish a stable, third-party-verifiable JWT format for them — access tokens
-for a resource you don't own are meant to be treated as opaque. So rather
-than decoding the token locally, we ask Microsoft Graph to vouch for it: a
-200 from `GET /v1.0/me` using the token as a bearer credential proves the
-token is genuine, and Graph's response gives us the caller's identity
-directly.
+The frontend requests an access token scoped to Nimbus API. Because this API
+owns the token's audience, the backend validates its signature, issuer,
+audience, and expiry locally using Microsoft Entra ID's published signing
+keys. Identity, role, and group information is then read from the verified
+JWT claims. Group-overage claims are logged but not resolved; group-based
+authorization therefore fails closed when direct group claims are unavailable.
 
 `AUTH_MODE=disabled` (LOCAL/TEST ONLY) bypasses validation entirely and
 returns a fake dev principal. It logs a warning on every request so it can
 never be mistaken for a secure configuration.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import lru_cache
 
-import httpx
+import jwt
+from jwt import PyJWKClient
+from jwt.exceptions import (
+    ExpiredSignatureError,
+    InvalidTokenError,
+    PyJWKClientConnectionError,
+    PyJWKClientError,
+    PyJWKSetError,
+)
 
 from app.core.config import Settings
 from app.core.errors import UnauthorizedError, UpstreamServiceError
@@ -25,13 +33,15 @@ from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
-_GRAPH_ME_URL = "https://graph.microsoft.com/v1.0/me"
-_GRAPH_TIMEOUT_SECONDS = 5.0
+
+@lru_cache(maxsize=8)
+def _jwk_client(jwks_uri: str) -> PyJWKClient:
+    return PyJWKClient(jwks_uri, cache_keys=True, timeout=5.0)
 
 
 @dataclass
 class Principal:
-    """The authenticated caller, normalized from the Graph profile."""
+    """The authenticated caller, normalized from verified JWT claims."""
 
     subject: str
     name: str
@@ -62,14 +72,20 @@ def _dev_principal() -> Principal:
     )
 
 
-def _extract_principal(profile: dict) -> Principal:
-    # Graph's /me response has no app-role or group-membership claims — those
-    # require separate calls and scopes. See module docstring for the gap
-    # this leaves in role/group-based authorization.
+def _principal_from_claims(claims: dict) -> Principal:
+    claim_names = claims.get("_claim_names")
+    if isinstance(claim_names, dict) and "groups" in claim_names:
+        logger.warning(
+            "Access token contains a group-overage claim; group authorization "
+            "will fail closed because overage resolution is not configured"
+        )
+
     return Principal(
-        subject=profile.get("id", "unknown"),
-        name=profile.get("displayName", ""),
-        email=profile.get("mail") or profile.get("userPrincipalName", ""),
+        subject=claims.get("oid") or claims.get("sub", "unknown"),
+        name=claims.get("name", ""),
+        email=(claims.get("preferred_username") or claims.get("upn") or claims.get("email", "")),
+        roles=claims.get("roles", []) or [],
+        groups=claims.get("groups", []) or [],
     )
 
 
@@ -84,27 +100,47 @@ def validate_token(token: str, settings: Settings) -> Principal:
     if not settings.azure_tenant_id:
         raise UnauthorizedError("Auth is enabled but AZURE_TENANT_ID is not configured")
 
+    audiences = [
+        audience
+        for audience in (
+            settings.entra_backend_client_id,
+            settings.entra_backend_app_id_uri,
+        )
+        if audience
+    ]
+    if not audiences:
+        raise UnauthorizedError("Auth is enabled but no API audience is configured")
+
     if not token:
         raise UnauthorizedError("Missing bearer token")
 
     try:
-        response = httpx.get(
-            _GRAPH_ME_URL,
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=_GRAPH_TIMEOUT_SECONDS,
-        )
-    except httpx.HTTPError as exc:
-        logger.warning("Microsoft Graph unreachable during token validation: %s", exc)
-        raise UpstreamServiceError("Could not reach Microsoft Graph to verify token") from exc
+        signing_key = _jwk_client(settings.entra_jwks_uri).get_signing_key_from_jwt(token)
+    except PyJWKClientConnectionError as exc:
+        logger.warning("Microsoft Entra ID unreachable during token validation: %s", exc)
+        raise UpstreamServiceError("Could not reach Microsoft Entra ID to verify token") from exc
+    except PyJWKSetError as exc:
+        logger.warning("Microsoft Entra ID returned an unusable JWKS: %s", exc)
+        raise UpstreamServiceError("Could not verify token with Microsoft Entra ID") from exc
+    except PyJWKClientError as exc:
+        logger.info("Token signing-key validation failed: %s", type(exc).__name__)
+        raise UnauthorizedError("Invalid access token") from exc
 
-    if response.status_code == 401:
-        logger.info("Token validation failed: Microsoft Graph rejected the token")
-        raise UnauthorizedError("Invalid or expired access token")
-    if response.status_code != 200:
-        logger.warning(
-            "Microsoft Graph returned unexpected status %s during token validation",
-            response.status_code,
+    try:
+        claims = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["RS256"],
+            audience=audiences,
+            issuer=settings.entra_issuer,
+            leeway=settings.jwt_leeway_seconds,
+            options={"require": ["exp", "iss", "aud"]},
         )
-        raise UpstreamServiceError("Could not verify token with Microsoft Graph")
+    except ExpiredSignatureError as exc:
+        logger.info("Token validation failed: %s", type(exc).__name__)
+        raise UnauthorizedError("Access token has expired") from exc
+    except InvalidTokenError as exc:
+        logger.info("Token validation failed: %s", type(exc).__name__)
+        raise UnauthorizedError("Invalid access token") from exc
 
-    return _extract_principal(response.json())
+    return _principal_from_claims(claims)

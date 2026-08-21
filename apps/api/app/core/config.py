@@ -14,7 +14,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _LOCAL_ONLY_ENVIRONMENTS = {"local", "test"}
 _API_ROOT = Path(__file__).resolve().parents[2]
-_REPO_ROOT = _API_ROOT.parents[1]
+# In the container image only `apps/api` is copied in (see Dockerfile), so
+# there's no repo root above it — fall back to _API_ROOT itself in that case.
+_REPO_ROOT = _API_ROOT.parents[1] if len(_API_ROOT.parents) > 1 else _API_ROOT
 _ENV_FILES = (str(_API_ROOT / ".env"), str(_REPO_ROOT / ".env"))
 
 
@@ -28,6 +30,10 @@ class AuthMode(StrEnum):
 
     disabled = "disabled"
     entra = "entra"
+
+class DbMode(StrEnum):
+    local= "local"
+    dev="dev"
 
 
 class Settings(BaseSettings):
@@ -45,11 +51,17 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     api_v1_prefix: str = "/api/v1"
 
+    # --- DB ----
+    db_mode: DbMode = DbMode.local
+
     # ---- CORS ----
     cors_allow_origins: str = "http://localhost:3000"
 
+
     # ---- AI provider ----
     ai_provider: AIProviderName = AIProviderName.mock
+
+
 
     # ---- Auth ----
     auth_mode: AuthMode = AuthMode.disabled
@@ -62,8 +74,10 @@ class Settings(BaseSettings):
     # Comma-separated emails allowed to propose/edit content outside git (future use).
     editor_emails: str = ""
 
+
     # ---- Database ----
     database_url: str = "sqlite+pysqlite:///./local.db"
+    dev_database_url: str = ""
 
     # ---- Content (git-authored markdown, synced into the DB at startup) ----
     content_dir: str = str(_API_ROOT / "content")
@@ -121,6 +135,12 @@ class Settings(BaseSettings):
     @classmethod
     def _normalize_env(cls, v: str) -> str:
         return v.strip().lower()
+
+    @model_validator(mode="after")
+    def _resolve_database_url(self) -> Settings:
+        if self.db_mode == DbMode.dev and self.dev_database_url:
+            self.database_url = self.dev_database_url
+        return self
 
     @model_validator(mode="after")
     def _validate_security_invariants(self) -> Settings:

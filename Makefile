@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PYTHON ?= python3.11
 
 .PHONY: help dev up down logs api web install-api install-web \
-        test test-api test-web e2e lint typecheck fmt migrate content-sync reindex
+        test test-api test-web e2e lint typecheck fmt migrate content-sync reindex kill local-up
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -19,17 +19,25 @@ up: ## Start frontend + backend + db locally (mock AI, disabled auth)
 
 down: ## Stop and remove the local stack
 	docker compose down -v
-local-up: ## Start frontend + backend + docker db (mock AI, disabled auth)
-	docker compose up -d db
-	cd apps/api && . .venv/bin/activate && uvicorn app.main:app --reload & \
-	cd apps/web && npm run dev & \
+local-up: ## Start frontend + backend + docker db
+# 	docker compose up -d db
+	@trap 'echo; echo "Stopping..."; kill 0' INT TERM EXIT; \
+	(cd apps/api && . .venv/bin/activate && exec uvicorn app.main:app --reload) & \
+	(cd apps/web && exec npm run dev) & \
 	wait
+
+kill: ## Force-kill anything left on the local dev ports (api:8000, web:3000)
+	@lsof -ti :8000 -sTCP:LISTEN | xargs kill -9 2>/dev/null || true
+	@lsof -ti :3000 -sTCP:LISTEN | xargs kill -9 2>/dev/null || true
+	@pkill -f "uvicorn app.main:app" 2>/dev/null || true
+	@pkill -f "next dev" 2>/dev/null || true
+	@echo "Killed anything on ports 8000/3000 and matching uvicorn/next processes."
 
 logs: ## Tail logs from the local stack
 	docker compose logs -f
 
 install-api: ## Install backend dependencies into a venv
-	cd apps/api && $(PYTHON) -m venv .venv && . .venv/bin/activate && pip install -e ".[dev]"
+	cd apps/api && $(PYTHON) -m venv .venv && . .venv/bin/activate && pip install -e ".[dev, foundry]"
 
 install-web: ## Install frontend dependencies
 	cd apps/web && npm install

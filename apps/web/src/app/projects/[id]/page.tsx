@@ -63,7 +63,9 @@ export default function ProjectDetailPage() {
   }, [api, id]);
 
   useEffect(() => {
-    if (Number.isFinite(id)) void load();
+    (async () => {
+      if (Number.isFinite(id)) await load();
+    })();
   }, [id, load]);
 
   function startEditing(p: Project) {

@@ -22,19 +22,18 @@ export function useContentList(kind?: ContentKind): ListState {
 
   const reload = useCallback(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    api
-      .listContent(kind ? { kind } : {})
-      .then((res) => {
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.listContent(kind ? { kind } : {});
         if (!cancelled) setItems(res.items);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (!cancelled) setError(err);
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };
@@ -61,22 +60,21 @@ export function useContentDetail(slug: string): DetailState {
 
   const reload = useCallback(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    api
-      .getContent(slug)
-      .then((res) => {
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.getContent(slug);
         if (!cancelled) {
           setItem(res);
           void api.recordContentEvent(slug, "view").catch(() => {});
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         if (!cancelled) setError(err);
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };

@@ -21,14 +21,21 @@ param environmentName string = 'dev'
 param location string = resourceGroup().location
 
 @description('PostgreSQL administrator login name (must match the postgres deployment).')
-param dbAdminLogin string = '${resourcePrefix}admin'
+param dbAdminLogin string = 'citus'
 
 @description('PostgreSQL administrator password (must match the postgres deployment). Used to compose the database-url seed secret.')
 @secure()
 param dbAdminPassword string
 
 @description('Application database name (must match the postgres deployment).')
-param databaseName string = 'appdb'
+param databaseName string = 'nimbus0dev'
+
+@description('PostgreSQL flexible server name override, for servers not deployed via deploy-postgres.sh (defaults to the deterministic pg-<prefix>-<env> name).')
+param postgresServerName string = ''
+
+@description('Azure AI Foundry API key, seeded as the foundry-api-key secret. Leave empty to skip (e.g. when using managed identity auth instead).')
+@secure()
+param foundryApiKey string = ''
 
 var namePrefix = '${resourcePrefix}-${environmentName}'
 var tags = {
@@ -44,14 +51,18 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   name: 'appi-${namePrefix}'
 }
 
-// Same deterministic name the postgres module computes.
 resource pg 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' existing = {
-  name: 'pg-${namePrefix}'
+  name: !empty(postgresServerName) ? postgresServerName : 'pg-${namePrefix}'
 }
 
 // Full SQLAlchemy URL, delivered to the API via Key Vault (it embeds the
 // admin password, so it must never appear as a plain env var).
 var databaseUrl = 'postgresql+psycopg://${dbAdminLogin}:${dbAdminPassword}@${pg.properties.fullyQualifiedDomainName}:5432/${databaseName}?sslmode=require'
+
+var baseSecrets = {
+  'appinsights-connection-string': appInsights.properties.ConnectionString
+  'database-url': databaseUrl
+}
 
 module keyVault '../modules/key-vault.bicep' = {
   name: 'keyVault'
@@ -60,10 +71,7 @@ module keyVault '../modules/key-vault.bicep' = {
     location: location
     tags: tags
     appPrincipalId: identity.properties.principalId
-    seedSecrets: {
-      'appinsights-connection-string': appInsights.properties.ConnectionString
-      'database-url': databaseUrl
-    }
+    seedSecrets: empty(foundryApiKey) ? baseSecrets : union(baseSecrets, { 'foundry-api-key': foundryApiKey })
   }
 }
 

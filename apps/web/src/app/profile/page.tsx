@@ -27,7 +27,9 @@ export default function ProfilePage() {
   }, [api]);
 
   useEffect(() => {
-    void load();
+    (async () => {
+      await load();
+    })();
   }, [load]);
 
   return (

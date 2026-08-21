@@ -51,14 +51,29 @@ param foundryApiVersion string = '2024-08-01-preview'
 @description('Embedding deployment name for RAG (must match the foundry deployment).')
 param foundryEmbeddingDeploymentName string = 'text-embedding-3-small'
 
+@description('Azure AI Foundry project name.')
+param foundryProjectName string = ''
+
+@description('Whether to wire up the foundry-api-key Key Vault secret. Set false if deploy-key-vault.sh was run without --foundry-api-key (e.g. using managed identity auth instead).')
+param enableFoundryApiKey bool = true
+
 @description('Comma-separated emails allowed to propose/edit content outside git (future use).')
 param editorEmails string = ''
 
 @description('Azure AI Search endpoint (empty if search is not deployed).')
 param searchEndpoint string = ''
 
+@description('Azure AI Search index name.')
+param searchIndex string = 'default'
+
+@description('Application log level.')
+param logLevel string = 'INFO'
+
 @description('Blob container name for uploads (must match the storage deployment).')
 param storageContainerName string = 'uploads'
+
+@description('Whether the storage account was deployed. Set false to skip the lookup if storage is not in use yet.')
+param enableStorage bool = true
 
 @description('Optional explicit ACR name (must match the registry deployment). Empty = acr<prefix><env>.')
 param acrName string = ''
@@ -79,7 +94,7 @@ resource registry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' ex
   name: empty(acrName) ? take('acr${replace(namePrefix, '-', '')}', 50) : acrName
 }
 
-resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' existing = if (enableStorage) {
   name: take('st${replace(namePrefix, '-', '')}', 24)
 }
 
@@ -100,6 +115,7 @@ var apiBaseUrl = 'https://${apiAppName}.${env.properties.defaultDomain}'
 
 var appInsightsSecretUrl = '${keyVault.properties.vaultUri}secrets/appinsights-connection-string'
 var databaseUrlSecretUrl = '${keyVault.properties.vaultUri}secrets/database-url'
+var foundryApiKeySecretUrl = '${keyVault.properties.vaultUri}secrets/foundry-api-key'
 
 module apiApp '../modules/container-app.bicep' = {
   name: 'apiApp'
@@ -115,6 +131,7 @@ module apiApp '../modules/container-app.bicep' = {
     external: true
     envVars: [
       { name: 'ENVIRONMENT', value: environmentName }
+      { name: 'LOG_LEVEL', value: logLevel }
       { name: 'AI_PROVIDER', value: aiProvider }
       { name: 'AUTH_MODE', value: authMode }
       { name: 'AZURE_TENANT_ID', value: tenantId }
@@ -122,25 +139,33 @@ module apiApp '../modules/container-app.bicep' = {
       { name: 'ENTRA_BACKEND_APP_ID_URI', value: entraBackendAppIdUri }
       { name: 'ADMIN_GROUP_ID', value: adminGroupId }
       { name: 'CORS_ALLOW_ORIGINS', value: webOrigin }
-      { name: 'AZURE_STORAGE_ACCOUNT_URL', value: storage.properties.primaryEndpoints.blob }
+      { name: 'AZURE_STORAGE_ACCOUNT_URL', value: storage.?properties.primaryEndpoints.blob ?? '' }
       { name: 'AZURE_STORAGE_CONTAINER', value: storageContainerName }
       { name: 'AZURE_AI_FOUNDRY_ENDPOINT', value: foundryEndpoint }
       { name: 'AZURE_AI_FOUNDRY_DEPLOYMENT_NAME', value: foundryDeploymentName }
       { name: 'AZURE_AI_FOUNDRY_API_VERSION', value: foundryApiVersion }
       { name: 'AZURE_AI_FOUNDRY_EMBEDDING_DEPLOYMENT_NAME', value: foundryEmbeddingDeploymentName }
+      { name: 'AZURE_AI_FOUNDRY_PROJECT_NAME', value: foundryProjectName }
       { name: 'EDITOR_EMAILS', value: editorEmails }
       { name: 'AZURE_SEARCH_ENDPOINT', value: searchEndpoint }
+      { name: 'AZURE_SEARCH_INDEX', value: searchIndex }
       // Tells DefaultAzureCredential which user-assigned identity to use.
       { name: 'AZURE_CLIENT_ID', value: identity.properties.clientId }
     ]
-    secretRefs: [
-      { name: 'appinsights-connection-string', keyVaultUrl: appInsightsSecretUrl }
-      { name: 'database-url', keyVaultUrl: databaseUrlSecretUrl }
-    ]
-    secretEnvVars: [
-      { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', secretRef: 'appinsights-connection-string' }
-      { name: 'DATABASE_URL', secretRef: 'database-url' }
-    ]
+    secretRefs: concat(
+      [
+        { name: 'appinsights-connection-string', keyVaultUrl: appInsightsSecretUrl }
+        { name: 'database-url', keyVaultUrl: databaseUrlSecretUrl }
+      ],
+      enableFoundryApiKey ? [{ name: 'foundry-api-key', keyVaultUrl: foundryApiKeySecretUrl }] : []
+    )
+    secretEnvVars: concat(
+      [
+        { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', secretRef: 'appinsights-connection-string' }
+        { name: 'DATABASE_URL', secretRef: 'database-url' }
+      ],
+      enableFoundryApiKey ? [{ name: 'AZURE_AI_FOUNDRY_API_KEY', secretRef: 'foundry-api-key' }] : []
+    )
   }
 }
 

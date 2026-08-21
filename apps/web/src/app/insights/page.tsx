@@ -66,7 +66,9 @@ export default function InsightsPage() {
   }, [api]);
 
   useEffect(() => {
-    void load();
+    (async () => {
+      await load();
+    })();
   }, [load]);
 
   if (loading) return <LoadingSpinner label="Loading insights..." />;

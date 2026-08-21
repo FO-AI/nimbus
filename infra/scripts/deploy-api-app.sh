@@ -16,6 +16,11 @@ AUTH_MODE="entra"
 SEARCH_ENDPOINT=""
 ACR_NAME=""
 EDITOR_EMAILS="${EDITOR_EMAILS:-}"
+ENABLE_STORAGE=true
+FOUNDRY_PROJECT_NAME="${AZURE_AI_FOUNDRY_PROJECT_NAME:-}"
+SEARCH_INDEX="default"
+LOG_LEVEL="${LOG_LEVEL:-INFO}"
+ENABLE_FOUNDRY_API_KEY=true
 
 usage() {
   cat <<EOF
@@ -50,6 +55,16 @@ $(common_options_help)
                                      output of deploy-registry.sh if present.
       --editor-emails <list>         Comma-separated emails allowed to propose/
                                      edit content outside git (or set EDITOR_EMAILS)
+      --no-storage                   Skip the storage account lookup (use if
+                                     deploy-storage.sh hasn't been run yet)
+      --foundry-project-name <name>  Azure AI Foundry project name
+                                     (or set AZURE_AI_FOUNDRY_PROJECT_NAME)
+      --search-index <name>          Azure AI Search index name (default: default)
+      --log-level <level>            Application log level (or set LOG_LEVEL;
+                                     default: INFO)
+      --no-foundry-api-key           Skip wiring the foundry-api-key Key Vault
+                                     secret (use if deploy-key-vault.sh was run
+                                     without --foundry-api-key)
 
 Example:
   $(basename "$0") -g rg-nimbus --api-image myacr.azurecr.io/nimbus-api:latest
@@ -69,6 +84,11 @@ while [[ $# -gt 0 ]]; do
     --search-endpoint)    SEARCH_ENDPOINT="${2:-}"; SEARCH_ENDPOINT_SET=true; shift 2 ;;
     --acr-name)           ACR_NAME="${2:-}"; shift 2 ;;
     --editor-emails)      EDITOR_EMAILS="${2:-}"; shift 2 ;;
+    --no-storage)         ENABLE_STORAGE=false; shift 1 ;;
+    --foundry-project-name) FOUNDRY_PROJECT_NAME="${2:-}"; shift 2 ;;
+    --search-index)       SEARCH_INDEX="${2:-}"; shift 2 ;;
+    --log-level)          LOG_LEVEL="${2:-}"; shift 2 ;;
+    --no-foundry-api-key) ENABLE_FOUNDRY_API_KEY=false; shift 1 ;;
     -h|--help) usage; exit 0 ;;
     *) parse_common_arg "$@" || { usage >&2; die "unknown option: $1"; }; shift "$ARG_SHIFT" ;;
   esac
@@ -95,4 +115,9 @@ run_deployment api-app \
   foundryDeploymentName="$FOUNDRY_DEPLOYMENT_NAME" \
   foundryEmbeddingDeploymentName="$FOUNDRY_EMBEDDING_DEPLOYMENT_NAME" \
   searchEndpoint="$SEARCH_ENDPOINT" \
-  editorEmails="$EDITOR_EMAILS"
+  searchIndex="$SEARCH_INDEX" \
+  editorEmails="$EDITOR_EMAILS" \
+  enableStorage="$ENABLE_STORAGE" \
+  foundryProjectName="$FOUNDRY_PROJECT_NAME" \
+  logLevel="$LOG_LEVEL" \
+  enableFoundryApiKey="$ENABLE_FOUNDRY_API_KEY"
