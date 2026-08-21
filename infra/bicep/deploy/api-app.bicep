@@ -57,9 +57,6 @@ param foundryProjectName string = ''
 @description('Whether to wire up the foundry-api-key Key Vault secret. Set false if deploy-key-vault.sh was run without --foundry-api-key (e.g. using managed identity auth instead).')
 param enableFoundryApiKey bool = true
 
-@description('Comma-separated emails allowed to propose/edit content outside git (future use).')
-param editorEmails string = ''
-
 @description('Azure AI Search endpoint (empty if search is not deployed).')
 param searchEndpoint string = ''
 
@@ -146,7 +143,6 @@ module apiApp '../modules/container-app.bicep' = {
       { name: 'AZURE_AI_FOUNDRY_API_VERSION', value: foundryApiVersion }
       { name: 'AZURE_AI_FOUNDRY_EMBEDDING_DEPLOYMENT_NAME', value: foundryEmbeddingDeploymentName }
       { name: 'AZURE_AI_FOUNDRY_PROJECT_NAME', value: foundryProjectName }
-      { name: 'EDITOR_EMAILS', value: editorEmails }
       { name: 'AZURE_SEARCH_ENDPOINT', value: searchEndpoint }
       { name: 'AZURE_SEARCH_INDEX', value: searchIndex }
       // Tells DefaultAzureCredential which user-assigned identity to use.

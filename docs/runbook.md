@@ -161,10 +161,6 @@ server configuration; migration `0003_pgvector` then runs
 `CREATE EXTENSION IF NOT EXISTS vector`. Locally the
 `pgvector/pgvector:pg16` docker image ships it pre-installed.
 
-**Editor gating.** Set `EDITOR_EMAILS` (comma-separated, case-insensitive) to
-the people allowed to triage/edit projects. The local dev principal
-(`AUTH_MODE=disabled`) is always an editor.
-
 **Reindexing.** The retrieval index (`content_chunks`) refreshes incrementally
 by checksum at API startup and inline on project writes. To force a manual
 refresh: `make reindex`. **After switching AI providers or embedding models**
@@ -209,7 +205,7 @@ single request end to end.
 | --- | --- |
 | `401 unauthorized` for all calls | Token audience/issuer mismatch. Confirm `ENTRA_BACKEND_APP_ID_URI` and `AZURE_TENANT_ID`, and that the SPA requests the correct scope. |
 | `401` intermittently | Clock skew or expired token; MSAL should refresh. Check `jwt_leeway_seconds`. |
-| `403 forbidden` on admin routes | User lacks the `admin` role or `ADMIN_GROUP_ID` membership. |
+| `403 forbidden` on admin or project-editing routes | User lacks the `admin` role or `ADMIN_GROUP_ID` membership. |
 | Works locally, fails deployed | You were running with `AUTH_MODE=disabled`. Test with `AUTH_MODE=entra` and a real token. |
 | Login loop / redirect error | `NEXT_PUBLIC_ENTRA_REDIRECT_URI` must be registered as a redirect URI on the SPA app registration. |
 

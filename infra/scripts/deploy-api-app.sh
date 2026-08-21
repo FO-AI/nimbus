@@ -15,7 +15,6 @@ AI_PROVIDER="foundry"
 AUTH_MODE="entra"
 SEARCH_ENDPOINT=""
 ACR_NAME=""
-EDITOR_EMAILS="${EDITOR_EMAILS:-}"
 ENABLE_STORAGE=true
 FOUNDRY_PROJECT_NAME="${AZURE_AI_FOUNDRY_PROJECT_NAME:-}"
 SEARCH_INDEX="default"
@@ -53,8 +52,6 @@ $(common_options_help)
       --acr-name <name>              ACR name, if the registry was deployed with
                                      a non-default name. Defaults to the saved
                                      output of deploy-registry.sh if present.
-      --editor-emails <list>         Comma-separated emails allowed to propose/
-                                     edit content outside git (or set EDITOR_EMAILS)
       --no-storage                   Skip the storage account lookup (use if
                                      deploy-storage.sh hasn't been run yet)
       --foundry-project-name <name>  Azure AI Foundry project name
@@ -83,7 +80,6 @@ while [[ $# -gt 0 ]]; do
     --auth-mode)          AUTH_MODE="${2:-}"; shift 2 ;;
     --search-endpoint)    SEARCH_ENDPOINT="${2:-}"; SEARCH_ENDPOINT_SET=true; shift 2 ;;
     --acr-name)           ACR_NAME="${2:-}"; shift 2 ;;
-    --editor-emails)      EDITOR_EMAILS="${2:-}"; shift 2 ;;
     --no-storage)         ENABLE_STORAGE=false; shift 1 ;;
     --foundry-project-name) FOUNDRY_PROJECT_NAME="${2:-}"; shift 2 ;;
     --search-index)       SEARCH_INDEX="${2:-}"; shift 2 ;;
@@ -116,7 +112,6 @@ run_deployment api-app \
   foundryEmbeddingDeploymentName="$FOUNDRY_EMBEDDING_DEPLOYMENT_NAME" \
   searchEndpoint="$SEARCH_ENDPOINT" \
   searchIndex="$SEARCH_INDEX" \
-  editorEmails="$EDITOR_EMAILS" \
   enableStorage="$ENABLE_STORAGE" \
   foundryProjectName="$FOUNDRY_PROJECT_NAME" \
   logLevel="$LOG_LEVEL" \

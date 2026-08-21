@@ -1,4 +1,4 @@
-"""Tests for /api/v1/projects: intake, triage, and the editor permission matrix."""
+"""Tests for /api/v1/projects: intake, triage, and the admin permission matrix."""
 from __future__ import annotations
 
 import pytest
@@ -42,7 +42,7 @@ def clean_tables(db_session):
 
 @pytest.fixture
 def as_regular_user(client):
-    """A real-looking (non-dev) principal whose email is NOT in EDITOR_EMAILS."""
+    """A real-looking (non-dev) principal with no admin role or group membership."""
     app.dependency_overrides[get_current_user] = lambda: Principal(
         subject="u-123", name="Regular Staff", email="staff@example.com"
     )
@@ -51,12 +51,12 @@ def as_regular_user(client):
 
 
 @pytest.fixture
-def as_email_editor(client):
-    """A non-dev principal authorized via the EDITOR_EMAILS allowlist."""
+def as_admin(client):
+    """A non-dev principal authorized via the admin group."""
     app.dependency_overrides[get_current_user] = lambda: Principal(
-        subject="u-456", name="Ed Itor", email="Editor@Example.com"
+        subject="u-789", name="Ada Min", email="admin@example.com", groups=["admins"]
     )
-    settings = get_settings().model_copy(update={"editor_emails": "editor@example.com"})
+    settings = get_settings().model_copy(update={"admin_group_id": "admins"})
     app.dependency_overrides[get_settings] = lambda: settings
     yield
     app.dependency_overrides.pop(get_current_user, None)
@@ -81,20 +81,25 @@ def test_regular_user_cannot_create_or_patch(client, as_regular_user):
     assert client.patch("/api/v1/projects/1", json={"summary": "x"}).status_code == 403
 
 
-def test_dev_principal_is_editor(client):
-    resp = client.post("/api/v1/projects", json={"name": "Editor create", "status": "idea"})
+def test_dev_principal_can_create(client):
+    resp = client.post("/api/v1/projects", json={"name": "Dev create", "status": "idea"})
     assert resp.status_code == 201
     assert resp.json()["status"] == "idea"
 
 
-def test_email_allowlist_editor_can_triage(client, as_email_editor, db_session):
-    created = client.post("/api/v1/projects", json={"name": "Allowlist create"}).json()
+def test_admin_group_member_can_triage(client, as_admin, db_session):
+    created = client.post("/api/v1/projects", json={"name": "Admin create"}).json()
     resp = client.patch(f"/api/v1/projects/{created['id']}", json={"status": "pilot"})
     assert resp.status_code == 200
-    assert resp.json()["lastUpdatedBy"] == "Editor@Example.com"
+    assert resp.json()["lastUpdatedBy"] == "admin@example.com"
 
     actions = [a.action for a in db_session.execute(select(AuditEvent)).scalars()]
     assert "project.status_changed" in actions
+
+
+def test_admin_group_member_can_create(client, as_admin):
+    resp = client.post("/api/v1/projects", json={"name": "Admin create", "status": "idea"})
+    assert resp.status_code == 201
 
 
 def test_status_transition_is_audited(client, db_session):
@@ -145,7 +150,7 @@ def test_get_missing_project_404(client):
     assert client.get("/api/v1/projects/9999").status_code == 404
 
 
-def test_inventory_creates_inventoried_project(client, as_email_editor, db_session):
+def test_inventory_creates_inventoried_project(client, as_admin, db_session):
     resp = client.post("/api/v1/projects/inventory", json=INVENTORY_PAYLOAD)
     assert resp.status_code == 201
     body = resp.json()
@@ -265,9 +270,9 @@ def test_list_filters_by_source_and_q(client):
     assert client.get("/api/v1/projects", params={"source": "bogus"}).status_code == 422
 
 
-def test_me_reports_editor_flag(client, as_regular_user):
-    assert client.get("/api/v1/me").json()["isEditor"] is False
+def test_me_reports_admin_flag(client, as_regular_user):
+    assert client.get("/api/v1/me").json()["isAdmin"] is False
 
 
-def test_me_editor_flag_for_dev_principal(client):
-    assert client.get("/api/v1/me").json()["isEditor"] is True
+def test_me_admin_flag_for_dev_principal(client):
+    assert client.get("/api/v1/me").json()["isAdmin"] is True

@@ -15,7 +15,6 @@ export interface MeResponse {
   roles: string[];
   groups: string[];
   isAdmin: boolean;
-  isEditor: boolean;
   isDevPrincipal: boolean;
 }
 

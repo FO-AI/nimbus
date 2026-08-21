@@ -31,7 +31,9 @@ cached in-process by `PyJWKClient`.
 - `get_current_user` resolves the caller into a `Principal` (subject, name,
   email, roles, groups).
 - `require_admin` gates admin routes: it allows the `admin` app role **or**
-  membership in the configured `ADMIN_GROUP_ID`.
+  membership in the configured `ADMIN_GROUP_ID`. The same dependency also gates
+  project inventory create/edit/triage/archive/delete routes — there is no
+  separate editor tier.
 - Authorization is always enforced server-side. The UI only uses claims for
   presentation (e.g. hiding links) — never as a security boundary.
 

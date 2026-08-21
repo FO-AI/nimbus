@@ -3,7 +3,7 @@
 Reads are open to all authenticated users (leadership visibility is the
 point). Intake is open to everyone and always lands as `proposed`. Direct
 creation, inventorying existing projects, edits, triage (status changes),
-archiving, and deletion are editor-only. Archived rows are hidden from
+archiving, and deletion are admin-only. Archived rows are hidden from
 default list views but stay retrievable by id.
 """
 from __future__ import annotations
@@ -30,13 +30,13 @@ from app.schemas.project import (
     ProjectUpdateRequest,
 )
 from app.services.audit import record_event
-from app.services.identity.current_user import CurrentUser, EditorUser
+from app.services.identity.current_user import AdminUser, CurrentUser
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 PROJECT_ERROR_RESPONSES = {
     401: {"model": ErrorResponse, "description": "Missing or invalid bearer token."},
-    403: {"model": ErrorResponse, "description": "Editor access required."},
+    403: {"model": ErrorResponse, "description": "Admin role or group membership required."},
     404: {"model": ErrorResponse, "description": "No project with that id."},
     422: {"model": ErrorResponse, "description": "Request validation failed."},
     500: {"model": ErrorResponse, "description": "Unexpected server error."},
@@ -123,7 +123,7 @@ async def submit_intake(
 )
 async def inventory_project(
     payload: ProjectInventoryRequest,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> ProjectResponse:
     """Add an existing/in-flight project to the registry."""
@@ -150,7 +150,7 @@ async def inventory_project(
 )
 async def create_project(
     payload: ProjectCreateRequest,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> ProjectResponse:
     data = payload.model_dump()
@@ -172,7 +172,7 @@ async def create_project(
 async def update_project(
     project_id: int,
     payload: ProjectUpdateRequest,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> ProjectResponse:
     row = _get_project(db, project_id)
@@ -200,7 +200,7 @@ async def update_project(
 )
 def archive_project(
     project_id: int,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> ProjectResponse:
     """Soft-archive: hide from default lists and drop from the /ask index."""
@@ -220,7 +220,7 @@ def archive_project(
 )
 async def unarchive_project(
     project_id: int,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> ProjectResponse:
     row = _get_project(db, project_id)
@@ -241,7 +241,7 @@ async def unarchive_project(
 )
 def delete_project(
     project_id: int,
-    user: EditorUser,
+    user: AdminUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> Response:
     """Hard delete, for junk/test records; archiving is the normal flow."""

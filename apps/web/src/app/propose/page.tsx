@@ -63,7 +63,7 @@ export default function ProposePage() {
         <Card className="space-y-5">
           <p>
             <strong>{submitted.name}</strong> is now in the inventory as{" "}
-            <Badge variant="warning">Proposed</Badge> and will be reviewed by the platform editors.
+            <Badge variant="warning">Proposed</Badge> and will be reviewed by an admin.
             You can follow its status on the projects page.
           </p>
           <div className="flex flex-wrap gap-2">

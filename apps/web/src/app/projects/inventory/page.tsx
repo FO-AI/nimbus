@@ -99,11 +99,11 @@ export default function InventoryProjectPage() {
     }
   }
 
-  // UX-only guard; the backend enforces editor access on the endpoint.
-  if (meLoaded && !me?.isEditor) {
+  // UX-only guard; the backend enforces admin access on the endpoint.
+  if (meLoaded && !me?.isAdmin) {
     return (
-      <EmptyState title="Editor access required" action={<ButtonLink href="/projects">All projects</ButtonLink>}>
-        <p>Only platform editors can inventory existing projects.</p>
+      <EmptyState title="Admin access required" action={<ButtonLink href="/projects">All projects</ButtonLink>}>
+        <p>Only admins can inventory existing projects.</p>
       </EmptyState>
     );
   }

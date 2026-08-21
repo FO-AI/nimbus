@@ -49,28 +49,5 @@ def require_admin(
     raise ForbiddenError("Admin role or group membership required")
 
 
-def is_editor(user: Principal, settings: Settings) -> bool:
-    """Editors maintain the project inventory (triage intake, edit records).
-
-    Entra access tokens can carry roles and groups, but assigning App Roles is
-    a portal-side prerequisite outside this change, so the gate remains an
-    EDITOR_EMAILS allowlist. The authenticated email now comes from the token's
-    UPN rather than the Graph mailbox address; re-audit EDITOR_EMAILS against
-    user UPNs after migration. The local dev principal is always an editor so
-    the flows work out of the box with AUTH_MODE=disabled.
-    """
-    return user.is_dev_principal or user.email.lower() in settings.editor_emails_list
-
-
-def require_editor(
-    user: Annotated[Principal, Depends(get_current_user)],
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> Principal:
-    if is_editor(user, settings):
-        return user
-    raise ForbiddenError("Editor access required")
-
-
 CurrentUser = Annotated[Principal, Depends(get_current_user)]
 AdminUser = Annotated[Principal, Depends(require_admin)]
-EditorUser = Annotated[Principal, Depends(require_editor)]

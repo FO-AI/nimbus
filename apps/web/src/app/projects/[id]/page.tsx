@@ -159,7 +159,7 @@ export default function ProjectDetailPage() {
       <PageHeader
         title={project.name}
         actions={
-          me?.isEditor && !editing ? (
+          me?.isAdmin && !editing ? (
             <div className="flex flex-wrap gap-2">
               <Button variant="secondary" type="button" onClick={() => startEditing(project)}>
                 Edit / triage

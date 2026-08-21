@@ -48,8 +48,9 @@ and leadership usage metrics.
 
 Content is **git-first**: markdown under `apps/api/content/` is synced into the
 DB at startup (see `apps/api/content/README.md`). Retrieval for `/ask` uses
-**pgvector on the existing Postgres** (Azure AI Search stays off). Editor-only
-actions (triage, project edits) are gated by the `EDITOR_EMAILS` setting.
+**pgvector on the existing Postgres** (Azure AI Search stays off). Admin-only
+actions (triage, project edits) are gated by Entra group membership
+(`ADMIN_GROUP_ID`).
 
 ## Architecture overview
 
@@ -174,7 +175,8 @@ they need no Azure credentials.
 2. Grant the SPA delegated permission to the backend API scope.
 3. Set the frontend `NEXT_PUBLIC_ENTRA_*` values and the backend
    `AZURE_TENANT_ID` / `ENTRA_BACKEND_*` values.
-4. For admin routes, put users in an Entra **group** (or assign an **app role**)
+4. For admin routes **and project inventory editing** (create/edit/triage/
+   archive/delete), put users in an Entra **group** (or assign an **app role**)
    and set `ADMIN_GROUP_ID`.
 
 Detailed walkthrough: [`docs/security.md`](docs/security.md) and the runbook.

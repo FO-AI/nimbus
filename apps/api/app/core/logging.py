@@ -38,6 +38,9 @@ def configure_logging(level: str = "INFO") -> None:
 
     # Uvicorn access logs are noisy and duplicate our middleware logging.
     logging.getLogger("uvicorn.access").handlers.clear()
+    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
 
 
 def get_logger(name: str) -> logging.Logger:

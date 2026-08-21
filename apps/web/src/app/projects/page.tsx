@@ -101,7 +101,7 @@ export default function ProjectsPage() {
         description="Every AI project, pilot, and use case across Finance & Operations: who owns it, where it stands, and what's next."
         actions={
           <div className="flex flex-wrap gap-2">
-            {me?.isEditor ? (
+            {me?.isAdmin ? (
               <ButtonLink variant="secondary" href="/projects/inventory">
                 Inventory existing project
               </ButtonLink>
@@ -132,7 +132,7 @@ export default function ProjectsPage() {
             </FilterChip>
           ))}
         </div>
-        {me?.isEditor ? (
+        {me?.isAdmin ? (
           <FilterChip
             type="button"
             active={showArchived}
@@ -219,7 +219,7 @@ export default function ProjectsPage() {
                         Archived
                       </Badge>
                     ) : null}
-                    {me?.isEditor && p.status === "proposed" ? (
+                    {me?.isAdmin && p.status === "proposed" ? (
                       <Badge className="ml-2" variant="featured">
                         Needs triage
                       </Badge>
