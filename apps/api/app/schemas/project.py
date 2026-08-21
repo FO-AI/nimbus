@@ -65,7 +65,7 @@ class ProjectInventoryRequest(_ProjectSchema):
     target_date: date | None = Field(default=None, alias="targetDate")
 
     @model_validator(mode="after")
-    def target_not_before_start(self) -> "ProjectInventoryRequest":
+    def target_not_before_start(self) -> ProjectInventoryRequest:
         if self.start_date and self.target_date and self.target_date < self.start_date:
             raise ValueError("targetDate must not be before startDate")
         return self
@@ -111,13 +111,13 @@ class ProjectUpdateRequest(_ProjectSchema):
     target_date: date | None = Field(default=None, alias="targetDate")
 
     @model_validator(mode="after")
-    def rejected_status_requires_note(self) -> "ProjectUpdateRequest":
+    def rejected_status_requires_note(self) -> ProjectUpdateRequest:
         if self.status == ProjectStatus.rejected and not (self.triage_note or "").strip():
             raise ValueError("triageNote is required when rejecting a project")
         return self
 
     @model_validator(mode="after")
-    def target_not_before_start(self) -> "ProjectUpdateRequest":
+    def target_not_before_start(self) -> ProjectUpdateRequest:
         if self.start_date and self.target_date and self.target_date < self.start_date:
             raise ValueError("targetDate must not be before startDate")
         return self
