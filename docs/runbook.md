@@ -10,35 +10,45 @@ Operational procedures for Nimbus.
    [security.md](security.md) and the auth troubleshooting section below.
 2. Create an Entra app registration for the deploy pipeline and configure a
    **federated credential** for GitHub OIDC (subject
-   `repo:<org>/<repo>:environment:dev`). Grant it `Contributor` (+ `User Access
-   Administrator` for role assignments) on the target subscription.
-3. Configure GitHub repository **secrets** and **variables**:
+   `repo:<org>/<repo>:environment:dev`). Grant it `Contributor` on `rg-nimbus`
+   and `Key Vault Secrets Officer` on `kv-nimbusdev`.
+3. Create a protected GitHub environment named `dev`. Configure these
+   environment secrets and variables:
 
    | Kind | Name | Example |
    | --- | --- | --- |
    | secret | `AZURE_CLIENT_ID` | pipeline app client id |
    | secret | `AZURE_TENANT_ID` | tenant id |
    | secret | `AZURE_SUBSCRIPTION_ID` | subscription id |
-   | secret | `SQL_ADMIN_PASSWORD` | strong password |
-   | var | `AZURE_LOCATION` | `eastus` |
-   | var | `ADMIN_GROUP_ID` | admin group object id |
-   | var | `ENTRA_FRONTEND_CLIENT_ID` | SPA client id |
-   | var | `ENTRA_BACKEND_APP_ID_URI` | `api://nimbus` |
-   | var | `AZURE_AI_FOUNDRY_ENDPOINT` | Foundry endpoint |
+   | secret | `API_ENV_FILE` | contents of the root `.env` |
+   | secret | `WEB_ENV_FILE` | contents of `apps/web/.env.local` |
+   | variable | `WEB_URL` | `https://nimbus.unc.edu` once active |
+
+   Upload the ignored local files without printing their contents:
+
+   ```bash
+   gh secret set API_ENV_FILE --env dev < .env
+   gh secret set WEB_ENV_FILE --env dev < apps/web/.env.local
+   ```
+
+   Repeat these commands after changing either local file. The workflow uses
+   `DEV_DATABASE_URL` for the deployed database and rejects localhost values.
+   It overrides local-only URLs when building and deploying.
 
 ### Automated deploy
 
-Push to `main` or run the **Deploy (dev)** workflow manually. It:
+After CI succeeds on `main`, or when **Deploy (dev)** is run manually, it:
 
 1. Logs in to Azure via OIDC.
-2. Provisions infrastructure with Bicep (seeding a public bootstrap image so the
-   first run succeeds before your images exist).
-3. Builds and pushes the API and web images to ACR.
-4. Rolls out the new images with `az containerapp update`.
+2. Syncs `DEV_DATABASE_URL` and `AZURE_AI_FOUNDRY_API_KEY` to Key Vault.
+3. Uses ACR Tasks to build both images with the commit SHA as the tag.
+4. Deploys new API and web Container App revisions and runs health checks.
 
-CI uses the legacy all-in-one `infra/bicep/main.bicep` (subscription-scoped; it
-creates the resource group itself). Manual deploys use the per-service flow
-below instead.
+The workflow updates existing resources; it does not provision infrastructure.
+The Azure web URL remains the default redirect until the `WEB_URL` environment
+variable is set. Register `https://nimbus.unc.edu` as an SPA redirect URI and
+bind the custom domain before setting it. The API URL is never a valid frontend
+redirect URI or CORS origin.
 
 ### Manual per-service deploy (from a workstation)
 
