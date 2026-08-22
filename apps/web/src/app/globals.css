@@ -13,6 +13,27 @@
   --color-muted: #5b6670;
   --color-border: #d7e3ec;
 
+  --color-console-deep: #07172c;
+  --color-console-mid: #0c2038;
+  --color-console-panel: #07182c;
+  --color-console-grid: rgb(255 255 255 / 0.12);
+  --color-console-glow: #4b9cd3;
+  --color-console-glow-soft: rgb(75 156 211 / 0.35);
+  --color-console-glow-medium: rgb(75 156 211 / 0.55);
+  --background-image-console-hero: radial-gradient(
+      circle at 18% 12%,
+      rgb(75 156 211 / 0.32),
+      transparent 30%
+    ),
+    linear-gradient(135deg, var(--color-console-deep) 0%, var(--color-navy) 48%, var(--color-background) 100%);
+  --background-image-console-dark: linear-gradient(
+    135deg,
+    var(--color-console-deep) 0%,
+    var(--color-navy) 60%,
+    var(--color-console-mid) 100%
+  );
+  --shadow-console-panel: 0 24px 80px -42px rgb(75 156 211 / 0.95);
+
   --color-danger: #b42318;
   --color-danger-bg: #fef3f2;
   --color-warning: #92400e;

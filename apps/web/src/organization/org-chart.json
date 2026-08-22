@@ -1,0 +1,9 @@
+{
+  "sponsor": { "name": "Nathan Knuffman", "role": "VC Finance and Ops, CFO, Sponsor" },
+  "lead": { "name": "Om Shewale", "role": "Applied AI Engineer" },
+  "interns": [
+    { "name": "[Intern Name]", "role": "[Focus area]" },
+    { "name": "[Intern Name]", "role": "[Focus area]" },
+    { "name": "[Intern Name]", "role": "[Focus area]" }
+  ]
+}
