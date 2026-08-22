@@ -36,7 +36,7 @@ export interface AuthContextValue {
   isAuthenticated: boolean;
   authDisabled: boolean;
   account: AuthAccount | null;
-  login: () => void;
+  login: (redirectTo?: string) => void;
   logout: () => void;
   getToken: () => Promise<string | null>;
 }
@@ -74,9 +74,13 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
     }
   }, [instance, accounts]);
 
-  const login = useCallback(() => {
+  const login = useCallback((redirectTo?: string) => {
     if (inProgress !== InteractionStatus.None) return;
-    void instance.loginRedirect(loginRequest);
+
+    const redirectStartPage = redirectTo
+      ? new URL(redirectTo, window.location.origin).href
+      : undefined;
+    void instance.loginRedirect({ ...loginRequest, redirectStartPage });
   }, [instance, inProgress]);
 
   const logout = useCallback(() => {

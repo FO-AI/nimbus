@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 
-import { AuthShell } from "@/components/AuthShell";
+import { AuthDisabledBanner } from "@/components/AuthDisabledBanner";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nimbus",
-  description: "This is a AI first platform for F&O staff to use",
+  title: "FOAI — Finance & Operations AI Initiative",
+  description:
+    "FOAI helps UNC Finance & Operations staff build AI familiarity and tool literacy. Nimbus, the initiative's flagship product, brings guides, prompts, and a grounded assistant into one workspace.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <AuthProvider>
-          <AuthShell>{children}</AuthShell>
+          <AuthDisabledBanner />
+          {children}
         </AuthProvider>
       </body>
     </html>

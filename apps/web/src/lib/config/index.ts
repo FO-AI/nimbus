@@ -26,7 +26,7 @@ export const config = {
     tenantId: required("NEXT_PUBLIC_ENTRA_TENANT_ID", process.env.NEXT_PUBLIC_ENTRA_TENANT_ID),
     redirectUri: firstNonEmpty(
       process.env.NEXT_PUBLIC_ENTRA_REDIRECT_URI,
-      typeof window !== "undefined" ? window.location.origin : "http://localhost:3000",
+      typeof window !== "undefined" ? window.location.origin : "http://localhost:3000/",
     ),
     apiScope: required("NEXT_PUBLIC_ENTRA_API_SCOPE", process.env.NEXT_PUBLIC_ENTRA_API_SCOPE),
   },
