@@ -2,8 +2,10 @@
   "sponsor": { "name": "Nathan Knuffman", "role": "VC Finance and Ops, CFO, Sponsor" },
   "lead": { "name": "Om Shewale", "role": "Applied AI Engineer" },
   "interns": [
-    { "name": "[Intern Name]", "role": "[Focus area]" },
-    { "name": "[Intern Name]", "role": "[Focus area]" },
-    { "name": "[Intern Name]", "role": "[Focus area]" }
+    { "name": "Chris Kim", "role": "Intern" },
+    { "name": "Kaiji Fu", "role": "Intern" },
+    { "name": "Ayush Sagar", "role": "Intern" },
+    { "name": "Eesham Bhattad", "role": "Intern" },
+    { "name": "Daniel Zhang", "role": "Intern" }
   ]
 }
