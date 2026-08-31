@@ -1,6 +1,9 @@
 {
   "sponsor": { "name": "Nathan Knuffman", "role": "VC Finance and Ops, CFO, Sponsor" },
-  "lead": { "name": "Om Shewale", "role": "Applied AI Engineer" },
+  "lead": {
+    "name": "Om Shewale",
+    "role": "Applied AI engineer, Office of the Vice Chancellor and CFO"
+  },
   "interns": [
     { "name": "Chris Kim", "role": "Intern" },
     { "name": "Kaiji Fu", "role": "Intern" },

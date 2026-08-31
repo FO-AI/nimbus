@@ -20,8 +20,8 @@ export default function OrganizationPage() {
     <ConsoleSurface
       as="section"
       tone="dark"
-      className="flex flex-1 flex-col justify-center"
-      contentClassName="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:py-20"
+      className="flex flex-1 flex-col"
+      contentClassName="mx-auto max-w-5xl px-4 pb-20 pt-12 sm:px-6 lg:pt-16"
     >
       <div className="mx-auto max-w-2xl text-center">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-carolina">
@@ -36,19 +36,18 @@ export default function OrganizationPage() {
         </p>
       </div>
 
-      <div className="mt-14 flex flex-col items-center">
+      <div className="mt-16 flex justify-center sm:justify-start">
         <PersonNode person={sponsor} tone="sponsor" />
-        <span
-          aria-hidden="true"
-          className="my-3 h-8 w-px bg-gradient-to-b from-carolina/70 to-carolina/20"
-        />
+      </div>
+
+      <div className="mt-20 flex flex-col items-center">
         <PersonNode person={lead} tone="lead" />
       </div>
 
-      <div className="relative mt-2">
+      <div className="mt-4">
         <span
           aria-hidden="true"
-          className="mx-auto block h-8 w-px bg-gradient-to-b from-carolina/70 to-carolina/20"
+          className="mx-auto block h-12 w-px bg-gradient-to-b from-carolina/70 to-carolina/20"
         />
         {interns.length > 0 ? (
           <>
@@ -56,12 +55,15 @@ export default function OrganizationPage() {
               aria-hidden="true"
               className="mx-auto block h-px max-w-3xl bg-carolina/30"
             />
-            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-8">
+            <div className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-12">
               {interns.map((intern, index) => (
-                <div className="relative flex flex-col items-center" key={`${intern.name}-${index}`}>
+                <div
+                  className="relative flex flex-col items-center"
+                  key={`${intern.name}-${index}`}
+                >
                   <span
                     aria-hidden="true"
-                    className="absolute -top-6 h-6 w-px bg-carolina/30"
+                    className="absolute -top-10 h-10 w-px bg-carolina/30"
                   />
                   <PersonNode person={intern} tone="intern" />
                 </div>
@@ -69,7 +71,7 @@ export default function OrganizationPage() {
             </div>
           </>
         ) : (
-          <div className="mt-6 flex justify-center">
+          <div className="mt-10 flex justify-center">
             <Card className="max-w-sm border-dashed border-white/25 bg-white/[0.04] text-center">
               <p className="font-semibold text-white">Intern seats open</p>
               <p className="mt-1 text-sm text-cloud">
@@ -80,7 +82,7 @@ export default function OrganizationPage() {
         )}
       </div>
 
-      <p className="mt-14 text-center font-mono text-xs uppercase tracking-[0.14em] text-cloud/70">
+      <p className="mt-20 text-center font-mono text-xs uppercase tracking-[0.14em] text-cloud/70">
         Currently: 1 sponsor · 1 lead · {interns.length}{" "}
         {interns.length === 1 ? "intern" : "interns"}
       </p>
