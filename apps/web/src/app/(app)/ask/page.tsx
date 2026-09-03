@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Markdown } from "@/components/Markdown";
 import { Button, Card, Input, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import type { Citation } from "@/types";
@@ -77,10 +78,14 @@ export default function AskPage() {
                 className={
                   turn.role === "user"
                     ? "max-w-[85%] self-end whitespace-pre-wrap rounded-xl bg-carolina px-4 py-3 text-sm text-navy"
-                    : "max-w-[85%] self-start whitespace-pre-wrap rounded-xl bg-cloud px-4 py-3 text-sm text-foreground"
+                    : "max-w-[85%] self-start rounded-xl bg-cloud px-4 py-3 text-sm text-foreground"
                 }
               >
-                <div>{turn.content}</div>
+                {turn.role === "assistant" ? (
+                  <Markdown>{turn.content}</Markdown>
+                ) : (
+                  <div className="whitespace-pre-wrap">{turn.content}</div>
+                )}
                 {turn.citations && turn.citations.length > 0 ? (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {turn.citations.map((c) => (
