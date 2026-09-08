@@ -9,8 +9,8 @@ const authMocks = vi.hoisted(() => ({
     acquireTokenSilent: vi.fn(),
     acquireTokenRedirect: vi.fn(),
     getActiveAccount: vi.fn(() => null),
-    loginRedirect: vi.fn(),
-    logoutRedirect: vi.fn(),
+    loginRedirect: vi.fn(async () => undefined),
+    logoutRedirect: vi.fn(async () => undefined),
     setActiveAccount: vi.fn(),
     ssoSilent: vi.fn(async () => ({})),
   },
@@ -96,20 +96,10 @@ describe("session persistence", () => {
     expect(msalConfig.cache?.temporaryCacheLocation).toBe("sessionStorage");
   });
 
-  it("attempts a silent restore when no account is cached", async () => {
-    render(
-      <AuthProvider>
-        <LoginProbe />
-      </AuthProvider>,
-    );
-
-    await waitFor(() => expect(authMocks.instance.ssoSilent).toHaveBeenCalled());
-    await waitFor(() => expect(screen.getByTestId("ready")).toHaveTextContent("true"));
-  });
-
-  it("skips the silent restore when an account is already cached", async () => {
-    authMocks.accounts = [{ name: "Ayush Sagar", username: "ayush@example.edu" }];
-
+  it("never starts a background MSAL interaction", async () => {
+    // Regression: a speculative ssoSilent probe held MSAL's single interaction
+    // slot for up to its 10s iframe timeout, during which `login()` returned
+    // early and the "Sign in" button did nothing at all.
     render(
       <AuthProvider>
         <LoginProbe />
@@ -120,15 +110,15 @@ describe("session persistence", () => {
     expect(authMocks.instance.ssoSilent).not.toHaveBeenCalled();
   });
 
-  it("reports ready even when there is no session to restore", async () => {
-    authMocks.instance.ssoSilent.mockRejectedValueOnce(new Error("interaction_required"));
-
+  it("can sign in immediately after load", async () => {
+    const user = userEvent.setup();
     render(
       <AuthProvider>
         <LoginProbe />
       </AuthProvider>,
     );
 
-    await waitFor(() => expect(screen.getByTestId("ready")).toHaveTextContent("true"));
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+    expect(authMocks.instance.loginRedirect).toHaveBeenCalledTimes(1);
   });
 });

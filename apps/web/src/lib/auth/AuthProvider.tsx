@@ -20,7 +20,6 @@ import {
   useContext,
   useMemo,
   useRef,
-  useState,
   type ReactNode,
 } from "react";
 
@@ -85,7 +84,6 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
   const isAuthenticated = useIsAuthenticated();
   const active = useMemo(() => instance.getActiveAccount() ?? accounts[0] ?? null, [instance, accounts]);
   const redirectStartedRef = useRef(false);
-  const [restoreAttempted, setRestoreAttempted] = useState(false);
 
   useEffect(() => {
     if (!instance.getActiveAccount() && accounts[0]) {
@@ -94,36 +92,12 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
   }, [instance, accounts]);
 
   /*
-   * Silent session restore.
-   *
-   * The persistent token cache covers a returning user whose tokens are still
-   * cached. When the cache is empty but Entra still holds a session for this
-   * browser, `ssoSilent` redeems that session in a hidden iframe (prompt=none)
-   * and signs the user in with no interaction. It legitimately fails — no
-   * session, or a browser blocking third-party cookies — in which case we fall
-   * through to the normal sign-in button rather than forcing a redirect on a
-   * visitor who may just be reading the public page.
+   * Nothing here may start a background MSAL interaction. MSAL allows exactly
+   * one at a time and reports it through `inProgress`, so a speculative call
+   * (an `ssoSilent` probe, say) holds the slot for up to its 10s iframe
+   * timeout and silently swallows the user's click on "Sign in" for that whole
+   * window. Session persistence is the token cache's job — see msalConfig.
    */
-  useEffect(() => {
-    if (restoreAttempted || inProgress !== InteractionStatus.None) return;
-    // A cached account already settles the question — see `sessionSettled`.
-    if (accounts.length > 0) return;
-
-    let cancelled = false;
-    void (async () => {
-      try {
-        await instance.ssoSilent(loginRequest);
-      } catch {
-        // Expected whenever there is no reusable Entra session.
-      } finally {
-        if (!cancelled) setRestoreAttempted(true);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [accounts.length, inProgress, instance, restoreAttempted]);
 
   const login = useCallback((redirectTo?: string) => {
     if (inProgress !== InteractionStatus.None) return;
@@ -131,7 +105,10 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
     const redirectStartPage = redirectTo
       ? new URL(redirectTo, window.location.origin).href
       : undefined;
-    void instance.loginRedirect({ ...loginRequest, redirectStartPage });
+    instance.loginRedirect({ ...loginRequest, redirectStartPage }).catch((error: unknown) => {
+      // A rejected redirect leaves the user staring at an unresponsive button.
+      console.error("Sign-in redirect failed", error);
+    });
   }, [instance, inProgress]);
 
   const logout = useCallback(() => {
@@ -165,10 +142,6 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
     }
   }, [active, inProgress, instance]);
 
-  // The session question is answered once MSAL has an account for us, or once
-  // the silent restore has run and come back empty.
-  const sessionSettled = accounts.length > 0 || restoreAttempted;
-
   const value = useMemo<AuthContextValue>(() => {
     const account: AuthAccount | null = active
       ? { name: active.name ?? active.username, email: active.username }
@@ -176,14 +149,16 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
 
     return {
       isAuthenticated,
-      isReady: sessionSettled && inProgress === InteractionStatus.None,
+      // MSAL has finished startup and any redirect handling; whatever the cache
+      // held has been loaded by now.
+      isReady: inProgress === InteractionStatus.None,
       authDisabled: false,
       account,
       login,
       logout,
       getToken,
     };
-  }, [active, getToken, inProgress, isAuthenticated, login, logout, sessionSettled]);
+  }, [active, getToken, inProgress, isAuthenticated, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
