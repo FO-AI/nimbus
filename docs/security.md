@@ -42,16 +42,17 @@ on every visit (`lib/auth/msalConfig.ts`, `lib/auth/AuthProvider.tsx`):
   the nonce/state/PKCE verifier survives the redirect round-trip in browsers
   that partition storage across a top-level navigation. Those cookies carry
   `Secure` on any HTTPS origin (`secureCookies`).
-- **Silent restore.** When the cache is empty but Entra still holds a session
-  for the browser, `ssoSilent` redeems it in a hidden iframe (`prompt=none`).
-  Failure is expected and non-fatal — no session, or a browser blocking
-  third-party cookies — and falls back to the normal sign-in button. Nothing
-  here ever forces an interactive redirect on a visitor reading the public page.
-- **`isReady`.** `useAuth()` reports whether that restore has finished. Gated
-  UI must wait for it before treating "not authenticated" as "signed out",
-  otherwise every returning user sees a flash of the signed-out state. Once
-  authenticated, the public landing page redirects to `/home`; `?stay=1` or an
-  in-page anchor opts out.
+- **No background interactions.** MSAL permits one interaction at a time and
+  reports it through `inProgress`. Anything speculative — an `ssoSilent` probe
+  to pick up an existing Entra session, say — holds that slot for up to its
+  10s iframe timeout, and `login()` returns early for the whole window, so the
+  "Sign in" button silently does nothing. Persistence is the token cache's job;
+  do not add a background probe alongside it.
+- **`isReady`.** `useAuth()` reports whether MSAL has finished startup and
+  redirect handling. Gated UI must wait for it before treating "not
+  authenticated" as "signed out", otherwise every returning user sees a flash
+  of the signed-out state. Once authenticated, the public landing page
+  redirects to `/home`; `?stay=1` or an in-page anchor opts out.
 
 None of this is a security boundary. It only decides what the browser shows —
 every request is still authorized server-side against a validated token.
