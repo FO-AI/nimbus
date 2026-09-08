@@ -26,6 +26,36 @@ The backend validates every access token (`core/security.py`):
 Validation failures return `401` with the standard error envelope. Keys are
 cached in-process by `PyJWKClient`.
 
+## Session persistence (frontend)
+
+Signing in is meant to last, so a returning user is not asked to click "Sign in"
+on every visit (`lib/auth/msalConfig.ts`, `lib/auth/AuthProvider.tsx`):
+
+- **Token cache in `localStorage`.** MSAL's cache survives closing the tab and
+  the browser, so a returning user is restored from cache. The tradeoff is the
+  one every browser-based SPA makes: storage is readable by script, so an XSS
+  bug is a token-theft bug. It is bounded by short-lived access tokens and by
+  the single-use, rotating refresh token Entra issues to SPAs, and the backend
+  still validates every token on every request.
+- **Interaction state stays per-tab** (`temporaryCacheLocation:
+  sessionStorage`) and is mirrored into cookies (`storeAuthStateInCookie`) so
+  the nonce/state/PKCE verifier survives the redirect round-trip in browsers
+  that partition storage across a top-level navigation. Those cookies carry
+  `Secure` on any HTTPS origin (`secureCookies`).
+- **Silent restore.** When the cache is empty but Entra still holds a session
+  for the browser, `ssoSilent` redeems it in a hidden iframe (`prompt=none`).
+  Failure is expected and non-fatal — no session, or a browser blocking
+  third-party cookies — and falls back to the normal sign-in button. Nothing
+  here ever forces an interactive redirect on a visitor reading the public page.
+- **`isReady`.** `useAuth()` reports whether that restore has finished. Gated
+  UI must wait for it before treating "not authenticated" as "signed out",
+  otherwise every returning user sees a flash of the signed-out state. Once
+  authenticated, the public landing page redirects to `/home`; `?stay=1` or an
+  in-page anchor opts out.
+
+None of this is a security boundary. It only decides what the browser shows —
+every request is still authorized server-side against a validated token.
+
 ## Authorization
 
 - `get_current_user` resolves the caller into a `Principal` (subject, name,

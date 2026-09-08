@@ -3,6 +3,7 @@
 import { ConsoleSurface } from "@/components/ConsoleSurface";
 import { Badge, Button, ButtonLink, Card } from "@/components/ui";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useSignedInRedirect } from "@/lib/auth/useSignedInRedirect";
 
 const journeyStages = [
   {
@@ -18,16 +19,34 @@ const journeyStages = [
 const committeeMandate =
   "Committee members review Nimbus usage and project metrics to decide which Finance & Operations AI use cases move forward next.";
 
-const committeeMembers = [
-  { name: "[Member Name]", role: "[Title · Department]", chair: true },
-  { name: "[Member Name]", role: "[Title · Department]" },
-  { name: "[Member Name]", role: "[Title · Department]" },
-  { name: "[Member Name]", role: "[Title · Department]" },
-  { name: "[Member Name]", role: "[Title · Department]" },
-  { name: "[Member Name]", role: "[Title · Department]" },
+type CommitteeMember = {
+  name: string;
+  role: string;
+  /** Set on the member who chairs the committee; renders a "Chair" badge. */
+  chair?: boolean;
+};
+
+const committeeMembers: CommitteeMember[] = [
+  { name: "Alex Azad", role: "Executive Director · F&O IT" },
+  { name: "Mogan Glenn", role: "IT Security Office" },
+  { name: "Rich Arnold", role: "Senior Director · Human Resources Information Management" },
+  { name: "Nicole \u0160ebik", role: "Director of Financial Data Analytics and Reporting" },
+  { name: "Chris Dobek", role: "Director · Transportation and Parking" },
 ];
 
+/** First and last initial, e.g. "Nicole \u0160ebik" -> "N\u0160". */
+function initialsOf(name: string): string {
+  const words = name.split(/\s+/).filter(Boolean);
+  const first = words.at(0)?.charAt(0) ?? "";
+  const last = words.length > 1 ? (words.at(-1)?.charAt(0) ?? "") : "";
+  return `${first}${last}`.toUpperCase();
+}
+
 export default function PublicLandingPage() {
+  // A signed-in visitor landing here already has a session — send them to the
+  // app instead of showing them the sign-in pitch a second time.
+  useSignedInRedirect("/home");
+
   return (
     <>
       <Hero />
@@ -150,8 +169,11 @@ function SteeringCommittee() {
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {committeeMembers.map((member, index) => (
             <Card className="flex items-start gap-4" key={`${member.name}-${index}`}>
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cloud font-mono text-sm font-semibold text-navy">
-                ··
+              <span
+                aria-hidden="true"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cloud font-mono text-sm font-semibold text-navy"
+              >
+                {initialsOf(member.name)}
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
