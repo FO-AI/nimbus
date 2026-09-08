@@ -5,7 +5,7 @@ title: Practice a negotiation before you have it
 summary: Rehearse a real negotiation against an AI counterpart, then get feedback on how
   you handled alternatives, framing, and concessions.
 tags: [ai-literacy, negotiation, procurement, practice]
-related_slugs: [sensitive-data, copilot-chat, vendor-negotiation-prep-brief]
+related_slugs: [sensitive-data, copilot-chat, vendor-negotiation-prep-brief, how-to-write-a-prompt]
 source:
   mode: import
   url: https://gail.wharton.upenn.edu/prompt-library/
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     This is a role-play in which I practice a negotiation and get feedback.
     You play a practical mentor, and then the counterpart.
@@ -66,6 +67,9 @@ stakes are real and you have not done many.
   counterpart is far too agreeable to be useful practice.
 - Use a scenario resembling your real one but do not use the actual vendor,
   terms, or numbers. See below.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

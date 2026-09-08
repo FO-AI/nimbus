@@ -5,7 +5,7 @@ title: List contract renewals and notice deadlines coming up
 summary: Pull upcoming vendor contract expiries, notice deadlines, and auto-renewal
   flags out of your contract files into a dated action list.
 tags: [procurement, contracts, renewals, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-spend-summary]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-spend-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     From our contract files, list vendor contracts with renewals or expiries in
     the next [TIMEFRAME]. Give me a table with:
@@ -50,6 +51,9 @@ discovered after a contract has auto-renewed.
   or the list will miss the ones that matter.
 - Add "flag any contract with no named owner" — unowned contracts are the
   ones that auto-renew.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -126,3 +126,28 @@ def test_tools_declare_status_and_data_tier(library):
         and not (i.attributes.get("status") and i.attributes.get("data_tier"))
     )
     assert incomplete == []
+
+
+def test_every_prompt_links_the_prompting_guidance(library):
+    """§4b: every prompt page must reach the CLEAR framework in one click."""
+    missing = sorted(
+        i.slug
+        for i in library
+        if i.kind == "prompt" and "how-to-write-a-prompt" not in i.related_slugs
+    )
+    assert missing == []
+
+
+def test_every_prompt_names_a_real_tool(library):
+    """`tool` is a display label and drifts; `tool_slug` is the identity.
+
+    Without this the library filter can offer a tool name that matches no
+    registry entry, which is how the two got out of step in the first place.
+    """
+    tools = {i.slug for i in library if i.kind == "tool"}
+    dangling = sorted(
+        (i.slug, i.attributes.get("tool_slug"))
+        for i in library
+        if i.kind == "prompt" and i.attributes.get("tool_slug") not in tools
+    )
+    assert dangling == []

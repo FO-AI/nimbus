@@ -5,7 +5,7 @@ title: Organize vendor responses into a comparison matrix
 summary: Lay bid responses side by side against your requirements, with gaps and
   clarification questions, to prepare the panel's review.
 tags: [procurement, rfp, evaluation, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, tender-evaluation-criteria-draft]
+related_slugs: [sensitive-data, microsoft-365-copilot, tender-evaluation-criteria-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Organize the vendor responses I reference into a comparison matrix against
     our requirements:
@@ -49,6 +50,9 @@ requirements without losing track.
   Excel handles the layout better than a pasted table.
 - Add "quote the vendor's exact wording, do not paraphrase" if the
   differences are contractual rather than functional.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Turn facilities correspondence into a status report
 summary: Compile reported issues, resolution status, recurring problems, and vendor
   involvement from a month of facilities email.
 tags: [facilities, operations, reporting, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: Facilities
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Search my email and Teams for facilities issues raised over the past
     [TIMEFRAME]. Compile a status report:
@@ -50,6 +51,9 @@ of one-off messages.
   makes the recurrence pattern visible.
 - Add "flag anything with a safety implication separately" so those do not
   sit in a list with lightbulbs.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

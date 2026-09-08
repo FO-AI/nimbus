@@ -5,7 +5,7 @@ title: Work out the procurement approach for a project
 summary: Talk through what you need to buy and get a reasoned outline of the route to
   market, contract considerations, and value-for-money approach.
 tags: [procurement, sourcing, planning, strategy]
-related_slugs: [sensitive-data, copilot-chat, sourcing-strategy-outline]
+related_slugs: [sensitive-data, copilot-chat, sourcing-strategy-outline, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff, project leads
   department: Procurement
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a senior procurement and finance officer helping me plan the
     commercial approach for [PROJECT].
@@ -60,6 +61,9 @@ bought.
   and a wrong number produces a confidently wrong route.
 - Add any existing contract you might use — it changes the recommendation
   completely.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

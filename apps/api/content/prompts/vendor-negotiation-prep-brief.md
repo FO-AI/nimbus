@@ -5,7 +5,7 @@ title: Build a negotiation preparation brief
 summary: Assemble pricing history, dependence on both sides, and open asks into talking
   points before you sit down with a vendor.
 tags: [procurement, vendor, negotiation, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-spend-summary]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-spend-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the negotiation with [VENDOR] on [SCOPE], gather from my email and
     documents:
@@ -49,6 +50,9 @@ nobody has written down what it is.
   pattern most worth seeing before you concede again.
 - For a cooperative or state contract, add that pricing is set by the master
   agreement so the negotiation is about scope and service, not rate.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

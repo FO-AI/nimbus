@@ -5,7 +5,7 @@ title: Prioritize a portfolio of projects
 summary: Rank projects against strategic alignment, delivery confidence, and value for
   money in a matrix suitable for a leadership discussion.
 tags: [planning, portfolio, prioritization, leadership]
-related_slugs: [sensitive-data, copilot-chat, project-risk-register]
+related_slugs: [sensitive-data, copilot-chat, project-risk-register, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Unit managers, project leads
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a portfolio manager assessing [NUMBER] projects. Build a
     prioritization matrix to support a leadership discussion.
@@ -58,6 +59,9 @@ the conversation needs a shared starting point.
   specific rather than generic.
 - The Nimbus [project inventory](/projects) is a good source for the
   summaries — it already holds status, value, and risks per project.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Draft an announcement to staff
 summary: Turn a policy change, closure, or process update into a clear announcement
   covering what, when, why, impact, and who to ask.
 tags: [operations, communications, writing, copilot]
-related_slugs: [sensitive-data, copilot-chat, policy-plain-language-summary]
+related_slugs: [sensitive-data, copilot-chat, policy-plain-language-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft an announcement to staff about [TOPIC]. Include:
     - A clear headline
@@ -52,6 +53,9 @@ office closure — where clarity matters more than polish.
   announcement comes from what it leaves ambiguous.
 - For anything affecting pay, benefits, or employment terms, route it
   through HR before sending. Do not send it on Copilot's word.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

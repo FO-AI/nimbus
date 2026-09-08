@@ -5,7 +5,7 @@ title: Research an invoice or purchase order query
 summary: Trace what was ordered, what was approved, and where the discrepancy arose on a
   disputed invoice or PO.
 tags: [finance, accounts-payable, invoices, procurement, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-email-draft]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-email-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, procurement staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the invoice or PO query [REFERENCE] with [VENDOR], search my email for:
     - What was ordered and what was agreed, with dates
@@ -48,6 +49,9 @@ thread with six people on it.
   a strong search anchor.
 - Ask it to "state clearly what is disputed and what both sides agree on" —
   separating those is most of the resolution.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

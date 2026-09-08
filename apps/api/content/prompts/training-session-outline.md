@@ -5,7 +5,7 @@ title: Outline a training session from learning objectives
 summary: Turn objectives and an audience into a session outline with outcomes,
   structure, activities, and a suggested duration.
 tags: [hr-operations, training, learning, copilot]
-related_slugs: [sensitive-data, copilot-chat, sop-first-draft]
+related_slugs: [sensitive-data, copilot-chat, sop-first-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: HR operations staff
   department: HR operations
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     From these objectives, outline a training session:
     - Learning outcomes, stated as what someone can do afterwards
@@ -51,6 +52,9 @@ rollout, an onboarding module.
   wrong level are the usual failure.
 - Add the real time you have. Copilot defaults to a full-day structure for
   what is actually a 45-minute session.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

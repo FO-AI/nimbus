@@ -5,7 +5,7 @@ title: Draft a plain-language FAQ from a policy
 summary: Turn a policy document into the questions staff actually ask, answered in clear
   non-legalistic language, for HR to review.
 tags: [hr-operations, policy, writing, copilot]
-related_slugs: [sensitive-data, copilot-chat, policy-plain-language-summary]
+related_slugs: [sensitive-data, copilot-chat, policy-plain-language-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: HR operations staff
   department: HR operations
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     From the policy below, draft a plain-language FAQ for staff. Cover the
     questions people actually ask, not the structure of the policy. Clear,
@@ -49,6 +50,9 @@ arrive at your desk instead.
   somewhere to point.
 - Add "list the three questions this policy does not answer" — those gaps
   are worth raising with the policy owner.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

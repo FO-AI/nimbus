@@ -5,7 +5,7 @@ title: Scan a project for unintended consequences
 summary: Work through the financial, social, environmental, reputational, and legal
   effects of a project — including the positive and unintended ones.
 tags: [planning, risk, ethics, project-management]
-related_slugs: [sensitive-data, copilot-chat, project-risk-register]
+related_slugs: [sensitive-data, copilot-chat, project-risk-register, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Run a consequence scan on the project below. For each of these categories —
     financial, social, environmental, reputational, legal — identify the
@@ -52,6 +53,9 @@ register — consequences are broader than delivery risks.
   it be crowded out by the obvious ones.
 - For anything touching staff workload or roles, add "include consequences
   for the people who do this work today."
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

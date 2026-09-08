@@ -5,7 +5,7 @@ title: Build a month-end close prep checklist
 summary: Sweep your email and Teams for open items, pending journal entries, and
   blockers before the close, and turn them into a checklist.
 tags: [finance, close, checklist, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative]
+related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the [MONTH] close in [DEPARTMENT], search my email and Teams for:
     - Open items and pending journal entries anyone has mentioned
@@ -49,6 +50,9 @@ of mail threads and nobody has written them down in one place.
   that matter if your mailbox is noisy.
 - Add "flag anything involving a sponsored project separately" if your unit
   carries grant funds — those close on different rules.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

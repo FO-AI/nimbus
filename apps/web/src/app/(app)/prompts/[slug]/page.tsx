@@ -7,7 +7,7 @@ import { CopyPromptButton } from "@/components/CopyPromptButton";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
-import { SourceNote } from "@/components/SourceNote";
+import { SourceNote, sourceNoteSlot } from "@/components/SourceNote";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentDetail } from "@/lib/api/useContent";
@@ -26,6 +26,8 @@ export default function PromptDetailPage() {
   if (error) return <ErrorState error={error} onRetry={reload} />;
   if (!item) return null;
 
+  const slot = sourceNoteSlot(item.source);
+
   const { prompt, audience, tool, example_input, example_output } = item.attributes;
 
   return (
@@ -34,9 +36,20 @@ export default function PromptDetailPage() {
         ← Prompt library
       </Link>
       <PageHeader title={item.title} description={item.summary} />
+
+      {item.source && slot === "above" ? <SourceNote source={item.source} /> : null}
+
       <div className="flex flex-wrap gap-2">
         {audience ? <Badge variant="primary">{String(audience)}</Badge> : null}
-        {tool ? <Badge>{String(tool)}</Badge> : null}
+        {tool ? (
+          typeof item.attributes.tool_slug === "string" ? (
+            <Link href={`/guides/${item.attributes.tool_slug}`} className="hover:text-carolina">
+              <Badge>{String(tool)} →</Badge>
+            </Link>
+          ) : (
+            <Badge>{String(tool)}</Badge>
+          )
+        ) : null}
         {item.tags.map((t) => (
           <Badge key={t}>
             {t}
@@ -74,10 +87,10 @@ export default function PromptDetailPage() {
         </Card>
       ) : null}
 
-      {item.bodyMd || item.source ? (
+      {item.bodyMd || slot === "below" ? (
         <Card className="space-y-6">
           {item.bodyMd ? <Markdown>{item.bodyMd}</Markdown> : null}
-          {item.source ? <SourceNote source={item.source} /> : null}
+          {item.source && slot === "below" ? <SourceNote source={item.source} /> : null}
         </Card>
       ) : null}
 

@@ -32,6 +32,8 @@ export type ContentAttributes = Record<string, unknown> & {
   audience?: string;
   department?: string;
   tool?: string;
+  /** Slug of the `kind: tool` entry this prompt runs in — `tool` is only a label. */
+  tool_slug?: string;
   example_input?: string;
   example_output?: string;
 };

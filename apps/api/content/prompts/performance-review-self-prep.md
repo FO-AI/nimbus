@@ -5,7 +5,7 @@ title: Prepare for your own performance review
 summary: Review your own work and feedback over the period and summarize your
   achievements before writing a self-assessment.
 tags: [productivity, career, writing, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: All Finance and Operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     I am preparing for my own performance review covering [PERIOD].
 
@@ -53,6 +54,9 @@ blurred together.
   assessed against.
 - Run it a month before the deadline. The underdocumented items are worth a
   conversation with your supervisor before the review, not during it.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

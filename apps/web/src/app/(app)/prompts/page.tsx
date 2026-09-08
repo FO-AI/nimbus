@@ -21,6 +21,7 @@ import {
 } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentList } from "@/lib/api/useContent";
+import { attr, attributeValues } from "@/lib/contentAttributes";
 import { useQueryFilters } from "@/lib/useQueryFilters";
 import type { ContentSummary } from "@/types";
 
@@ -34,21 +35,9 @@ function departmentLabel(value: string): string {
   return DEPARTMENT_LABEL[value] ?? value;
 }
 
-/** Frontmatter `attributes` values are typed as unknown; narrow to a string. */
-function attr(item: ContentSummary, key: "department" | "tool" | "audience"): string | null {
-  const value = item.attributes[key];
-  return typeof value === "string" && value.trim() !== "" ? value : null;
-}
-
-function sortedValues(items: ContentSummary[], key: "department" | "tool"): string[] {
-  const all = new Set<string>();
-  items.forEach((i) => {
-    const v = attr(i, key);
-    if (v) all.add(v);
-  });
-  return Array.from(all).sort();
-}
-
+// Every prompt falls in exactly one bucket: written here, or adapted from an
+// external source. Keying "adapted" off a specific mode would have hidden
+// link- and practice-mode prompts from both options.
 const ORIGINS = new Set(["unc", "adapted"]);
 
 export default function PromptsPage() {
@@ -63,22 +52,17 @@ export default function PromptsPage() {
 function PromptsLibrary() {
   const api = useApiClient();
   const { items, loading, error, reload } = useContentList("prompt");
-  const { searchParams, setFilters } = useQueryFilters();
+  const { searchParams, setFilters, readFilter } = useQueryFilters();
   const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
   const [preview, setPreview] = useState<ContentSummary | null>(null);
+  const previewDepartment = preview ? attr(preview, "department") : null;
 
-  const departments = useMemo(() => sortedValues(items, "department"), [items]);
-  const tools = useMemo(() => sortedValues(items, "tool"), [items]);
+  const departments = useMemo(() => attributeValues(items, "department"), [items]);
+  const tools = useMemo(() => attributeValues(items, "tool"), [items]);
 
-  // A stale or hand-edited URL value that matches nothing is treated as "all"
-  // once the list is known, so the controls never show a selection that has
-  // no effect. Until then, trust the URL so the controls do not flicker.
-  const known = (value: string | null, options: string[]) =>
-    value && (loading || options.includes(value)) ? value : ALL;
-  const department = known(searchParams.get("department"), departments);
-  const tool = known(searchParams.get("tool"), tools);
-  const originParam = searchParams.get("origin");
-  const origin = originParam && ORIGINS.has(originParam) ? originParam : ALL;
+  const department = readFilter("department", departments, { loading, fallback: ALL });
+  const tool = readFilter("tool", tools, { loading, fallback: ALL });
+  const origin = readFilter("origin", [...ORIGINS], { fallback: ALL });
 
   const visible = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -86,7 +70,7 @@ function PromptsLibrary() {
       if (department !== ALL && attr(i, "department") !== department) return false;
       if (tool !== ALL && attr(i, "tool") !== tool) return false;
       if (origin === "unc" && i.source) return false;
-      if (origin === "adapted" && i.source?.mode !== "import") return false;
+      if (origin === "adapted" && !i.source) return false;
       if (needle === "") return true;
       const prompt = typeof i.attributes.prompt === "string" ? i.attributes.prompt : "";
       return (
@@ -166,7 +150,7 @@ function PromptsLibrary() {
             >
               <option value={ALL}>Anywhere</option>
               <option value="unc">Written at UNC</option>
-              <option value="adapted">Adapted from an open library</option>
+              <option value="adapted">Adapted from an external source</option>
             </Select>
           </Field>
         </div>
@@ -203,16 +187,16 @@ function PromptsLibrary() {
             </EmptyState>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {visible.map((item) => (
+              {visible.map((item) => {
+                const itemDepartment = attr(item, "department");
+                return (
                 <Card
                   key={item.slug}
                   className="relative flex min-h-64 flex-col gap-3 transition hover:-translate-y-0.5 hover:border-carolina hover:shadow-md"
                 >
                   <div className="flex flex-wrap gap-2">
-                    {attr(item, "department") ? (
-                      <Badge variant="primary">
-                        {departmentLabel(attr(item, "department") as string)}
-                      </Badge>
+                    {itemDepartment ? (
+                      <Badge variant="primary">{departmentLabel(itemDepartment)}</Badge>
                     ) : null}
                     <SourceBadge source={item.source} />
                     {item.featured ? <Badge variant="featured">Featured</Badge> : null}
@@ -246,7 +230,8 @@ function PromptsLibrary() {
                     </div>
                   ) : null}
                 </Card>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
@@ -255,7 +240,7 @@ function PromptsLibrary() {
       {preview ? (
         <PromptPreviewDialog
           item={preview}
-          departmentLabel={attr(preview, "department") ? departmentLabel(attr(preview, "department") as string) : undefined}
+          departmentLabel={previewDepartment ? departmentLabel(previewDepartment) : undefined}
           onClose={() => setPreview(null)}
           onCopied={() => recordCopy(preview.slug)}
         />

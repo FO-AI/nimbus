@@ -5,7 +5,7 @@ title: Set up a team charter before a project starts
 summary: A guided conversation that gets a project team to agree goals, roles, and
   working norms up front rather than discovering them later.
 tags: [ai-literacy, teams, project-management, kickoff]
-related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan]
+related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan, how-to-write-a-prompt]
 source:
   mode: import
   url: https://gail.wharton.upenn.edu/prompt-library/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a practical team coach helping us set up a team charter — a short
     document covering roles (who does what), goals (what we are trying to
@@ -71,6 +72,9 @@ not worked together before.
   Keep it.
 - Add a question about how decisions get made when the team disagrees. It is
   the norm most often missing and most often needed.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

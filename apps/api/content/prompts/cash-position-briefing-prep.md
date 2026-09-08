@@ -5,7 +5,7 @@ title: Gather talking points for a cash and funding briefing
 summary: Collect expected large receipts and payments, funding points, and flagged cash
   risks into briefing notes.
 tags: [finance, cash, treasury, briefing, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For my cash and funding briefing covering [PERIOD], gather from email and
     reports:
@@ -49,6 +50,9 @@ scattered across correspondence rather than in a report.
   should be listed separately from operating cash.
 - Add "flag anything where the expected date has already slipped once" to
   surface the risky items.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

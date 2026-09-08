@@ -5,11 +5,12 @@ title: Summarize a policy in plain language
 summary: Produce a short, plain-language summary of a policy or procedure
   document, with the "what changed" and "what you must do" pulled out.
 tags: [policy, operations, writing]
-related_slugs: [sensitive-data]
+related_slugs: [sensitive-data, how-to-write-a-prompt]
 attributes:
   audience: Operations staff
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Summarize the policy text below for staff who need to follow it but
     won't read the full document. Produce:
@@ -41,4 +42,7 @@ summary for an email, intranet page, or team meeting.
   that omits an obligation is worse than no summary.
 
 Only paste policies that are already internal-public. For drafts under
-review, check with the policy owner first.
+review, check with the policy owner first. ## How to adapt it - New to
+prompting, or not getting what you need?
+[How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+framework and the Microsoft Prompt Gallery.

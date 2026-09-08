@@ -5,7 +5,7 @@ title: Build a business case step by step
 summary: An interactive walkthrough that asks for what a business case needs across
   strategy, options, procurement, funding, and delivery, then drafts it.
 tags: [business-case, planning, writing, budget]
-related_slugs: [sensitive-data, copilot-chat, business-case-summary]
+related_slugs: [sensitive-data, copilot-chat, business-case-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are an experienced business case advisor. Guide me through building a
     business case for [PROJECT].
@@ -64,6 +65,9 @@ questions than stare at a template.
 - Do the interview properly. Rushing step 2 is what produces a business case
   that reads well and says nothing.
 - For a smaller request, ask it to compress the five areas into two pages.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

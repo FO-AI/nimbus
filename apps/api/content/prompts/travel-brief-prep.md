@@ -5,7 +5,7 @@ title: Prepare a travel brief for a trip
 summary: Assemble the meeting schedule, contacts, background, and documents needed for a
   work trip, ready for booking details to be added.
 tags: [operations, travel, meetings, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, expense-justification-context]
+related_slugs: [sensitive-data, microsoft-365-copilot, expense-justification-context, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the upcoming trip to [DESTINATION] for [PURPOSE] on [DATES], compile a
     travel brief:
@@ -50,6 +51,9 @@ separate threads.
 - Pair with the
   [expense justification prompt](/prompts/expense-justification-context)
   after the trip; the purpose you state now is what the report will need.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

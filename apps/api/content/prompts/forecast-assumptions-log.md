@@ -5,7 +5,7 @@ title: Build an assumptions log for a forecast or budget
 summary: Extract the assumptions behind a forecast from discussion, with owner and
   status, so the reasoning is on the record.
 tags: [finance, budget, forecast, assumptions, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, forecast-input-gathering]
+related_slugs: [sensitive-data, microsoft-365-copilot, forecast-input-gathering, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, budget officers
   department: Budget
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the [FORECAST / budget cycle], extract from my email and meeting notes
     every assumption that has been discussed. Give me a table with:
@@ -49,6 +50,9 @@ assumptions that have never been written down in one place.
   if you drop other columns.
 - Re-run it at the end of the cycle and diff the two logs to see which
   assumptions quietly changed.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

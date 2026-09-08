@@ -5,7 +5,7 @@ title: Compile evidence for a vendor performance scorecard
 summary: Gather delivery, quality, responsiveness, and commercial signals into a
   scorecard structure — evidence only, ratings left to you.
 tags: [procurement, vendor, performance, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-business-review-prep]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-business-review-prep, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For [VENDOR], gather from my email, documents, and notes the performance
     signals over [PERIOD]:
@@ -50,6 +51,9 @@ evidence for it is scattered across a year of email.
   cannot be defended if the vendor disputes it.
 - Add "note where the evidence is thin" so you do not rate a criterion you
   cannot actually support.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

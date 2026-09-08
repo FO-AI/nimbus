@@ -5,7 +5,7 @@ title: Draft management commentary for a reporting period
 summary: Turn results and internal notes into plain, factual commentary on performance,
   drivers, and outlook for a reporting package.
 tags: [finance, reporting, writing, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative]
+related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft management commentary for [PERIOD] in [DEPARTMENT / unit] from the
     results and notes below:
@@ -52,6 +53,9 @@ quarterly report, a close package narrative, or a unit performance summary.
 - Add "write for a non-finance audience" when it goes to a department head
   rather than a budget officer.
 - Set the length explicitly — "under 300 words" — or it will over-write.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

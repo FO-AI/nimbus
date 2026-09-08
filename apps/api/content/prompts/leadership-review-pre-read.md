@@ -5,7 +5,7 @@ title: Assemble a one-page pre-read for a leadership review
 summary: Turn recent reports, emails, and decks into a single page of headline
   results, movements, risks, and open actions before a leadership meeting.
 tags: [finance, reporting, leadership, meetings, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions]
+related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, unit managers
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Prepare a one-page pre-read for [MEETING NAME] on [DATE], drawing on my
     recent reports, emails, and decks:
@@ -48,6 +49,9 @@ the material exists but nobody has condensed it.
   August close package and the FY26 forecast deck."
 - Add "write for someone who has not seen the detail" when the audience is
   outside Finance.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

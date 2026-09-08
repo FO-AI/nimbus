@@ -35,5 +35,26 @@ export function useQueryFilters() {
     [searchParams],
   );
 
-  return { searchParams, setFilters };
+  /**
+   * Read one filter from the URL, falling back when the value matches nothing.
+   *
+   * A stale or hand-edited param that no longer corresponds to an option would
+   * otherwise leave a control showing a selection that filters nothing out.
+   * While the options are still loading the URL is trusted, so the controls
+   * don't flicker to the fallback and back on first paint.
+   */
+  const readFilter = useCallback(
+    <TFallback extends string | null>(
+      key: string,
+      options: readonly string[],
+      { loading = false, fallback }: { loading?: boolean; fallback: TFallback },
+    ): string | TFallback => {
+      const value = searchParams.get(key);
+      if (!value) return fallback;
+      return loading || options.includes(value) ? value : fallback;
+    },
+    [searchParams],
+  );
+
+  return { searchParams, setFilters, readFilter };
 }

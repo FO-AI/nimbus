@@ -5,7 +5,7 @@ title: Draft structured RFP requirements from a business need
 summary: Turn a plain description of what your unit needs into scoped, structured
   requirements ready for category and legal review.
 tags: [procurement, rfp, sourcing, writing, copilot]
-related_slugs: [sensitive-data, copilot-chat, tender-evaluation-criteria-draft]
+related_slugs: [sensitive-data, copilot-chat, tender-evaluation-criteria-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     From this business need, draft structured RFP requirements:
     - Scope and objectives
@@ -53,6 +54,9 @@ ordinary language and need it in the shape a solicitation expects.
 - Keep the "criteria only, no weights" instruction. Weighting is a panel
   decision and putting it in a draft invites it to be copied forward
   unexamined.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

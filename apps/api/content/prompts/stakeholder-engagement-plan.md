@@ -5,7 +5,7 @@ title: Build a stakeholder engagement plan
 summary: Turn a stakeholder map into tailored objectives, messages, methods, and
   frequency for each group affected by a change.
 tags: [planning, stakeholders, communications, change]
-related_slugs: [sensitive-data, copilot-chat, stakeholder-map]
+related_slugs: [sensitive-data, copilot-chat, stakeholder-map, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a stakeholder engagement lead for [PROJECT].
 
@@ -58,6 +59,9 @@ do about each group.
   a plan nobody will run.
 - Add the group that will be most inconvenienced by the change — engagement
   plans routinely omit them.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

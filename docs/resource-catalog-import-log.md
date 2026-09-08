@@ -53,7 +53,7 @@ BuyCarolina / Concur where the source named a generic ERP).
 
 | Library | Licence | Taken |
 | --- | --- | --- |
-| awesome-microsoft-copilot-prompts | CC BY-SA 4.0 | 36 — Finance 14, Procurement & Vendor 10, Admin & Executive 8, HR & People 4 |
+| awesome-microsoft-copilot-prompts | CC BY-SA 4.0 | 36 — Finance 14, Procurement & Vendor 10, Admin & Executive 8, HR & People 4. One over the 30–35 the review set; kept deliberately rather than dropping a screened prompt to hit a round number. |
 | UK Government AI Knowledge Hub | OGL v3.0 | 13 |
 | Wharton Generative AI Labs | CC BY 4.0 | 5 |
 
@@ -92,6 +92,22 @@ prohibition on AI in hiring/evaluation/discipline, the public-records point
 (§6.4), the ISO → DGOG intake path, and the "external obligations override the
 tier" rule. This is narrower than §7.2 asks for.
 
+## Closed since the first pass
+
+**§4b (Prompt Gallery + CLEAR)** — was "link from every prompt page's 'How to
+adapt it' section", and none of the 60 did. Rather than repeating two raw URLs
+across 60 files, there is now a `how-to-write-a-prompt` guidance page in link
+mode over the Library's CLEAR guide, which also carries the Prompt Gallery
+link. Every prompt references it in `related_slugs` and links it from "How to
+adapt it"; `test_content_library.py` fails the build if one stops doing so.
+This also delivers half of §7.2.
+
+**Tool label drift** — 34 prompts said `tool: Microsoft 365 Copilot (licensed)`
+while the registry entry is titled "Microsoft 365 Copilot (licensed, inside the
+Office apps)". Prompts now carry `tool_slug` as the identity, `tool` stays a
+display label, the lint fails if a slug names no tool, and the chip on a prompt
+page links through to the tool.
+
 ## Fixed in passing
 
 `sensitive-data.md` and `budget-variance-narrative.md` linked to `/t/…` and
@@ -107,16 +123,21 @@ library's tool filter offers three variants of the same product. Two used
 
 ## Still open
 
-1. **§6.1 follow-up** — the Provost's tools page still prints Tier 0–1 for
+1. **§7.3 playbooks** — one per Copilot app from §3a, plus the two §3d
+   documents as practice material. `mode: practice` is implemented and
+   validated but still unused. The review deprioritized *guidance*; playbooks
+   were never assigned either way.
+2. **§7.5 Learn page** and §7.2's "Getting an AI tool approved for your unit".
+   `copilot-studio.md` still wants to link the approval page.
+3. **§4c in-house prompts** — every new prompt is an import; none were authored
+   from scratch. Facilities and Real Estate is covered by a single file.
+4. **§6.1 follow-up** — the Provost's tools page still prints Tier 0–1 for
    PromptLab. Worth asking that it be reconciled with the Library's figure, so
    staff who check the Provost page do not see something different from what
    Nimbus tells them.
-2. **§2 guidance** — eleven link entries, plus the two §7.2 pages ("Getting an
+5. **§2 guidance** — eleven link entries, plus the two §7.2 pages ("Getting an
    AI tool approved for your unit", "How to write a prompt" / CLEAR).
    `copilot-studio.md` wants to link the approval-path page that does not exist
    yet.
-3. **§3 playbooks** — one per Copilot app from §3a, and the two §3d practice
-   documents. `practice` mode is implemented and validated but nothing uses it.
-4. **§4b / §5** — Prompt Gallery and CLEAR links; the "Learn" page.
-5. **§4c** — the in-house prompts the imports do not cover, mostly Facilities
-   and Real Estate.
+6. **§5** — the training pointers (LinkedIn Learning, Microsoft Learn,
+   Library AI Studio, Carolina Talent, AI Acceleration).

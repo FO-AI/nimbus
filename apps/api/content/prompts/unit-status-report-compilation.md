@@ -5,7 +5,7 @@ title: Compile a recurring unit status report
 summary: Gather team status updates, completed milestones, blockers, and upcoming
   deadlines from correspondence into a report draft.
 tags: [operations, reporting, status, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions]
+related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     I need to compile the [weekly / monthly] report for [MANAGER / group].
     Search my email and Teams for:
@@ -50,6 +51,9 @@ minutes to write.
 - Match the sections to your existing report format — the value is saving
   assembly time, not redesigning the report.
 - Add "list anyone who has not reported this period" to catch silent gaps.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Summarize the correspondence someone needs to act on
 summary: Sort a busy period of email into what needs a response, what awaits a decision,
   what you can handle, and what is only for awareness.
 tags: [operations, email, triage, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, copilot-outlook-inbox-triage]
+related_slugs: [sensitive-data, microsoft-365-copilot, copilot-outlook-inbox-triage, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Summarize the communications I need to be aware of from the past
     [TIMEFRAME]:
@@ -50,6 +51,9 @@ need to know what actually needs you.
 - The
   [Copilot in Outlook triage playbook](/guides/copilot-outlook-inbox-triage)
   covers the fuller workflow this prompt sits inside.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

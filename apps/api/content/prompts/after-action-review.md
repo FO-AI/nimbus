@@ -5,7 +5,7 @@ title: Run an after-action review with the team
 summary: A facilitated review of what was supposed to happen, what did, why they
   differed, and what the team takes forward.
 tags: [ai-literacy, retrospective, project-management, learning]
-related_slugs: [sensitive-data, copilot-chat, meeting-notes-to-actions]
+related_slugs: [sensitive-data, copilot-chat, meeting-notes-to-actions, how-to-write-a-prompt]
 source:
   mode: import
   url: https://gail.wharton.upenn.edu/prompt-library/
@@ -20,6 +20,7 @@ attributes:
   audience: All Finance and Operations staff
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a curious, skilled team coach facilitating an after-action review.
     This is a dialogue — always wait for the team to respond before continuing,
@@ -68,6 +69,9 @@ fresh and before the story hardens into one version.
   person's account, which is the thing it is designed to avoid.
 - The "separate agreed from contested" instruction is an addition worth
   keeping — a review that manufactures consensus has failed.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

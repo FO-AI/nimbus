@@ -5,7 +5,7 @@ title: Prepare briefing notes for a department spend review
 summary: Gather the spending topics, commitments, and unclosed prior actions before you
   meet a department about its budget.
 tags: [finance, budget, meetings, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, budget-vs-actual-review-summary]
+related_slugs: [sensitive-data, microsoft-365-copilot, budget-vs-actual-review-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, budget officers
   department: Budget
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For my spend review with [DEPARTMENT], gather:
     - Spending topics raised in recent email
@@ -47,6 +48,9 @@ walk in knowing what they are going to ask.
 - The "questions they are likely to raise" bullet is speculative but useful
   — drop it if you would rather not anchor yourself.
 - Add specific chartfield strings if the department spans several.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

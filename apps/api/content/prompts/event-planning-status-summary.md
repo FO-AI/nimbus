@@ -5,7 +5,7 @@ title: Consolidate event planning into a status summary
 summary: Pull confirmed details, vendor threads, budget discussion, logistics, and
   outstanding decisions for an event into one status view.
 tags: [operations, events, planning, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions]
+related_slugs: [sensitive-data, microsoft-365-copilot, meeting-notes-to-actions, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Search my email and Teams for all discussion of [EVENT NAME]. Compile a
     status summary:
@@ -51,6 +52,9 @@ threads and nobody can say what is actually settled.
   instruction if you trim anything else.
 - Add "list what has a hard deadline in the next ten days" when you are
   close to the date.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

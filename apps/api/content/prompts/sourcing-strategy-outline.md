@@ -5,7 +5,7 @@ title: Outline a sourcing strategy for a category
 summary: Draft current state, market considerations, options, and risks for a spend
   category, with assumptions flagged and no recommendation.
 tags: [procurement, sourcing, strategy, copilot]
-related_slugs: [sensitive-data, copilot-chat, vendor-spend-summary]
+related_slugs: [sensitive-data, copilot-chat, vendor-spend-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft a sourcing strategy outline for [CATEGORY] from the inputs below:
     - Current state — spend, vendors, contracts — exactly as I have given it
@@ -51,6 +52,9 @@ fairly before anyone forms a view.
   constrain the options more than market factors do.
 - Ask it to state what evidence would be needed to choose between the
   options. That is usually the real next step.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -196,20 +196,3 @@ def test_detail_returns_source(client, sourced):
     assert body["source"]["mode"] == "import"
     assert body["source"]["adapted"] is True
     assert body["bodyMd"] == "Body."
-
-
-def test_list_filters_by_mode(client, sourced):
-    assert [i["slug"] for i in client.get("/api/v1/content?mode=link").json()["items"]] == [
-        "linked-tool"
-    ]
-    assert [i["slug"] for i in client.get("/api/v1/content?mode=import").json()["items"]] == [
-        "imported-prompt"
-    ]
-    # "original" selects the in-house rows, which carry no source block.
-    assert [i["slug"] for i in client.get("/api/v1/content?mode=original").json()["items"]] == [
-        "in-house"
-    ]
-
-
-def test_list_rejects_unknown_mode(client, sourced):
-    assert client.get("/api/v1/content?mode=borrowed").status_code == 422

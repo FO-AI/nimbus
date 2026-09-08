@@ -5,7 +5,7 @@ title: Draft a benefits realization plan
 summary: Turn a project's intended value into a benefits register with owners and
   measures, a map from outputs to outcomes, and the risks to delivering them.
 tags: [planning, benefits, project-management, business-case]
-related_slugs: [sensitive-data, copilot-chat, business-case-builder]
+related_slugs: [sensitive-data, copilot-chat, business-case-builder, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are an experienced benefits manager. Create a benefits realization plan
     for [PROJECT], to accompany its business case.
@@ -58,6 +59,9 @@ project worked.
   nobody does.
 - Add "flag any benefit that cannot be measured with data we already
   collect" — those are the ones that quietly disappear.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

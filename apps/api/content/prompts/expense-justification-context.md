@@ -5,7 +5,7 @@ title: Gather the business justification for an expense report
 summary: Find the purpose, attendees, approvals, and special circumstances discussed for
   a trip or event, to support an expense submission.
 tags: [finance, travel, expenses, concur, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Search my email for communications about the expenses for [TRIP / event /
     project]. Find:
@@ -49,6 +50,9 @@ framed.
   discussion should be pulled out separately.
 - Ask for the approval thread's date and sender — that is what a reviewer
   will want to see.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

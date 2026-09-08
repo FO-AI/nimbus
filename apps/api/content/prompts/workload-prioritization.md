@@ -5,7 +5,7 @@ title: Prioritize your workload and plan the week
 summary: Sort your pending tasks by urgency and importance, then get a realistic
   schedule that fits around the meetings already in your calendar.
 tags: [productivity, planning, time-management, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, correspondence-triage-summary]
+related_slugs: [sensitive-data, microsoft-365-copilot, correspondence-triage-summary, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: All Finance and Operations staff
   department: All
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     You are a productivity coach. Help me prioritize my work for [PERIOD].
 
@@ -56,6 +57,9 @@ what actually has to happen.
   it turns a scheduling exercise into a conversation about what to drop.
 - Add your genuine focus hours. A schedule that puts your hardest work at
   4pm is not a schedule you will follow.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

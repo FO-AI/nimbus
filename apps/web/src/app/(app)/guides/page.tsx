@@ -50,7 +50,7 @@ export default function GuidesPage() {
 
 function GuidesLibrary() {
   const { items, loading, error, reload } = useContentList();
-  const { searchParams, setFilters } = useQueryFilters();
+  const { searchParams, setFilters, readFilter } = useQueryFilters();
   const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
   const [showAllTags, setShowAllTags] = useState(false);
   const allTagsId = useId();
@@ -74,8 +74,7 @@ function GuidesLibrary() {
   // `some` rather than `includes` here and below: passing the value into an
   // array method makes the React Compiler treat it as mutable and refuse to
   // memoize `visible` (react-hooks/preserve-manual-memoization).
-  const tagParam = searchParams.get("tag");
-  const tag = tagParam !== null && (loading || tags.some((t) => t === tagParam)) ? tagParam : null;
+  const tag = readFilter("tag", tags, { loading, fallback: null });
 
   const primaryTags = tags.slice(0, VISIBLE_TAG_COUNT);
   const moreTags = tags.slice(VISIBLE_TAG_COUNT);

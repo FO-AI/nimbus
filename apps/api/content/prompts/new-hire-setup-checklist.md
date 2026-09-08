@@ -5,7 +5,7 @@ title: Build a setup checklist for a new hire
 summary: Gather the equipment, access, workspace, and training arrangements discussed
   for a new starter into a complete setup checklist.
 tags: [hr-operations, onboarding, checklist, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, position-description-draft]
+related_slugs: [sensitive-data, microsoft-365-copilot, position-description-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Administrative and operations staff
   department: HR operations
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Search my email and Teams for onboarding arrangements for [NEW HIRE /
     position] starting [DATE]. Compile a setup checklist covering:
@@ -51,6 +52,9 @@ remembered to arrange.
 - For a position with ConnectCarolina or InfoPorte access, note that
   Business & Financial Systems Access requests run on their own timeline —
   start them early.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

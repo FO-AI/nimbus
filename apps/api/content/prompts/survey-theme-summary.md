@@ -5,7 +5,7 @@ title: Summarize themes in open-text survey comments
 summary: Group free-text survey responses into recurring themes, positive signals, and
   concerns, without attributing anything to an individual.
 tags: [hr-operations, survey, analysis, copilot]
-related_slugs: [sensitive-data, copilot-chat]
+related_slugs: [sensitive-data, copilot-chat, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: HR operations staff
   department: HR operations
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Summarize the themes in these open-text comments:
     - Recurring themes, with roughly how often each appears
@@ -51,6 +52,9 @@ time to read them all carefully.
   about a specific role identifies a person.
 - Add "list anything mentioned only once but serious" — thematic summaries
   bury the single important comment.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

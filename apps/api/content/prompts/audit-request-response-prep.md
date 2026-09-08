@@ -5,7 +5,7 @@ title: Prepare a response outline for an audit request
 summary: Find the relevant policies, prior responses, and likely evidence locations for
   an audit request, and draft a response outline.
 tags: [finance, audit, compliance, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the audit request on [TOPIC], search my files and email for:
     - Relevant University policies and our own process notes
@@ -49,6 +50,9 @@ to work out where the answers live.
   audit) — the expected evidence differs.
 - Add "note where evidence appears to be missing" so gaps become a
   workstream rather than a surprise.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

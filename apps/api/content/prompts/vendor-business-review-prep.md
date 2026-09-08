@@ -5,7 +5,7 @@ title: Prepare an agenda and notes for a vendor business review
 summary: Collect performance highlights, open actions, upcoming renewals, and likely
   vendor questions into an agenda and briefing notes.
 tags: [procurement, vendor, meetings, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-scorecard-prep]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-scorecard-prep, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For my business review with [VENDOR], gather from email and documents:
     - Performance highlights and issues since the last review
@@ -47,6 +48,9 @@ open actions in front of you rather than in a file somewhere.
   even if you cut the rest.
 - Add "list what we owe them" — reviews go better when you arrive knowing
   your own overdue items.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Draft the justification for a capital or equipment request
 summary: Turn need, options, costs, and risks into a justification narrative for a
   capital or major equipment request.
 tags: [finance, budget, capital, business-case, writing, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, sop-first-draft]
+related_slugs: [sensitive-data, microsoft-365-copilot, sop-first-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, unit managers
   department: Budget
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft the justification for the [CAPITAL / equipment] request below:
     - The need, and the options considered
@@ -51,6 +52,9 @@ read like a case rather than a list.
   asks for.
 - Add "state plainly what happens if we do nothing" — reviewers ask this and
   it is usually missing.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

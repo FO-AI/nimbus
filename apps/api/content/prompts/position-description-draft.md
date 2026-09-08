@@ -5,7 +5,7 @@ title: Draft a position description
 summary: Turn a short brief into a position description with purpose, responsibilities,
   and requirements in inclusive plain language.
 tags: [hr-operations, writing, hiring, copilot]
-related_slugs: [sensitive-data, copilot-chat, new-hire-setup-checklist]
+related_slugs: [sensitive-data, copilot-chat, new-hire-setup-checklist, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: HR operations staff
   department: HR operations
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Draft a position description for [POSITION] from this brief:
     [PASTE HERE]
@@ -50,6 +51,9 @@ HR's hands faster.
   description has to sit inside it.
 - The "no unnecessary degree requirements" instruction matters. Copilot adds
   them by default, and they narrow your applicant pool for no reason.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Collect reforecast inputs from across your unit
 summary: Sweep correspondence for the revenue signals, cost changes, and timing shifts
   other teams have already shared, and note what is still missing.
 tags: [finance, forecast, budget, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, forecast-assumptions-log]
+related_slugs: [sensitive-data, microsoft-365-copilot, forecast-assumptions-log, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, budget officers
   department: Budget
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the [PERIOD] reforecast in [DEPARTMENT], search my email and Teams for
     inputs people have already shared:
@@ -48,6 +49,9 @@ lost track of who has answered.
 - The chase list is the point — keep that instruction even if you trim the
   rest.
 - Add your unit's actual area names so the grouping matches how you report.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

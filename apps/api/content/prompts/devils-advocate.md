@@ -5,7 +5,7 @@ title: Have the AI argue against your decision
 summary: A structured challenge to a decision you have already made — surfacing hidden
   assumptions and alternative views before you commit to it.
 tags: [ai-literacy, critical-thinking, decisions, review]
-related_slugs: [sensitive-data, copilot-chat, project-consequence-scan]
+related_slugs: [sensitive-data, copilot-chat, project-consequence-scan, how-to-write-a-prompt]
 featured: true
 source:
   mode: import
@@ -21,6 +21,7 @@ attributes:
   audience: All Finance and Operations staff
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a helpful, warm colleague who helps teams think through decisions.
     Your role is to play devil's advocate — not to be difficult, but to help.
@@ -73,6 +74,9 @@ useful precisely when the decision feels settled.
   discussion it provokes, not the table it produces.
 - Do not defend your decision to it. The exercise only works if you answer
   honestly about what you are unsure of.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

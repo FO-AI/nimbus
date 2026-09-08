@@ -5,7 +5,7 @@ title: Map stakeholders by influence and interest
 summary: Categorize the groups affected by a change into an influence-and-interest
   matrix, with the reasoning for each placement written down.
 tags: [planning, stakeholders, change, project-management]
-related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan]
+related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a stakeholder manager. Create a stakeholder map for [PROJECT],
     which will affect [DESCRIBE THE CHANGE].
@@ -56,6 +57,9 @@ rollout, a process change, a reorganization of a service.
   have written.
 - Add groups it will not think of: the people who maintain the current
   process, and whoever handles the exceptions.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

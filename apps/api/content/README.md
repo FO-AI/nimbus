@@ -108,13 +108,19 @@ attributes:
   audience: Finance staff # who this prompt is for (shown as a chip)
   department: Finance     # primary F&O department this prompt serves
                           # (Finance | Procurement | Operations | All)
-  tool: Microsoft 365 Copilot   # where to paste it
+  tool: Microsoft 365 Copilot   # display label for the tool chip/filter
+  tool_slug: copilot-chat       # required; the tool entry this prompt runs in.
+                                # `tool` drifts, this is the identity — the
+                                # library lint fails if it names no tool.
   example_input: Optional description of what to feed it
   example_output: Optional sample of what a good result looks like
 ```
 
 The markdown body of a prompt holds usage notes: when to use it, how to
-adapt the placeholders, and what to double-check in the output.
+adapt the placeholders, and what to double-check in the output. Every prompt
+must also carry `how-to-write-a-prompt` in `related_slugs` and link it from
+its "How to adapt it" section, so the CLEAR framework is one click from any
+prompt (resource catalog §4b).
 
 ## Rules enforced by the sync
 

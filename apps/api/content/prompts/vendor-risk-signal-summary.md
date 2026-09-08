@@ -5,7 +5,7 @@ title: Surface internal risk signals about a vendor
 summary: Search internal correspondence for financial, delivery, quality, or dependency
   concerns about a vendor and list them as flags for review.
 tags: [procurement, vendor, risk, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-scorecard-prep]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-scorecard-prep, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Search my internal email and documents for risk signals about [VENDOR]:
     - Financial, delivery, quality, or compliance concerns anyone mentioned
@@ -47,6 +48,9 @@ been raised that never made it into a formal record.
   often two years old.
 - Add "note whether each concern was resolved" so old, closed issues do not
   read as live risk.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Summarize a budget-vs-actual discussion for review
 summary: Pull the reasons given for over- and underspend out of your email and
   documents, so the review meeting starts from the explanations, not the numbers.
 tags: [finance, budget, reporting, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative]
+related_slugs: [sensitive-data, microsoft-365-copilot, budget-variance-narrative, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, budget officers
   department: Budget
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For [DEPARTMENT / chartfield string], gather from my email and documents:
     - Where spend is running against budget, as people have described it
@@ -48,6 +49,9 @@ the explanations live in a dozen threads and you need them in one place.
 - Once you have the narrative, the
   [budget variance narrative prompt](/prompts/budget-variance-narrative)
   turns it into the paragraph that goes in the close package.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

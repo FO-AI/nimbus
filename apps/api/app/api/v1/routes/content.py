@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.content_item import VALID_KINDS, VALID_SOURCE_MODES, ContentItem
+from app.models.content_item import VALID_KINDS, ContentItem
 from app.schemas.common import ErrorResponse
 from app.schemas.content import (
     ContentDetail,
@@ -81,18 +81,10 @@ def list_content(
     kind: Annotated[str | None, Query(description=f"One of: {', '.join(VALID_KINDS)}")] = None,
     tag: Annotated[str | None, Query(description="Exact tag match.")] = None,
     q: Annotated[str | None, Query(max_length=200, description="Keyword filter.")] = None,
-    mode: Annotated[
-        str | None,
-        Query(description=f"Provenance mode; one of: {', '.join(VALID_SOURCE_MODES)}"),
-    ] = None,
 ) -> ContentListResponse:
     if kind is not None and kind not in VALID_KINDS:
         raise HTTPException(
             status_code=422, detail=f"kind must be one of: {', '.join(VALID_KINDS)}"
-        )
-    if mode is not None and mode not in VALID_SOURCE_MODES:
-        raise HTTPException(
-            status_code=422, detail=f"mode must be one of: {', '.join(VALID_SOURCE_MODES)}"
         )
 
     stmt = select(ContentItem).where(ContentItem.published.is_(True))
@@ -104,8 +96,6 @@ def list_content(
     # Tag/keyword filtering happens in Python: tags live in a JSON column and
     # the corpus is small (hundreds of rows), so this beats dialect-specific
     # JSON operators and keeps SQLite (tests) and Postgres identical.
-    if mode is not None:
-        rows = [r for r in rows if (r.source.get("mode") if r.source else "original") == mode]
     if tag is not None:
         rows = [r for r in rows if tag in r.tags]
     if q is not None and q.strip():

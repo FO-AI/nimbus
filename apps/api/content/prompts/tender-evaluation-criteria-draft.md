@@ -5,7 +5,7 @@ title: Draft evaluation criteria for a solicitation
 summary: Produce a grouped, neutral set of evaluation criteria with a description of
   what good looks like, leaving weights and scores to the panel.
 tags: [procurement, rfp, evaluation, fairness, copilot]
-related_slugs: [sensitive-data, copilot-chat, rfp-requirements-draft]
+related_slugs: [sensitive-data, copilot-chat, rfp-requirements-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft evaluation criteria for [SOLICITATION] from the requirements below:
     - Group the criteria into technical, commercial, delivery, risk, and
@@ -49,6 +50,9 @@ the criteria cover everything and read neutrally.
   this draft is most useful for catching.
 - Drop the sustainability group if it is not part of your evaluation, rather
   than leaving it empty.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

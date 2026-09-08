@@ -5,7 +5,7 @@ title: Summarize a business case for decision-makers
 summary: Condense a full business case into an executive summary that non-specialists
   can act on, with assumptions and speculative content flagged.
 tags: [business-case, writing, leadership, summarizing]
-related_slugs: [sensitive-data, copilot-chat, business-case-builder]
+related_slugs: [sensitive-data, copilot-chat, business-case-builder, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are an experienced business case manager. Write a summary of the
     business case below for senior decision-makers who are not close to the
@@ -60,6 +61,9 @@ most.
   that bury the ask get deferred.
 - Name the audience specifically. A summary for a budget officer is a
   different document from one for a dean.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Compile the history behind an overdue account
 summary: Pull the invoices, promises to pay, disputes, and last contact for an overdue
   account into one summary before you follow up.
 tags: [finance, receivables, collections, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, vendor-email-draft]
+related_slugs: [sensitive-data, microsoft-365-copilot, vendor-email-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For [PAYER / account], search my email for the history on this balance:
     - Invoices and amounts referenced, with dates
@@ -47,6 +48,9 @@ was already answered three months ago.
   second step once the history is clear.
 - For a sponsor or subrecipient, add that the relevant award terms should be
   noted alongside the balance.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

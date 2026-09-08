@@ -5,7 +5,7 @@ title: Develop a project risk register
 summary: Identify the top delivery risks for a project with scoring, mitigation actions,
   owners, and the early indicators that a risk is materializing.
 tags: [planning, risk, project-management]
-related_slugs: [sensitive-data, copilot-chat, project-consequence-scan]
+related_slugs: [sensitive-data, copilot-chat, project-consequence-scan, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a senior risk manager. Develop a risk register identifying the top
     5 to 10 delivery risks for [PROJECT], which is at [STAGE].
@@ -58,6 +59,9 @@ never revisited is decoration.
   makes a register operational. Keep it.
 - Add your unit's actual dependencies — vendor systems, other units, hiring
   — since those are where the real risks sit.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

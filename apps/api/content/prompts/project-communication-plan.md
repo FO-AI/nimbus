@@ -5,7 +5,7 @@ title: Create a project communication plan
 summary: Build a communication plan with objectives, audiences, strategy,
   implementation, and how you will evaluate whether it worked.
 tags: [planning, communications, change, project-management]
-related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan]
+related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, communications staff
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a communications manager. Create a communication plan for
     [PROJECT], which aims to [AIMS AND INTENDED EFFECT], for the stakeholder
@@ -58,6 +59,9 @@ than an afterthought.
   nobody opens fails quietly.
 - Ask for "what we will say if it goes wrong" as a sixth section — that
   message is best written before you need it.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

@@ -5,7 +5,7 @@ title: Draft a neutral vendor communication
 summary: Produce a professional RFI invitation, clarification request, or unsuccessful-
   bidder notice that commits to nothing.
 tags: [procurement, vendor, writing, email, copilot]
-related_slugs: [sensitive-data, copilot-chat, vendor-email-draft]
+related_slugs: [sensitive-data, copilot-chat, vendor-email-draft, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     Draft a [RFI invitation / clarification request / unsuccessful-bidder
     notice / onboarding request] to [VENDOR].
@@ -49,6 +50,9 @@ to stay even and nothing can read as a promise.
   by procurement policy and belongs in a separate, deliberate conversation.
 - Add your unit's standard signature block and the solicitation number so
   the message is filed correctly on their end.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

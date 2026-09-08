@@ -11,6 +11,20 @@ import { Badge } from "@/components/ui";
  * sits quietly at the foot of the page. `practice` marks public exercise
  * material.
  */
+/**
+ * Where a provenance note belongs on a detail page.
+ *
+ * A linked page is the authority for what follows, so the reader needs it
+ * before the body; an attribution is a footnote and belongs after it. This
+ * lived as an inline mode check in each detail page, which is how a link-mode
+ * prompt and a link-mode guide ended up rendering the same block in different
+ * places.
+ */
+export function sourceNoteSlot(source: SourceRef | null): "above" | "below" | null {
+  if (!source) return null;
+  return source.mode === "import" ? "below" : "above";
+}
+
 export function SourceNote({ source }: { source: SourceRef }) {
   if (source.mode === "link") {
     return (

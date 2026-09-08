@@ -5,7 +5,7 @@ title: Structure a finance pack for a unit or leadership review
 summary: Gather results, cash points, risks, and pending decisions from existing reports
   into draft sections for a leadership finance pack.
 tags: [finance, reporting, leadership, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, leadership-review-pre-read]
+related_slugs: [sensitive-data, microsoft-365-copilot, leadership-review-pre-read, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, unit managers
   department: Finance
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For the [MEETING / period] finance pack, pull together from my existing
     reports and email:
@@ -49,6 +50,9 @@ every time and the work is collection, not analysis.
   value is in matching the shape people already expect.
 - Add "flag any section where I have no source material" so gaps surface
   early rather than at the meeting.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

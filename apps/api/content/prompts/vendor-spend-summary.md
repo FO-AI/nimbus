@@ -5,7 +5,7 @@ title: Compile vendor spend and contract context before a review
 summary: Gather spend, contract dates, issues, and change discussions for a vendor ahead
   of a review or renewal conversation.
 tags: [finance, vendor, procurement, contracts, copilot]
-related_slugs: [sensitive-data, microsoft-365-copilot, contract-renewal-watch]
+related_slugs: [sensitive-data, microsoft-365-copilot, contract-renewal-watch, how-to-write-a-prompt]
 source:
   mode: import
   url: https://github.com/kesslernity/awesome-microsoft-copilot-prompts
@@ -20,6 +20,7 @@ attributes:
   audience: Finance staff, procurement staff
   department: Procurement
   tool: Microsoft 365 Copilot (licensed)
+  tool_slug: microsoft-365-copilot
   prompt: |
     For [VENDOR], gather from my email and documents:
     - Spend and invoices referenced, with dates
@@ -47,6 +48,9 @@ across contract files and mail threads.
   summary into a negotiating position.
 - Contract documents are often Tier 2 — keep this in an approved tool and do
   not paste NDA-covered terms into anything else.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

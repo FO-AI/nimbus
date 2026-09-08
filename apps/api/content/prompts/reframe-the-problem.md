@@ -5,7 +5,7 @@ title: Reframe a problem you are stuck on
 summary: Get three or four genuinely different framings of the same problem, then work
   through whichever one opens it up.
 tags: [ai-literacy, critical-thinking, problem-solving]
-related_slugs: [sensitive-data, copilot-chat, devils-advocate]
+related_slugs: [sensitive-data, copilot-chat, devils-advocate, how-to-write-a-prompt]
 source:
   mode: import
   url: https://gail.wharton.upenn.edu/prompt-library/
@@ -20,6 +20,7 @@ attributes:
   audience: All Finance and Operations staff
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are an innovation specialist helping a team work on this problem:
 
@@ -60,6 +61,9 @@ sign the framing is the obstacle, not the analysis.
   frustration. A sanitized description gets sanitized reframings.
 - The instruction "your role is not to find a solution" is load-bearing.
   Remove it and you get advice instead of analysis.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

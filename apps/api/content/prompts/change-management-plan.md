@@ -5,7 +5,7 @@ title: Draft a change management plan
 summary: Build the people side of a process change — key messages, likely reactions by
   group, a communication and training timeline, and the risks.
 tags: [planning, change, communications, training]
-related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan]
+related_slugs: [sensitive-data, copilot-chat, stakeholder-engagement-plan, how-to-write-a-prompt]
 source:
   mode: import
   url: https://ai.gov.uk/knowledge-hub/prompts/
@@ -20,6 +20,7 @@ attributes:
   audience: Project leads, unit managers
   department: All
   tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     You are a change manager. Develop a practical change management plan for
     the people side of [PROJECT].
@@ -60,6 +61,9 @@ someone has to plan for that, not just the build.
   what you actually know about each group.
 - Add the training people will need on day one, separately from the training
   that can wait a month.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 
