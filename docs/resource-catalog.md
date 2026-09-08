@@ -10,6 +10,12 @@ Scope: UNC-Chapel Hill resources only, filtered to what Finance & Operations sta
 | **Practice** | Public UNC document used as safe, Tier 0 material inside a playbook exercise. |
 | **Import** | Openly licensed prompt library (§4a only). Prompts are copied, re-voiced for UNC, and carry attribution in frontmatter. |
 
+> **Import status (2026-09-08).** Sprint 1 of §7 is done, on the priorities set
+> in the catalog review: tools imported in link mode, guidance deprioritized,
+> prompts fully imported with the schema reshaped. See
+> `docs/resource-catalog-import-log.md` for exactly what landed, what was
+> screened out and why, and what is still open.
+
 ---
 
 ## 1. `kind: tool` — the registry
@@ -21,7 +27,7 @@ Only tools that ITS or the Provost's AI at UNC page list as available to Univers
 | Link | Microsoft 365 Copilot Chat (with Data Protection) | approved | Anyone with an active Onyen (Basic); Premium for licensed users | Tier 1 and 2; **never Tier 3 / PHI** | ITS — https://its.unc.edu/ai/copilot/ · sign in https://m365.cloud.microsoft/chat/ |
 | Link | Microsoft 365 Copilot (licensed, inside Word, Excel, Outlook, Teams, PowerPoint) | approved, licensed | Licensed users; departments request licenses through their IT (~$20/user/month) | Tier 1 and 2; never Tier 3 / PHI | ITS — https://its.unc.edu/ai/copilot-for-microsoft-365/ |
 | Link | Microsoft Copilot Studio (custom agents) | approved, by request | Departments and technical teams via the AI Acceleration Program | Tier 2 (Library compare page) | https://aiacceleration.unc.edu/ |
-| Link | PromptLab (University Library; GPT, Gemini, Claude models) | approved | Anyone with an Onyen, free | **Confirm before publishing:** Tier 0–1 per ai.unc.edu/tools, Tier 2 per Library compare page | University Library — https://promptlab.lib.unc.edu/ · privacy https://library.unc.edu/documentation/promptlab-privacy-information/ |
+| Link | PromptLab (University Library; GPT, Gemini, Claude models) | approved | Anyone with an Onyen, free | Tier 1 and 2; never Tier 3 (resolved 2026-09-08 — see §6.1) | University Library — https://promptlab.lib.unc.edu/ · privacy https://library.unc.edu/documentation/promptlab-privacy-information/ |
 | Link | Zoom AI Companion | approved | All licensed Zoom users; off by default, user enables | Summaries are **public records**; notify participants | ITS — https://its.unc.edu/2025/02/19/zoom-ai-companion-available/ |
 | Link | Adobe Firefly (Creative Cloud) | approved | Free for instructional staff; $25/yr for non-instructional staff | not tier-rated | https://software.sites.unc.edu/adobe/ |
 
@@ -141,7 +147,7 @@ Prompt topics to author for the library where the imports leave gaps, by F&O dep
 
 ## 6. Confirm before publishing
 
-1. **PromptLab data tier**: ai.unc.edu/tools says Tier 0–1; the Library compare page says Tier 2. Confirm with the Library AI Studio and state one tier.
+1. ~~**PromptLab data tier**~~ — **resolved 2026-09-08: Tier 1 and 2**, following the Library compare page over ai.unc.edu/tools, since the Library runs the service. Recorded in `content/tools/promptlab.md`; the Provost page is still unreconciled.
 2. **Copilot tier wording**: ITS says "no Tier 3 / PHI"; ai.unc.edu says "Tier 1 & 2". Use one phrasing everywhere: "Tier 1 and 2; never Tier 3."
 3. **No numbered University GenAI policy exists**; governance is the Provost's Staff Generative AI Usage Guidance. Nimbus should say so rather than imply a policy.
 4. **Public records**: prompts, outputs, and Zoom AI summaries are public records — include in the sensitive-data guidance page, not only in the Zoom tool entry.

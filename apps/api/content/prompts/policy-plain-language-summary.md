@@ -8,8 +8,8 @@ tags: [policy, operations, writing]
 related_slugs: [sensitive-data]
 attributes:
   audience: Operations staff
-  department: Operations
-  tool: Microsoft 365 Copilot
+  department: All
+  tool: Microsoft 365 Copilot Chat
   prompt: |
     Summarize the policy text below for staff who need to follow it but
     won't read the full document. Produce:

@@ -10,7 +10,7 @@ featured: true
 attributes:
   audience: All staff
   department: All
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
   prompt: |
     Below are my raw notes from a meeting. Extract:
     1. Decisions made (one line each)
@@ -37,8 +37,8 @@ straight into a follow-up email or Teams post.
 
 ## How to adapt it
 
-- If you have a Teams transcript instead of notes, paste that — it works
-  the same but check speaker attribution.
+- If you have a Teams transcript instead of notes, paste that — it works the
+  same but check speaker attribution.
 - Add "group action items by owner" for larger meetings.
 
 ## What to check

@@ -5,10 +5,11 @@ title: Explain or debug an Excel formula
 summary: Get a plain-English explanation of what an inherited spreadsheet
   formula does, why it might be failing, and a safer rewrite.
 tags: [excel, finance, spreadsheets]
+related_slugs: [sensitive-data]
 attributes:
   audience: Finance staff
   department: Finance
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
   prompt: |
     Explain this Excel formula step by step in plain English:
 

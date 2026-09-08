@@ -27,18 +27,16 @@ last period's format.
 ## Steps
 
 1. Open a new Word document and start Copilot with **Draft with Copilot**.
-2. Reference the previous report and provide your bullets:
-   > Draft this quarter's operations update following the structure of
-   > [/previous-report.docx]. Here are this quarter's facts: [YOUR BULLETS].
-   > Keep each section under 150 words. Where I haven't provided a fact for
-   > a section, insert "[NEEDS INPUT]" rather than inventing content.
-3. Review the draft section by section. Search for `[NEEDS INPUT]` markers
-   and fill them from real sources.
-4. Ask Copilot to tighten specific sections rather than regenerating the
-   whole draft:
-   > Rewrite the staffing section to lead with the vacancy numbers.
-5. Fact-check every figure against your bullets — numbers are where drafts
-   silently drift.
+2. Reference the previous report and provide your bullets: > Draft this
+quarter's operations update following the structure of > [/previous-
+report.docx]. Here are this quarter's facts: [YOUR BULLETS]. > Keep each
+section under 150 words. Where I haven't provided a fact for > a section,
+insert "[NEEDS INPUT]" rather than inventing content. 3. Review the draft
+section by section. Search for `[NEEDS INPUT]` markers and fill them from
+real sources. 4. Ask Copilot to tighten specific sections rather than
+regenerating the whole draft: > Rewrite the staffing section to lead with
+the vacancy numbers. 5. Fact-check every figure against your bullets —
+numbers are where drafts silently drift.
 
 ## Common problems
 

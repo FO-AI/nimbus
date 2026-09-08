@@ -9,7 +9,7 @@ related_slugs: [sensitive-data]
 attributes:
   audience: Procurement and AP staff
   department: Procurement
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
   prompt: |
     Draft a professional email to a vendor. Context:
     - Issue: [LATE DELIVERY / INVOICE DISCREPANCY / CONTRACT QUESTION]

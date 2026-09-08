@@ -10,7 +10,7 @@ featured: true
 attributes:
   audience: Finance staff
   department: Finance
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
   prompt: |
     I'm preparing the monthly budget-to-actuals review for [DEPARTMENT].
     Below are the accounts with variances over 10% and a one-line reason
@@ -31,8 +31,8 @@ attributes:
 ## When to use this
 
 After you've identified variances (see the
-[Copilot in Excel variance playbook](/p/copilot-excel-budget-variance)) and
-need the written explanation that goes into the close package.
+[Copilot in Excel variance playbook](/guides/copilot-excel-budget-variance))
+and need the written explanation that goes into the close package.
 
 ## How to adapt it
 
