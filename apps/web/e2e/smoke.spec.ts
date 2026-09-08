@@ -15,7 +15,7 @@ test("public FOAI landing loads without signing in", async ({ page }) => {
     page.getByRole("heading", { name: "Building AI fluency across Finance & Operations." }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "The Steering Committee" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Reach the FOAI team" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Reach the FO-AI team" })).toBeVisible();
 });
 
 test("local dev auth-disabled banner is shown", async ({ page }) => {

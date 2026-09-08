@@ -8,8 +8,23 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 
 export const nimbusNavigationItems: ResponsiveNavItem[] = [
   { href: "/home", label: "Home", match: "exact" },
-  { href: "/guides", label: "Guides", match: "prefix" },
-  { href: "/prompts", label: "Prompts", match: "prefix" },
+  {
+    label: "Resources",
+    items: [
+      {
+        href: "/guides",
+        label: "Guides",
+        match: "prefix",
+        description: "Playbooks, guidance, and the tool registry",
+      },
+      {
+        href: "/prompts",
+        label: "Prompts",
+        match: "prefix",
+        description: "Copy-paste prompts for everyday work",
+      },
+    ],
+  },
   { href: "/projects", label: "Projects", match: "prefix" },
   { href: "/ask", label: "Ask", match: "exact" },
   { href: "/insights", label: "Insights", match: "exact" },

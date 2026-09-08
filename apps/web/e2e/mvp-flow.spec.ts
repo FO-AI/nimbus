@@ -41,8 +41,9 @@ test("submit an AI use-case proposal", async ({ page }) => {
 
 test("ask a grounded question and get citations", async ({ page }) => {
   await page.goto("/ask");
+  // Role-scoped: the starter-question group's label also contains "Question".
   await page
-    .getByLabel("Question")
+    .getByRole("textbox", { name: "Question" })
     .fill("How do I analyze a budget variance with Copilot in Excel?");
   await page.getByRole("button", { name: "Ask" }).click();
 
