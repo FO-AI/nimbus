@@ -71,9 +71,6 @@ function GuidesLibrary() {
   const kind = isGuideKind(kindParam) ? kindParam : null;
   // A stale or hand-edited ?tag= that no longer exists is ignored once the list
   // has loaded, so a shared link never leaves an empty page with no chip to clear.
-  // `some` rather than `includes` here and below: passing the value into an
-  // array method makes the React Compiler treat it as mutable and refuse to
-  // memoize `visible` (react-hooks/preserve-manual-memoization).
   const tag = readFilter("tag", tags, { loading, fallback: null });
 
   const primaryTags = tags.slice(0, VISIBLE_TAG_COUNT);

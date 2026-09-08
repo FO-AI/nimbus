@@ -11,6 +11,7 @@ import { SourceNote, sourceNoteSlot } from "@/components/SourceNote";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentDetail } from "@/lib/api/useContent";
+import { attr } from "@/lib/contentAttributes";
 import type { RelatedItem } from "@/types";
 
 function relatedHref(item: RelatedItem): string {
@@ -27,6 +28,7 @@ export default function PromptDetailPage() {
   if (!item) return null;
 
   const slot = sourceNoteSlot(item.source);
+  const toolSlug = attr(item, "tool_slug");
 
   const { prompt, audience, tool, example_input, example_output } = item.attributes;
 
@@ -42,8 +44,8 @@ export default function PromptDetailPage() {
       <div className="flex flex-wrap gap-2">
         {audience ? <Badge variant="primary">{String(audience)}</Badge> : null}
         {tool ? (
-          typeof item.attributes.tool_slug === "string" ? (
-            <Link href={`/guides/${item.attributes.tool_slug}`} className="hover:text-carolina">
+          toolSlug ? (
+            <Link href={`/guides/${toolSlug}`} className="hover:text-carolina">
               <Badge>{String(tool)} →</Badge>
             </Link>
           ) : (

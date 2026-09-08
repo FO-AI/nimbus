@@ -56,9 +56,12 @@ needs an `https` URL, `link` needs a `publisher`, and `import` needs
 block both normalize to `{}`, so the column is falsy for in-house content and
 the frontend can test it directly.
 
-`GET /api/v1/content` gains a `mode` filter, and the retrieval indexer folds a
-link-mode item's publisher and URL into its chunk prefix so `/ask` can point
-staff at the authority rather than answering from the summary.
+The retrieval indexer folds a link-mode item's publisher and URL into its chunk
+prefix so `/ask` can point staff at the authority rather than answering from the
+summary. A `mode` query filter was added to `GET /api/v1/content` and then
+removed: the library pages fetch once and filter provenance client-side, which
+at this corpus size costs one request instead of one per control change, so the
+server-side filter had no caller.
 
 ## Consequences
 

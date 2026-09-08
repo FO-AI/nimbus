@@ -106,8 +106,9 @@ attributes:
     The literal prompt    # Copy button puts on the clipboard
     text, verbatim.
   audience: Finance staff # who this prompt is for (shown as a chip)
-  department: Finance     # primary F&O department this prompt serves
-                          # (Finance | Procurement | Operations | All)
+  department: Finance     # primary F&O department this prompt serves:
+                          # Finance | Budget | Procurement | HR operations |
+                          # Facilities | All (All = not department-specific)
   tool: Microsoft 365 Copilot   # display label for the tool chip/filter
   tool_slug: copilot-chat       # required; the tool entry this prompt runs in.
                                 # `tool` drifts, this is the identity — the

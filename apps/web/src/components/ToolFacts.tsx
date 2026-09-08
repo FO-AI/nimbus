@@ -1,12 +1,7 @@
 import type { ContentDetail } from "@/types";
 
 import { Badge, ButtonLink, Card } from "@/components/ui";
-
-/** Narrow a free-form frontmatter attribute to a non-empty string. */
-function attr(item: ContentDetail, key: string): string | null {
-  const value = item.attributes[key];
-  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
-}
+import { attr } from "@/lib/contentAttributes";
 
 function statusVariant(status: string) {
   if (status.startsWith("approved")) return "success" as const;

@@ -38,7 +38,7 @@ function departmentLabel(value: string): string {
 // Every prompt falls in exactly one bucket: written here, or adapted from an
 // external source. Keying "adapted" off a specific mode would have hidden
 // link- and practice-mode prompts from both options.
-const ORIGINS = new Set(["unc", "adapted"]);
+const ORIGINS = ["unc", "adapted"] as const;
 
 export default function PromptsPage() {
   // useSearchParams (inside useQueryFilters) needs a Suspense boundary above it.
@@ -62,7 +62,7 @@ function PromptsLibrary() {
 
   const department = readFilter("department", departments, { loading, fallback: ALL });
   const tool = readFilter("tool", tools, { loading, fallback: ALL });
-  const origin = readFilter("origin", [...ORIGINS], { fallback: ALL });
+  const origin = readFilter("origin", ORIGINS, { fallback: ALL });
 
   const visible = useMemo(() => {
     const needle = search.trim().toLowerCase();

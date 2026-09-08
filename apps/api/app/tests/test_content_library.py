@@ -151,3 +151,30 @@ def test_every_prompt_names_a_real_tool(library):
         if i.kind == "prompt" and i.attributes.get("tool_slug") not in tools
     )
     assert dangling == []
+
+
+def test_every_prompt_links_the_prompting_guidance_from_its_body(library):
+    """`related_slugs` renders a "Related" card; §4b wants the link in the prose.
+
+    Checking only the frontmatter would let the body link be deleted silently,
+    which is the state this test was written to prevent.
+    """
+    missing = sorted(
+        i.slug
+        for i in library
+        if i.kind == "prompt" and "/guides/how-to-write-a-prompt" not in i.body_md
+    )
+    assert missing == []
+
+
+def test_prompt_departments_use_the_documented_vocabulary(library):
+    """Keeps the library filter's options from drifting into synonyms."""
+    allowed = {"Finance", "Budget", "Procurement", "HR operations", "Facilities", "All"}
+    unexpected = sorted(
+        {
+            str(i.attributes.get("department"))
+            for i in library
+            if i.kind == "prompt" and i.attributes.get("department") not in allowed
+        }
+    )
+    assert unexpected == []

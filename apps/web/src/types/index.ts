@@ -81,8 +81,6 @@ export interface ContentListFilters {
   kind?: ContentKind;
   tag?: string;
   q?: string;
-  /** Provenance mode; "original" selects in-house content. */
-  mode?: SourceMode | "original";
 }
 
 /** Project inventory / intake workflow. */
