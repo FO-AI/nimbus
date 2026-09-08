@@ -11,7 +11,6 @@
 import {
   InteractionRequiredAuthError,
   InteractionStatus,
-  PublicClientApplication,
 } from "@azure/msal-browser";
 import { MsalProvider, useIsAuthenticated, useMsal } from "@azure/msal-react";
 import {
@@ -24,7 +23,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { apiRequest, loginRequest, msalConfig } from "@/lib/auth/msalConfig";
+import { apiRequest, getMsalInstance, loginRequest } from "@/lib/auth/msalConfig";
 import { config } from "@/lib/config";
 
 export interface AuthAccount {
@@ -34,6 +33,12 @@ export interface AuthAccount {
 
 export interface AuthContextValue {
   isAuthenticated: boolean;
+  /**
+   * False until MSAL has finished restoring any existing session. Callers must
+   * wait for it before treating `isAuthenticated: false` as "signed out",
+   * otherwise a returning user sees a flash of the signed-out UI.
+   */
+  isReady: boolean;
   authDisabled: boolean;
   account: AuthAccount | null;
   login: (redirectTo?: string) => void;
@@ -54,8 +59,20 @@ export function useAuth(): AuthContextValue {
 /** Local-dev value: a fixed, clearly-fake principal and a no-op token. */
 const DISABLED_VALUE: AuthContextValue = {
   isAuthenticated: true,
+  isReady: true,
   authDisabled: true,
   account: { name: "Local Developer", email: "dev@localhost" },
+  login: () => {},
+  logout: () => {},
+  getToken: async () => null,
+};
+
+/** Server-render / pre-hydration value: nothing known yet, nothing signed in. */
+const PENDING_VALUE: AuthContextValue = {
+  isAuthenticated: false,
+  isReady: false,
+  authDisabled: false,
+  account: null,
   login: () => {},
   logout: () => {},
   getToken: async () => null,
@@ -74,18 +91,31 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
     }
   }, [instance, accounts]);
 
+  /*
+   * Nothing here may start a background MSAL interaction. MSAL allows exactly
+   * one at a time and reports it through `inProgress`, so a speculative call
+   * (an `ssoSilent` probe, say) holds the slot for up to its 10s iframe
+   * timeout and silently swallows the user's click on "Sign in" for that whole
+   * window. Session persistence is the token cache's job — see msalConfig.
+   */
+
   const login = useCallback((redirectTo?: string) => {
     if (inProgress !== InteractionStatus.None) return;
 
     const redirectStartPage = redirectTo
       ? new URL(redirectTo, window.location.origin).href
       : undefined;
-    void instance.loginRedirect({ ...loginRequest, redirectStartPage });
+    instance.loginRedirect({ ...loginRequest, redirectStartPage }).catch((error: unknown) => {
+      // A rejected redirect leaves the user staring at an unresponsive button.
+      console.error("Sign-in redirect failed", error);
+    });
   }, [instance, inProgress]);
 
   const logout = useCallback(() => {
     if (inProgress !== InteractionStatus.None) return;
-    void instance.logoutRedirect();
+    // Name the account so Entra ends this user's session rather than prompting
+    // for an account picker, and clear the local cache with it.
+    void instance.logoutRedirect({ account: instance.getActiveAccount() ?? undefined });
   }, [instance, inProgress]);
 
   const getToken = useCallback(async () => {
@@ -119,26 +149,31 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
 
     return {
       isAuthenticated,
+      // MSAL has finished startup and any redirect handling; whatever the cache
+      // held has been loaded by now.
+      isReady: inProgress === InteractionStatus.None,
       authDisabled: false,
       account,
       login,
       logout,
       getToken,
     };
-  }, [active, getToken, isAuthenticated, login, logout]);
+  }, [active, getToken, inProgress, isAuthenticated, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Stable per-config choice — not a conditional hook.
-  const instance = useMemo(
-    () => (config.authDisabled ? null : new PublicClientApplication(msalConfig)),
-    [],
-  );
+  const instance = useMemo(() => (config.authDisabled ? null : getMsalInstance()), []);
+
+  if (config.authDisabled) {
+    return <AuthContext.Provider value={DISABLED_VALUE}>{children}</AuthContext.Provider>;
+  }
 
   if (!instance) {
-    return <AuthContext.Provider value={DISABLED_VALUE}>{children}</AuthContext.Provider>;
+    // Server render: no browser storage to read, so no session to restore yet.
+    return <AuthContext.Provider value={PENDING_VALUE}>{children}</AuthContext.Provider>;
   }
 
   return (
