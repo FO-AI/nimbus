@@ -28,13 +28,31 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.logging import get_logger
-from app.models.content_item import VALID_KINDS, ContentItem
+from app.models.content_item import VALID_KINDS, VALID_SOURCE_MODES, ContentItem
 
 logger = get_logger(__name__)
 
 _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n?(.*)$", re.DOTALL)
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 _REQUIRED_FIELDS = ("slug", "kind", "title", "summary")
+
+# --- the `source` block -----------------------------------------------------
+# Cross-kind provenance: where the material came from and on what terms. It is
+# a closed schema (unknown keys are rejected) so a typo in one of 60 hand-
+# written files fails the sync instead of silently dropping an attribution.
+_SOURCE_FIELDS = (
+    "mode",
+    "url",
+    "title",
+    "publisher",
+    "license",
+    "license_url",
+    "attribution",
+    "adapted",
+    "retrieved",
+)
+_URL_RE = re.compile(r"^https://[^\s]+$")
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 @dataclass
@@ -47,6 +65,7 @@ class ParsedItem:
     tags: list[str]
     attributes: dict
     related_slugs: list[str]
+    source: dict
     featured: bool
     published: bool
     source_path: str
@@ -66,6 +85,74 @@ class SyncResult:
             f"created={self.created} updated={self.updated} unchanged={self.unchanged} "
             f"deleted={self.deleted} errors={len(self.errors)}"
         )
+
+
+def _parse_source(meta: dict) -> dict:
+    """Validate and normalize the optional `source` provenance block.
+
+    Returns `{}` for in-house content (no block, or `mode: original`) so the
+    column stays falsy and the UI can test it directly.
+    """
+    raw = meta.get("source")
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        raise ValueError("'source' must be a mapping")
+
+    unknown = sorted(set(raw) - set(_SOURCE_FIELDS))
+    if unknown:
+        raise ValueError(
+            f"source has unknown field(s) {', '.join(unknown)}; "
+            f"allowed: {', '.join(_SOURCE_FIELDS)}"
+        )
+
+    mode = raw.get("mode")
+    if not isinstance(mode, str) or mode not in VALID_SOURCE_MODES:
+        raise ValueError(f"source.mode must be one of {', '.join(VALID_SOURCE_MODES)}")
+    if mode == "original":
+        return {}
+
+    source: dict = {"mode": mode}
+
+    url = raw.get("url")
+    if not isinstance(url, str) or not _URL_RE.match(url.strip()):
+        raise ValueError(f"source.url is required for mode '{mode}' and must be an https URL")
+    source["url"] = url.strip()
+
+    # A linked page is the authority for its own content, so the reader has to
+    # be told who published it before they are sent there.
+    if mode == "link" and not str(raw.get("publisher", "")).strip():
+        raise ValueError("source.publisher is required for mode 'link'")
+
+    # Imported text is redistributed under someone else's terms: attribution
+    # and the licence have to travel with the file.
+    if mode == "import":
+        for name in ("license", "license_url", "attribution"):
+            if not str(raw.get(name, "")).strip():
+                raise ValueError(f"source.{name} is required for mode 'import'")
+
+    for name in ("title", "publisher", "license", "license_url", "attribution"):
+        value = raw.get(name)
+        if value is not None:
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"source.{name} must be a non-empty string")
+            source[name] = value.strip()
+
+    if "license_url" in source and not _URL_RE.match(source["license_url"]):
+        raise ValueError("source.license_url must be an https URL")
+
+    retrieved = raw.get("retrieved")
+    if retrieved is not None:
+        # PyYAML parses an unquoted YYYY-MM-DD into a date object.
+        text = retrieved.isoformat() if hasattr(retrieved, "isoformat") else str(retrieved)
+        if not _DATE_RE.match(text):
+            raise ValueError("source.retrieved must be an ISO date (YYYY-MM-DD)")
+        source["retrieved"] = text
+
+    if raw.get("adapted") is not None:
+        source["adapted"] = bool(raw["adapted"])
+
+    return source
 
 
 def _str_list(meta: dict, key: str) -> list[str]:
@@ -112,6 +199,7 @@ def parse_content_file(path: Path, source_path: str) -> ParsedItem:
         tags=_str_list(meta, "tags"),
         attributes=attributes,
         related_slugs=_str_list(meta, "related_slugs"),
+        source=_parse_source(meta),
         featured=bool(meta.get("featured", False)),
         published=bool(meta.get("published", True)),
         source_path=source_path,
@@ -153,6 +241,7 @@ _SYNCED_FIELDS = (
     "tags",
     "attributes",
     "related_slugs",
+    "source",
     "featured",
     "published",
     "source_path",

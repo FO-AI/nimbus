@@ -114,3 +114,102 @@ def test_event_rejects_unknown_type_and_slug(client, seeded):
     assert bad_type.status_code == 422
     bad_slug = client.post("/api/v1/content/nope/events", json={"eventType": "view"})
     assert bad_slug.status_code == 404
+
+
+# --- provenance (`source`) --------------------------------------------------
+
+
+@pytest.fixture
+def sourced(db_session):
+    """One linked tool, one imported prompt, one in-house guide."""
+    db_session.query(ContentEvent).delete()
+    db_session.query(ContentItem).delete()
+    db_session.add_all(
+        [
+            ContentItem(
+                slug="linked-tool",
+                kind="tool",
+                title="A linked tool",
+                summary="Summarized from ITS.",
+                body_md="Body.",
+                tags=[],
+                attributes={},
+                related_slugs=[],
+                source={
+                    "mode": "link",
+                    "url": "https://its.unc.edu/ai/copilot/",
+                    "publisher": "UNC ITS",
+                    "retrieved": "2026-09-08",
+                },
+                published=True,
+            ),
+            ContentItem(
+                slug="imported-prompt",
+                kind="prompt",
+                title="An imported prompt",
+                summary="Adapted from elsewhere.",
+                body_md="Body.",
+                tags=[],
+                attributes={"prompt": "Do the thing."},
+                related_slugs=[],
+                source={
+                    "mode": "import",
+                    "url": "https://example.com/library",
+                    "license": "CC BY-SA 4.0",
+                    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+                    "attribution": "Someone Else",
+                    "adapted": True,
+                },
+                published=True,
+            ),
+            ContentItem(
+                slug="in-house",
+                kind="guidance",
+                title="Written here",
+                summary="Ours.",
+                body_md="Body.",
+                tags=[],
+                attributes={},
+                related_slugs=[],
+                source={},
+                published=True,
+            ),
+        ]
+    )
+    db_session.commit()
+    yield
+    db_session.query(ContentItem).delete()
+    db_session.commit()
+
+
+def test_list_returns_source_for_linked_and_imported(client, sourced):
+    items = {i["slug"]: i for i in client.get("/api/v1/content").json()["items"]}
+    assert items["linked-tool"]["source"]["publisher"] == "UNC ITS"
+    assert items["imported-prompt"]["source"]["license"] == "CC BY-SA 4.0"
+    # An imported item's licence URL is aliased to camelCase for the frontend.
+    assert items["imported-prompt"]["source"]["licenseUrl"].endswith("/by-sa/4.0/")
+    assert items["in-house"]["source"] is None
+
+
+def test_detail_returns_source(client, sourced):
+    body = client.get("/api/v1/content/imported-prompt").json()
+    assert body["source"]["mode"] == "import"
+    assert body["source"]["adapted"] is True
+    assert body["bodyMd"] == "Body."
+
+
+def test_list_filters_by_mode(client, sourced):
+    assert [i["slug"] for i in client.get("/api/v1/content?mode=link").json()["items"]] == [
+        "linked-tool"
+    ]
+    assert [i["slug"] for i in client.get("/api/v1/content?mode=import").json()["items"]] == [
+        "imported-prompt"
+    ]
+    # "original" selects the in-house rows, which carry no source block.
+    assert [i["slug"] for i in client.get("/api/v1/content?mode=original").json()["items"]] == [
+        "in-house"
+    ]
+
+
+def test_list_rejects_unknown_mode(client, sourced):
+    assert client.get("/api/v1/content?mode=borrowed").status_code == 422

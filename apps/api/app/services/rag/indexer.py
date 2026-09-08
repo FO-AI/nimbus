@@ -90,6 +90,12 @@ def _content_chunk_texts(item: ContentItem) -> list[Chunk]:
     if item.tags:
         prefix += f"\nTags: {', '.join(item.tags)}"
     prefix += f"\nSummary: {item.summary}"
+    # Link-mode items are thin summaries of an external page. Indexing that
+    # page's identity lets /ask send staff to the authority rather than
+    # answering from the summary alone.
+    if item.source.get("mode") == "link":
+        publisher = item.source.get("publisher", "")
+        prefix += f"\nAuthoritative source: {publisher} — {item.source.get('url', '')}"
 
     chunks = chunk_markdown(item.body_md)
     if not chunks:

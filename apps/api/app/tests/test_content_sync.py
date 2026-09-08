@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from sqlalchemy import select
 
 from app.models.content_item import ContentItem
@@ -161,3 +162,117 @@ def test_missing_directory_is_an_error(tmp_path, db_session):
 
     assert result.errors
     assert result.created == 0
+
+
+# --- the `source` provenance block -----------------------------------------
+
+LINKED = """---
+slug: linked-tool
+kind: tool
+title: A linked tool
+summary: Summarized from an external page.
+source:
+  mode: link
+  url: https://its.unc.edu/ai/copilot/
+  title: AI tools at Carolina
+  publisher: UNC ITS
+  retrieved: 2026-09-08
+---
+
+We summarize; they are the authority.
+"""
+
+IMPORTED = """---
+slug: imported-prompt
+kind: prompt
+title: An imported prompt
+summary: Adapted from an openly licensed library.
+source:
+  mode: import
+  url: https://example.com/library
+  license: CC BY-SA 4.0
+  license_url: https://creativecommons.org/licenses/by-sa/4.0/
+  attribution: Someone Else
+  adapted: true
+---
+
+Usage notes.
+"""
+
+ORIGINAL = """---
+slug: own-work
+kind: prompt
+title: Written here
+summary: Ours.
+source:
+  mode: original
+---
+
+Usage notes.
+"""
+
+
+def test_sync_parses_link_source(tmp_path, db_session):
+    write(tmp_path, "tools/linked.md", LINKED)
+    sync_content(db_session, tmp_path)
+    source = rows(db_session)["linked-tool"].source
+    assert source["mode"] == "link"
+    assert source["publisher"] == "UNC ITS"
+    # PyYAML turns an unquoted YYYY-MM-DD into a date; it must land as a string.
+    assert source["retrieved"] == "2026-09-08"
+
+
+def test_sync_parses_import_source_with_licence(tmp_path, db_session):
+    write(tmp_path, "prompts/imported.md", IMPORTED)
+    sync_content(db_session, tmp_path)
+    source = rows(db_session)["imported-prompt"].source
+    assert source["license"] == "CC BY-SA 4.0"
+    assert source["attribution"] == "Someone Else"
+    assert source["adapted"] is True
+
+
+def test_sync_treats_original_mode_as_no_source(tmp_path, db_session):
+    write(tmp_path, "prompts/own.md", ORIGINAL)
+    sync_content(db_session, tmp_path)
+    assert rows(db_session)["own-work"].source == {}
+
+
+def test_sync_defaults_source_to_empty(tmp_path, db_session):
+    write(tmp_path, "playbooks/a.md", PLAYBOOK)
+    sync_content(db_session, tmp_path)
+    assert rows(db_session)["test-playbook"].source == {}
+
+
+@pytest.mark.parametrize(
+    ("frontmatter", "expected"),
+    [
+        ("  mode: borrowed\n  url: https://example.com/x", "source.mode must be one of"),
+        ("  mode: link\n  publisher: X", "source.url is required"),
+        ("  mode: link\n  url: http://example.com/x\n  publisher: X", "source.url is required"),
+        ("  mode: link\n  url: https://example.com/x", "source.publisher is required"),
+        (
+            "  mode: import\n  url: https://example.com/x\n  attribution: A"
+            "\n  license_url: https://example.com/l",
+            "source.license is required",
+        ),
+        (
+            "  mode: link\n  url: https://example.com/x\n  publisher: X\n  retrieved: soon",
+            "source.retrieved must be an ISO date",
+        ),
+        (
+            "  mode: link\n  url: https://example.com/x\n  publisher: X\n  licence: CC0",
+            "unknown field(s) licence",
+        ),
+    ],
+)
+def test_sync_rejects_invalid_source(tmp_path, db_session, frontmatter, expected):
+    write(
+        tmp_path,
+        "tools/broken.md",
+        f"---\nslug: broken\nkind: tool\ntitle: T\nsummary: S\n"
+        f"source:\n{frontmatter}\n---\n\nBody.\n",
+    )
+    result = sync_content(db_session, tmp_path)
+    assert result.created == 0
+    assert len(result.errors) == 1
+    assert expected in result.errors[0]
