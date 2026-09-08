@@ -11,7 +11,6 @@
 import {
   InteractionRequiredAuthError,
   InteractionStatus,
-  PublicClientApplication,
 } from "@azure/msal-browser";
 import { MsalProvider, useIsAuthenticated, useMsal } from "@azure/msal-react";
 import {
@@ -21,10 +20,11 @@ import {
   useContext,
   useMemo,
   useRef,
+  useState,
   type ReactNode,
 } from "react";
 
-import { apiRequest, loginRequest, msalConfig } from "@/lib/auth/msalConfig";
+import { apiRequest, getMsalInstance, loginRequest } from "@/lib/auth/msalConfig";
 import { config } from "@/lib/config";
 
 export interface AuthAccount {
@@ -34,6 +34,12 @@ export interface AuthAccount {
 
 export interface AuthContextValue {
   isAuthenticated: boolean;
+  /**
+   * False until MSAL has finished restoring any existing session. Callers must
+   * wait for it before treating `isAuthenticated: false` as "signed out",
+   * otherwise a returning user sees a flash of the signed-out UI.
+   */
+  isReady: boolean;
   authDisabled: boolean;
   account: AuthAccount | null;
   login: (redirectTo?: string) => void;
@@ -54,8 +60,20 @@ export function useAuth(): AuthContextValue {
 /** Local-dev value: a fixed, clearly-fake principal and a no-op token. */
 const DISABLED_VALUE: AuthContextValue = {
   isAuthenticated: true,
+  isReady: true,
   authDisabled: true,
   account: { name: "Local Developer", email: "dev@localhost" },
+  login: () => {},
+  logout: () => {},
+  getToken: async () => null,
+};
+
+/** Server-render / pre-hydration value: nothing known yet, nothing signed in. */
+const PENDING_VALUE: AuthContextValue = {
+  isAuthenticated: false,
+  isReady: false,
+  authDisabled: false,
+  account: null,
   login: () => {},
   logout: () => {},
   getToken: async () => null,
@@ -67,12 +85,45 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
   const isAuthenticated = useIsAuthenticated();
   const active = useMemo(() => instance.getActiveAccount() ?? accounts[0] ?? null, [instance, accounts]);
   const redirectStartedRef = useRef(false);
+  const [restoreAttempted, setRestoreAttempted] = useState(false);
 
   useEffect(() => {
     if (!instance.getActiveAccount() && accounts[0]) {
       instance.setActiveAccount(accounts[0]);
     }
   }, [instance, accounts]);
+
+  /*
+   * Silent session restore.
+   *
+   * The persistent token cache covers a returning user whose tokens are still
+   * cached. When the cache is empty but Entra still holds a session for this
+   * browser, `ssoSilent` redeems that session in a hidden iframe (prompt=none)
+   * and signs the user in with no interaction. It legitimately fails — no
+   * session, or a browser blocking third-party cookies — in which case we fall
+   * through to the normal sign-in button rather than forcing a redirect on a
+   * visitor who may just be reading the public page.
+   */
+  useEffect(() => {
+    if (restoreAttempted || inProgress !== InteractionStatus.None) return;
+    // A cached account already settles the question — see `sessionSettled`.
+    if (accounts.length > 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        await instance.ssoSilent(loginRequest);
+      } catch {
+        // Expected whenever there is no reusable Entra session.
+      } finally {
+        if (!cancelled) setRestoreAttempted(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accounts.length, inProgress, instance, restoreAttempted]);
 
   const login = useCallback((redirectTo?: string) => {
     if (inProgress !== InteractionStatus.None) return;
@@ -85,7 +136,9 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     if (inProgress !== InteractionStatus.None) return;
-    void instance.logoutRedirect();
+    // Name the account so Entra ends this user's session rather than prompting
+    // for an account picker, and clear the local cache with it.
+    void instance.logoutRedirect({ account: instance.getActiveAccount() ?? undefined });
   }, [instance, inProgress]);
 
   const getToken = useCallback(async () => {
@@ -112,6 +165,10 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
     }
   }, [active, inProgress, instance]);
 
+  // The session question is answered once MSAL has an account for us, or once
+  // the silent restore has run and come back empty.
+  const sessionSettled = accounts.length > 0 || restoreAttempted;
+
   const value = useMemo<AuthContextValue>(() => {
     const account: AuthAccount | null = active
       ? { name: active.name ?? active.username, email: active.username }
@@ -119,26 +176,29 @@ function EntraAuthBridge({ children }: { children: ReactNode }) {
 
     return {
       isAuthenticated,
+      isReady: sessionSettled && inProgress === InteractionStatus.None,
       authDisabled: false,
       account,
       login,
       logout,
       getToken,
     };
-  }, [active, getToken, isAuthenticated, login, logout]);
+  }, [active, getToken, inProgress, isAuthenticated, login, logout, sessionSettled]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Stable per-config choice — not a conditional hook.
-  const instance = useMemo(
-    () => (config.authDisabled ? null : new PublicClientApplication(msalConfig)),
-    [],
-  );
+  const instance = useMemo(() => (config.authDisabled ? null : getMsalInstance()), []);
+
+  if (config.authDisabled) {
+    return <AuthContext.Provider value={DISABLED_VALUE}>{children}</AuthContext.Provider>;
+  }
 
   if (!instance) {
-    return <AuthContext.Provider value={DISABLED_VALUE}>{children}</AuthContext.Provider>;
+    // Server render: no browser storage to read, so no session to restore yet.
+    return <AuthContext.Provider value={PENDING_VALUE}>{children}</AuthContext.Provider>;
   }
 
   return (
