@@ -23,6 +23,27 @@ export type ContentAttributes = Record<string, unknown> & {
   example_output?: string;
 };
 
+/** How a content item relates to the material it came from. */
+export type SourceMode = "link" | "import" | "practice";
+
+/**
+ * Provenance for externally sourced content. Present only when the item came
+ * from somewhere else: `link` means the external page is the authority and
+ * Nimbus only summarizes it, `import` means the text was adapted from an
+ * openly licensed library, `practice` marks public exercise material.
+ */
+export interface SourceRef {
+  mode: SourceMode;
+  url: string;
+  title?: string | null;
+  publisher?: string | null;
+  license?: string | null;
+  licenseUrl?: string | null;
+  attribution?: string | null;
+  adapted: boolean;
+  retrieved?: string | null;
+}
+
 export interface ContentSummary {
   slug: string;
   kind: ContentKind;
@@ -30,6 +51,8 @@ export interface ContentSummary {
   summary: string;
   tags: string[];
   attributes: ContentAttributes;
+  /** Provenance for linked/imported material; null for in-house content. */
+  source: SourceRef | null;
   featured: boolean;
   updatedAt: string;
 }
@@ -56,6 +79,8 @@ export interface ContentListFilters {
   kind?: ContentKind;
   tag?: string;
   q?: string;
+  /** Provenance mode; "original" selects in-house content. */
+  mode?: SourceMode | "original";
 }
 
 /** Project inventory / intake workflow. */

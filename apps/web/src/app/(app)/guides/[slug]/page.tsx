@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
+import { SourceNote } from "@/components/SourceNote";
+import { ToolFacts } from "@/components/ToolFacts";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useContentDetail } from "@/lib/api/useContent";
 import type { RelatedItem } from "@/types";
@@ -28,6 +30,13 @@ export default function GuideDetailPage() {
         ← All guides
       </Link>
       <PageHeader title={item.title} description={item.summary} />
+
+      {item.source && item.source.mode !== "import" ? (
+        <SourceNote source={item.source} />
+      ) : null}
+
+      {item.kind === "tool" ? <ToolFacts item={item} /> : null}
+
       {item.tags.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {item.tags.map((t) => (
@@ -38,8 +47,9 @@ export default function GuideDetailPage() {
         </div>
       ) : null}
 
-      <Card>
+      <Card className="space-y-6">
         <Markdown>{item.bodyMd}</Markdown>
+        {item.source?.mode === "import" ? <SourceNote source={item.source} /> : null}
       </Card>
 
       {item.related.length > 0 ? (

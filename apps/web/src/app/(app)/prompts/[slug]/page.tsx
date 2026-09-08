@@ -7,6 +7,7 @@ import { CopyPromptButton } from "@/components/CopyPromptButton";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
+import { SourceNote } from "@/components/SourceNote";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentDetail } from "@/lib/api/useContent";
@@ -73,9 +74,10 @@ export default function PromptDetailPage() {
         </Card>
       ) : null}
 
-      {item.bodyMd ? (
-        <Card>
-          <Markdown>{item.bodyMd}</Markdown>
+      {item.bodyMd || item.source ? (
+        <Card className="space-y-6">
+          {item.bodyMd ? <Markdown>{item.bodyMd}</Markdown> : null}
+          {item.source ? <SourceNote source={item.source} /> : null}
         </Card>
       ) : null}
 

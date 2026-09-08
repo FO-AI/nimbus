@@ -112,6 +112,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
       if (filters.kind) params.set("kind", filters.kind);
       if (filters.tag) params.set("tag", filters.tag);
       if (filters.q) params.set("q", filters.q);
+      if (filters.mode) params.set("mode", filters.mode);
       const qs = params.toString();
       return request<ContentListResponse>(`/api/v1/content${qs ? `?${qs}` : ""}`);
     },
