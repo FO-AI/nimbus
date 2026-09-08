@@ -9,8 +9,16 @@ test("home loads", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Propose an AI use case" })).toBeVisible();
 });
 
-test("public FOAI landing loads without signing in", async ({ page }) => {
+// The redirect had unit coverage only. Auth is disabled here, so the dev
+// principal is always signed in and a bare "/" always bounces.
+test("the landing page sends a signed-in visitor into the app", async ({ page }) => {
   await page.goto("/");
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.getByRole("heading", { name: "AI enablement hub" })).toBeVisible();
+});
+
+test("public FOAI landing is still reachable with ?stay=1", async ({ page }) => {
+  await page.goto("/?stay=1");
   await expect(
     page.getByRole("heading", { name: "Building AI fluency across Finance & Operations." }),
   ).toBeVisible();
@@ -19,6 +27,6 @@ test("public FOAI landing loads without signing in", async ({ page }) => {
 });
 
 test("local dev auth-disabled banner is shown", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?stay=1");
   await expect(page.getByText(/Auth is disabled/i)).toBeVisible();
 });

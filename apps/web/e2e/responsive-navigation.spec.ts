@@ -10,7 +10,7 @@ async function expectNoHorizontalOverflow(page: import("@playwright/test").Page)
 
 test("public navigation works at 390px and resets across the md breakpoint", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/?stay=1");
 
   const toggle = page.locator('nav[aria-label="FOAI navigation"] button[aria-controls]');
   await expect(toggle).toBeVisible();
@@ -77,7 +77,7 @@ test("Nimbus navigation works at 390px and resets across the lg breakpoint", asy
 test("both desktop headers expose navigation without disclosure buttons", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
 
-  await page.goto("/");
+  await page.goto("/?stay=1");
   await expect(page.getByRole("button", { name: "Open FOAI navigation" })).toBeHidden();
   await expect(page.getByRole("link", { name: "Steering Committee" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
