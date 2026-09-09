@@ -214,9 +214,17 @@ jobs:
       - name: Verify deployment
         run: |
           set -euo pipefail
+          # The API seeds itself before it binds: migrate, sync the content
+          # library, then embed it. On a cold index that is one Foundry call per
+          # content item, so a deploy that adds a lot of content can take a few
+          # minutes to answer — far longer than the web container, which starts
+          # straight away. Budget 5 minutes here so a slow first boot reads as
+          # slow rather than as a failed deploy.
           curl --fail --silent --show-error \
-            --retry 12 --retry-delay 10 --retry-all-errors \
+            --retry 30 --retry-delay 10 --retry-all-errors \
             "$API_URL/health/ready" > /dev/null
+          # Web has no such startup work; keep its budget short so a genuine
+          # failure surfaces quickly.
           curl --fail --silent --show-error \
             --retry 12 --retry-delay 10 --retry-all-errors \
             "$AZURE_WEB_URL" > /dev/null
