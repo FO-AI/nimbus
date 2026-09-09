@@ -5,11 +5,12 @@ title: Draft a professional vendor or supplier email
 summary: Draft a firm-but-courteous email to a vendor about a late delivery,
   invoice discrepancy, or contract question, from a few bullet points.
 tags: [procurement, email, writing]
-related_slugs: [sensitive-data]
+related_slugs: [sensitive-data, how-to-write-a-prompt]
 attributes:
   audience: Procurement and AP staff
   department: Procurement
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Draft a professional email to a vendor. Context:
     - Issue: [LATE DELIVERY / INVOICE DISCREPANCY / CONTRACT QUESTION]
@@ -39,6 +40,9 @@ office, not an AI draft.
 - Fill all four context lines; the "relationship" line is what keeps the
   tone right.
 - For escalations, add "this is our second follow-up" to the context.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

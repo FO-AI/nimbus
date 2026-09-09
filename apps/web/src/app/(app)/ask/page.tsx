@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
-import { Button, Card, Input, PageHeader } from "@/components/ui";
+import { Button, Card, FilterChip, Input, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import type { Citation } from "@/types";
 
@@ -17,6 +17,16 @@ interface Turn {
   grounded?: boolean;
 }
 
+const STARTER_QUESTIONS = [
+  "How do I analyze a budget variance with Copilot?",
+  "Are there any AI projects in Finance?",
+  "What data can I put into an approved AI tool?",
+  "Is there a prompt for drafting a vendor email?",
+];
+
+/** Short enough to allow "PTO?", long enough to reject a stray keystroke. */
+const MIN_QUESTION_LENGTH = 3;
+
 function citationHref(c: Citation): string {
   if (c.sourceType === "project") return `/projects/${c.sourceKey}`;
   return c.kind === "prompt" ? `/prompts/${c.sourceKey}` : `/guides/${c.sourceKey}`;
@@ -24,14 +34,13 @@ function citationHref(c: Citation): string {
 
 export default function AskPage() {
   const api = useApiClient();
+  const hintId = useId();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [error, setError] = useState<unknown>(null);
   const [sending, setSending] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const question = input.trim();
+  async function ask(question: string) {
     if (!question || sending) return;
 
     setError(null);
@@ -57,6 +66,13 @@ export default function AskPage() {
     }
   }
 
+  const canAsk = input.trim().length >= MIN_QUESTION_LENGTH;
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    void ask(input.trim());
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -67,9 +83,40 @@ export default function AskPage() {
       <Card>
         <div className="mb-4 flex min-h-80 flex-col gap-3">
           {turns.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-cloud/45 p-4 text-sm text-muted">
-              Try: &quot;How do I analyze a budget variance with Copilot?&quot; or &quot;Are
-              there any AI projects in Finance?&quot;
+            <div className="grid gap-5 rounded-xl border border-dashed border-border bg-cloud/45 p-5 md:grid-cols-[1fr_1.2fr]">
+              <div className="space-y-3 text-sm">
+                <h2 className="text-base">What Nimbus can answer</h2>
+                <ul className="list-disc space-y-1.5 pl-5 text-muted">
+                  <li>How to do a task with an approved AI tool, using the step-by-step guides.</li>
+                  <li>Which reusable prompt fits the job you have in front of you.</li>
+                  <li>What AI projects and pilots are underway across Finance &amp; Operations.</li>
+                  <li>What is and isn&apos;t allowed under the acceptable-use guidance.</li>
+                </ul>
+                <p className="text-muted">
+                  Every answer links to the Nimbus pages it came from, so you can check the
+                  source before you act on it. Nimbus cannot see your files, email, or the web.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-base">Try one of these</h2>
+                <div
+                  className="flex flex-col items-start gap-2"
+                  role="group"
+                  aria-label="Example questions"
+                >
+                  {STARTER_QUESTIONS.map((q) => (
+                    <FilterChip
+                      key={q}
+                      type="button"
+                      className="max-w-full text-left"
+                      disabled={sending}
+                      onClick={() => void ask(q)}
+                    >
+                      {q}
+                    </FilterChip>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
             turns.map((turn, i) => (
@@ -111,15 +158,24 @@ export default function AskPage() {
         <form className="mt-4 flex flex-col gap-2 sm:flex-row" onSubmit={onSubmit}>
           <Input
             aria-label="Question"
+            aria-describedby={hintId}
             placeholder="Ask about tools, guides, prompts, or projects..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={sending}
           />
-          <Button type="submit" disabled={sending || input.trim().length < 3}>
+          <Button type="submit" disabled={sending || !canAsk}>
             Ask
           </Button>
         </form>
+        {/* A disabled button with no reason is a dead end; say what unlocks it. */}
+        <p id={hintId} className="mt-2 text-xs text-muted">
+          {sending
+            ? "Looking through the Nimbus library…"
+            : canAsk
+              ? "Answers cite the Nimbus pages they came from."
+              : `Type a question of at least ${MIN_QUESTION_LENGTH} characters to enable Ask.`}
+        </p>
       </Card>
     </div>
   );

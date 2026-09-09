@@ -5,12 +5,13 @@ title: Draft a budget variance narrative
 summary: Turn a list of variances into a clear, review-ready explanation
   paragraph for your budget officer or monthly close package.
 tags: [budget, finance, writing]
-related_slugs: [copilot-excel-budget-variance, sensitive-data]
+related_slugs: [copilot-excel-budget-variance, sensitive-data, how-to-write-a-prompt]
 featured: true
 attributes:
   audience: Finance staff
   department: Finance
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     I'm preparing the monthly budget-to-actuals review for [DEPARTMENT].
     Below are the accounts with variances over 10% and a one-line reason
@@ -31,8 +32,8 @@ attributes:
 ## When to use this
 
 After you've identified variances (see the
-[Copilot in Excel variance playbook](/p/copilot-excel-budget-variance)) and
-need the written explanation that goes into the close package.
+[Copilot in Excel variance playbook](/guides/copilot-excel-budget-variance))
+and need the written explanation that goes into the close package.
 
 ## How to adapt it
 
@@ -40,6 +41,9 @@ need the written explanation that goes into the close package.
   per line — the reasons drive the quality of the narrative.
 - Add "keep a formal tone" or "write for a non-finance audience" depending
   on who reads your close package.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

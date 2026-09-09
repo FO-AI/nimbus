@@ -7,9 +7,11 @@ import { CopyPromptButton } from "@/components/CopyPromptButton";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
+import { SourceNote, sourceNoteSlot } from "@/components/SourceNote";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentDetail } from "@/lib/api/useContent";
+import { attr } from "@/lib/contentAttributes";
 import type { RelatedItem } from "@/types";
 
 function relatedHref(item: RelatedItem): string {
@@ -25,6 +27,9 @@ export default function PromptDetailPage() {
   if (error) return <ErrorState error={error} onRetry={reload} />;
   if (!item) return null;
 
+  const slot = sourceNoteSlot(item.source);
+  const toolSlug = attr(item, "tool_slug");
+
   const { prompt, audience, tool, example_input, example_output } = item.attributes;
 
   return (
@@ -33,9 +38,20 @@ export default function PromptDetailPage() {
         ← Prompt library
       </Link>
       <PageHeader title={item.title} description={item.summary} />
+
+      {item.source && slot === "above" ? <SourceNote source={item.source} /> : null}
+
       <div className="flex flex-wrap gap-2">
         {audience ? <Badge variant="primary">{String(audience)}</Badge> : null}
-        {tool ? <Badge>{String(tool)}</Badge> : null}
+        {tool ? (
+          toolSlug ? (
+            <Link href={`/guides/${toolSlug}`} className="hover:text-carolina">
+              <Badge>{String(tool)} →</Badge>
+            </Link>
+          ) : (
+            <Badge>{String(tool)}</Badge>
+          )
+        ) : null}
         {item.tags.map((t) => (
           <Badge key={t}>
             {t}
@@ -73,9 +89,10 @@ export default function PromptDetailPage() {
         </Card>
       ) : null}
 
-      {item.bodyMd ? (
-        <Card>
-          <Markdown>{item.bodyMd}</Markdown>
+      {item.bodyMd || slot === "below" ? (
+        <Card className="space-y-6">
+          {item.bodyMd ? <Markdown>{item.bodyMd}</Markdown> : null}
+          {item.source && slot === "below" ? <SourceNote source={item.source} /> : null}
         </Card>
       ) : null}
 

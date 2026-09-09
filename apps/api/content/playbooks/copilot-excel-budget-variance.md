@@ -30,18 +30,15 @@ narrative, in about 10 minutes.
 ## Steps
 
 1. Open the workbook in Excel (desktop or web) and click inside your table.
-2. Open **Copilot** from the ribbon.
-3. Ask Copilot to add a variance column:
-   > Add a column that calculates the difference between Budget and Actuals,
-   > and a column showing that difference as a percentage of Budget.
-4. Ask for the outliers:
-   > Highlight rows where the variance is more than 10% of budget.
-5. Ask for a summary you can adapt:
-   > Summarize the three largest variances and suggest one sentence of
-   > explanation for each based on the account names.
-6. **Review every number before you send anything.** Copilot's arithmetic is
-   applied via formulas you can inspect — click the new columns and check the
-   formula bar.
+2. Open **Copilot** from the ribbon. 3. Ask Copilot to add a variance
+column: > Add a column that calculates the difference between Budget and
+Actuals, > and a column showing that difference as a percentage of Budget.
+4. Ask for the outliers: > Highlight rows where the variance is more than
+10% of budget. 5. Ask for a summary you can adapt: > Summarize the three
+largest variances and suggest one sentence of > explanation for each based
+on the account names. 6. **Review every number before you send anything.**
+Copilot's arithmetic is applied via formulas you can inspect — click the new
+columns and check the formula bar.
 
 ## Example prompt that works well
 

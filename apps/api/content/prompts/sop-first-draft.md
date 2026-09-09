@@ -5,11 +5,12 @@ title: Draft a standard operating procedure from your description
 summary: Turn a spoken-style description of how you do a task into a
   structured SOP draft with steps, roles, and exception handling.
 tags: [operations, documentation, process]
-related_slugs: [policy-plain-language-summary]
+related_slugs: [policy-plain-language-summary, sensitive-data, how-to-write-a-prompt]
 attributes:
   audience: Operations staff
-  department: Operations
-  tool: Microsoft 365 Copilot
+  department: All
+  tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     I'm going to describe, informally, how my team performs a task. Turn it
     into a structured SOP draft with these sections:
@@ -47,6 +48,9 @@ it used to take an hour.
   the point.
 - Run it once per process variant rather than describing three variants at
   once.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

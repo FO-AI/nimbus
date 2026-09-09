@@ -5,10 +5,12 @@ title: Explain or debug an Excel formula
 summary: Get a plain-English explanation of what an inherited spreadsheet
   formula does, why it might be failing, and a safer rewrite.
 tags: [excel, finance, spreadsheets]
+related_slugs: [sensitive-data, how-to-write-a-prompt]
 attributes:
   audience: Finance staff
   department: Finance
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Explain this Excel formula step by step in plain English:
 
@@ -36,6 +38,9 @@ nested formula nobody dares touch.
 - Include what the columns contain ("column C is fund codes, column F is
   amounts") for a much better explanation.
 - If the formula returns an error, paste the error value too.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

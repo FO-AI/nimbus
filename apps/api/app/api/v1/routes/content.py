@@ -23,6 +23,7 @@ from app.schemas.content import (
     ContentListResponse,
     ContentSummary,
     RelatedItem,
+    SourceRef,
 )
 from app.services.content_events import record_content_event
 from app.services.identity.current_user import CurrentUser
@@ -38,6 +39,18 @@ CONTENT_ERROR_RESPONSES = {
 _DbDep = Annotated[Session, Depends(get_db)]
 
 
+# `mode: original` is stored as an empty dict, so anything falsy is in-house.
+# Frontmatter is snake_case; the API is camelCase everywhere else, so the one
+# multi-word key is renamed here rather than carried as a Pydantic alias.
+def _source(row: ContentItem) -> SourceRef | None:
+    if not row.source:
+        return None
+    data = dict(row.source)
+    if "license_url" in data:
+        data["licenseUrl"] = data.pop("license_url")
+    return SourceRef.model_validate(data)
+
+
 def _summary(row: ContentItem) -> ContentSummary:
     return ContentSummary(
         slug=row.slug,
@@ -46,6 +59,7 @@ def _summary(row: ContentItem) -> ContentSummary:
         summary=row.summary,
         tags=row.tags,
         attributes=row.attributes,
+        source=_source(row),
         featured=row.featured,
         updatedAt=row.updated_at,
     )

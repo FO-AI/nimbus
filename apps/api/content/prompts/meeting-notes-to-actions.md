@@ -5,12 +5,13 @@ title: Turn meeting notes into an action-item list
 summary: Convert raw meeting notes or a transcript into a clean list of
   decisions, owners, and deadlines you can paste into a follow-up email.
 tags: [meetings, operations, productivity]
-related_slugs: [sensitive-data]
+related_slugs: [sensitive-data, how-to-write-a-prompt]
 featured: true
 attributes:
   audience: All staff
   department: All
-  tool: Microsoft 365 Copilot
+  tool: Microsoft 365 Copilot Chat
+  tool_slug: copilot-chat
   prompt: |
     Below are my raw notes from a meeting. Extract:
     1. Decisions made (one line each)
@@ -37,9 +38,12 @@ straight into a follow-up email or Teams post.
 
 ## How to adapt it
 
-- If you have a Teams transcript instead of notes, paste that — it works
-  the same but check speaker attribution.
+- If you have a Teams transcript instead of notes, paste that — it works the
+  same but check speaker attribution.
 - Add "group action items by owner" for larger meetings.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
 
 ## What to check
 

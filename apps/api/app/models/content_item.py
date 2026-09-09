@@ -17,6 +17,13 @@ from app.db.base import Base
 
 VALID_KINDS = ("playbook", "tool", "guidance", "prompt")
 
+# How a row relates to the material it came from (see `content/README.md`):
+#   link      an external page is the authority; Nimbus summarizes and links out
+#   import    text adapted from an openly licensed library; carries attribution
+#   practice  a public, Tier 0 document used as exercise material
+#   original  written in-house for Nimbus; no external source (the default)
+VALID_SOURCE_MODES = ("link", "import", "practice", "original")
+
 # JSONB on Postgres, plain JSON elsewhere (SQLite in tests).
 _JsonCol = JSON().with_variant(JSONB(), "postgresql")
 
@@ -41,6 +48,9 @@ class ContentItem(Base):
     attributes: Mapped[dict] = mapped_column(_JsonCol, default=dict)
     # Hand-curated cross-links by slug (e.g. playbook -> guidance).
     related_slugs: Mapped[list] = mapped_column(_JsonCol, default=list)
+    # Provenance for externally sourced material: mode, url, publisher,
+    # license, attribution. Empty dict for in-house content.
+    source: Mapped[dict] = mapped_column(_JsonCol, default=dict)
     featured: Mapped[bool] = mapped_column(Boolean, default=False)
     published: Mapped[bool] = mapped_column(Boolean, default=True)
     # Sync provenance: path relative to the content dir + sha256 of the file.
