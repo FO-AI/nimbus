@@ -1,15 +1,24 @@
 # Resource catalog — import log
 
-What was actually imported from `docs/resource-catalog.md`, on 2026-09-08.
-Priorities are the ones set in the catalog review: **tools in link mode only,
-guidance deprioritized, prompts fully imported with the schema reshaped.**
+What was actually imported from `docs/resource-catalog.md`, across two passes.
+
+- **Sprint 1 (2026-09-08)** — tools in link mode only, guidance deprioritized,
+  prompts fully imported with the schema reshaped. Those were the priorities
+  set in the catalog review.
+- **Sprint 2 (2026-09-11)** — everything sprint 1 left: the §2 guidance, the
+  remaining §3a playbooks, the §3d practice material, the §4c in-house
+  prompts, and the §5 training page. **The catalog is now fully imported.**
+
+Sprint 1 is recorded first; sprint 2 begins at *Sprint 2* below.
 
 The schema the review called for — "link schema doesn't exist yet; needs to be
 designed in line with existing content item patterns" — is the `source` block:
 `apps/api/content/README.md` for the shape, `docs/adr/0004-content-source-provenance.md`
 for the reasoning.
 
-## What landed
+## Sprint 1 — 2026-09-08
+
+### What landed
 
 | Kind | Before | After | Mode |
 | --- | --- | --- | --- |
@@ -82,7 +91,7 @@ Also dropped:
 - **Microsoft prompts that duplicated existing in-house content** — variance
   story draft, meeting minutes, process documentation, PO query research.
 
-## Guidance — deprioritized, with one exception
+### Guidance — deprioritized, with one exception
 
 The eleven §2 link entries are not imported, per the review.
 
@@ -92,7 +101,7 @@ prohibition on AI in hiring/evaluation/discipline, the public-records point
 (§6.4), the ISO → DGOG intake path, and the "external obligations override the
 tier" rule. This is narrower than §7.2 asks for.
 
-## Closed since the first pass
+### Closed since the first pass
 
 **§4b (Prompt Gallery + CLEAR)** — was "link from every prompt page's 'How to
 adapt it' section", and none of the 60 did. Rather than repeating two raw URLs
@@ -108,7 +117,7 @@ Office apps)". Prompts now carry `tool_slug` as the identity, `tool` stays a
 display label, the lint fails if a slug names no tool, and the chip on a prompt
 page links through to the tool.
 
-## Fixed in passing
+### Fixed in passing
 
 `sensitive-data.md` and `budget-variance-narrative.md` linked to `/t/…` and
 `/p/…`, which are not routes in this app — both 404'd silently. Corrected to
@@ -121,23 +130,131 @@ prompts, so they are relabelled `Microsoft 365 Copilot Chat` — otherwise the
 library's tool filter offers three variants of the same product. Two used
 `department: Operations`, off the §4c vocabulary; changed to `All`.
 
+## Sprint 2 — 2026-09-11
+
+Closes every item the first pass left open, except §6.1, which needs another
+office to act.
+
+| Kind | Before | After | Added in this pass |
+| --- | --- | --- | --- |
+| `tool` | 6 | 6 | — (cross-links only) |
+| `guidance` | 2 | 15 | 11 `link` (§2) + 2 `original` |
+| `playbook` | 3 | 8 | 3 `original` (§3a) + 2 `practice` (§3d) |
+| `prompt` | 60 | 68 | 8 `original` (§4c) |
+
+### Guidance — §2, link mode
+
+The eleven §2 entries, each `mode: link` with publisher and retrieval date,
+paraphrased rather than copied: `staff-ai-usage-guidance`,
+`information-classification-standard`, `using-ai-appropriately`,
+`ai-in-performance-management`, `ai-data-privacy`,
+`ai-deepfakes-payment-fraud`, `software-vendor-risk-assessment`,
+`data-governance-policies`, `ai-and-public-records`,
+`ai-and-digital-accessibility`, `copilot-data-privacy`.
+
+Each is written for F&O rather than summarizing its source page evenly. The
+deepfake entry is the clearest case: ITS's general cyber-threat article becomes
+verification steps for the teams that move money, because that is the half of
+it Accounts Payable, Payroll, and Travel need.
+
+`information-classification-standard` overlaps `sensitive-data` by design.
+`sensitive-data` is the working page — "what can I paste" — and the standard
+entry is the authority to cite when somebody needs the policy itself. They
+link each other, so the overlap reads as a choice rather than a duplicate.
+
+Plus `getting-a-tool-approved` (§7.2, `original`), the page `copilot-studio.md`
+and `sensitive-data.md` had both been waiting to link. Both now link it.
+
+### Playbooks — §3a and §3d
+
+Three more Copilot apps: `copilot-teams-meeting-recap` (carrying the
+public-records consequence and the run-without-transcribing option),
+`copilot-powerpoint-leadership-update`, and `copilot-pages-shared-notes` —
+Pages vs Notebooks vs Loop, which is a choice staff routinely get wrong and
+then have to migrate out of.
+
+§3a's two remaining rows are covered rather than duplicated: "Get started
+writing prompts" is `how-to-write-a-prompt`, and Agent Builder vs Copilot
+Studio is in the `copilot-studio` tool entry.
+
+**`mode: practice` is now used.** `practice-budget-book-variance` (the
+FY2025-26 Budget Book) and `practice-annual-report-qa` (the 2025 ACFR) are the
+two §3d documents as exercises. Both are Tier 0 throughout, which makes them
+usable for a team session and for a unit whose own tool is still in approval.
+The ACFR exercise teaches verification specifically — requiring page citations
+and then checking them — rather than summarizing.
+
+**Decision: §3a playbooks stay `mode: original`.** The catalog marks them
+"Link", but a `link` source block renders "This page summarizes guidance
+published by Microsoft. Where the two differ, the original is correct" — which
+is false for a page carrying UNC's tier rules and public-records warnings.
+Microsoft is authoritative on where the button is, not on what a UNC employee
+may put into it. Every playbook instead ends with a "Microsoft's own
+documentation" link, which is what §3a's link mode was there to protect. Also
+recorded in the catalog under §7.
+
+### Prompts — §4c, authored in-house
+
+Eight, `mode: original`, filling the gaps the imports left:
+
+| Department | Added |
+| --- | --- |
+| Finance | `journal-entry-justification`, `reconciliation-exception-summary`, `close-package-status-update` |
+| Budget | `budget-request-narrative` |
+| Procurement | `contract-clause-plain-language` |
+| Facilities | `work-order-trend-summary`, `space-request-response`, `facilities-project-status-update` |
+
+Facilities went from **one** prompt to four. That was the largest coverage gap
+in the library — §4c named three Facilities topics and none of them had been
+written, because the external libraries do not cover the work.
+
+`contract-clause-plain-language` is deliberately constrained: Tier 1 documents
+only, and the prompt itself forbids the model from evaluating the clause or
+proposing wording. A confident AI reading of a contract is a good way to talk
+yourself out of asking Procurement Services, so the prompt is built to get you
+there informed rather than to answer instead of them.
+
+The remaining §4c topics were already covered by screened imports and were not
+duplicated: SOP first draft, meeting notes to actions, policy plain-language
+summary, Excel formula explainer, position description, onboarding checklist,
+forecast assumptions, RFP requirements, sourcing justification, vendor emails.
+
+### Fixed in passing
+
+**Collapsed numbered lists in all three original playbooks.** A re-wrap had put
+`3.` after the end of the previous sentence on the same line, so steps 2–6 of
+the Excel, Word, and Outlook playbooks rendered as one run-on paragraph with
+the example prompts buried inside it. They are now real list items, and
+`test_numbered_steps_are_not_collapsed_into_a_paragraph` fails the build if it
+recurs. The first version of that test flagged nine false positives on ordinary
+prose like "never Tier 3. Consumer chatbots…", so it anchors on a sentence end
+rather than on any non-space character.
+
+Two further lint tests: practice material must name its document (an untitled
+`practice` source renders as the unhelpful "Open the document"), and every
+playbook must carry `sensitive-data` in `related_slugs` — the rule prompts
+already had, applied to the pages that walk somebody through putting real data
+into a tool.
+
 ## Still open
 
-1. **§7.3 playbooks** — one per Copilot app from §3a, plus the two §3d
-   documents as practice material. `mode: practice` is implemented and
-   validated but still unused. The review deprioritized *guidance*; playbooks
-   were never assigned either way.
-2. **§7.5 Learn page** and §7.2's "Getting an AI tool approved for your unit".
-   `copilot-studio.md` still wants to link the approval page.
-3. **§4c in-house prompts** — every new prompt is an import; none were authored
-   from scratch. Facilities and Real Estate is covered by a single file.
-4. **§6.1 follow-up** — the Provost's tools page still prints Tier 0–1 for
-   PromptLab. Worth asking that it be reconciled with the Library's figure, so
-   staff who check the Provost page do not see something different from what
-   Nimbus tells them.
-5. **§2 guidance** — eleven link entries, plus the two §7.2 pages ("Getting an
-   AI tool approved for your unit", "How to write a prompt" / CLEAR).
-   `copilot-studio.md` wants to link the approval-path page that does not exist
-   yet.
-6. **§5** — the training pointers (LinkedIn Learning, Microsoft Learn,
-   Library AI Studio, Carolina Talent, AI Acceleration).
+1. **§6.1 — the Provost's tools page still prints Tier 0–1 for PromptLab**,
+   against the Library's Tier 2. This is the one item that cannot be closed
+   from inside the repo: it needs the two University pages reconciled, so that
+   a member of staff who checks ai.unc.edu does not see something different
+   from what Nimbus tells them. Nimbus follows the Library and records why.
+   Note this is the *more permissive* reading — if the Provost's page turns out
+   to be current, the ceiling comes down and the 16 prompts that suggest
+   PromptLab need rechecking.
+
+2. **Nothing else from the catalog.** Every numbered item in §7 and every item
+   in §6 is closed. What remains is maintenance rather than import.
+
+### Worth doing next, though the catalog does not ask for it
+
+- **A staleness check on `source.retrieved`.** Fifteen guidance entries now
+  summarize pages that change under them, and nothing currently notices when a
+  summary is a year old. The field is there; only the check is missing.
+- **A duplication pass over the imports.** §4a suggested "roughly 20–25" from
+  the Microsoft repo and 36 were taken. Now that the in-house prompts cover the
+  same departments, some of those are probably near-duplicates of each other.

@@ -5,7 +5,7 @@ title: How to write a prompt (the CLEAR framework)
 summary: The campus framework for writing prompts that work — concise, logical,
   explicit, adaptive, reflective — plus where to find more prompts to start from.
 tags: [prompting, clear, ai-literacy, library]
-related_slugs: [sensitive-data, copilot-chat, microsoft-365-copilot]
+related_slugs: [sensitive-data, copilot-chat, microsoft-365-copilot, learn-ai-at-unc]
 featured: true
 published: true
 source:

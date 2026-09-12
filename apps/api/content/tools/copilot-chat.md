@@ -5,7 +5,7 @@ title: Microsoft 365 Copilot Chat (with Data Protection)
 summary: The University's general-purpose AI chat assistant, free to anyone with
   an Onyen. Approved for Tier 1 and Tier 2 data; never Tier 3 or PHI.
 tags: [copilot, microsoft-365, chat, approved, its]
-related_slugs: [sensitive-data, microsoft-365-copilot, promptlab]
+related_slugs: [sensitive-data, microsoft-365-copilot, promptlab, ai-data-privacy, copilot-data-privacy]
 featured: true
 published: true
 source:

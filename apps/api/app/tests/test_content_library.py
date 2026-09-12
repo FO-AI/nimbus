@@ -1,9 +1,10 @@
 """Lint the shipped content library under `apps/api/content/`.
 
-The library is hand-authored markdown — 70-odd files after the resource
-catalog import — so the failure modes are editorial, not logical: a typo in a
-`related_slugs` entry, a body link to a page that was renamed, an imported
-prompt whose licence line was dropped. The sync reports per-file schema
+The library is hand-authored markdown — nearly a hundred files once the
+resource catalog was fully imported — so the failure modes are editorial, not
+logical: a typo in a `related_slugs` entry, a body link to a page that was
+renamed, an imported prompt whose licence line was dropped, a re-wrap that
+turns a numbered list into a paragraph. The sync reports per-file schema
 errors; these tests cover the cross-file invariants it cannot see.
 """
 from __future__ import annotations
@@ -178,3 +179,50 @@ def test_prompt_departments_use_the_documented_vocabulary(library):
         }
     )
     assert unexpected == []
+
+
+def test_practice_material_names_the_document(library):
+    """`mode: practice` renders "Open the document" without a title.
+
+    Practice items exist to send a reader to a specific public document; an
+    untitled link tells them nothing about what they are about to download.
+    """
+    untitled = sorted(
+        item.slug
+        for item in library
+        if item.source.get("mode") == "practice" and not item.source.get("title")
+    )
+    assert untitled == []
+
+
+def test_every_playbook_links_the_data_guidance(library):
+    """A playbook walks somebody through putting real data into a tool.
+
+    The tier rules have to be one click away from that, the same way they are
+    from every prompt.
+    """
+    missing = sorted(
+        i.slug
+        for i in library
+        if i.kind == "playbook" and "sensitive-data" not in i.related_slugs
+    )
+    assert missing == []
+
+
+def test_numbered_steps_are_not_collapsed_into_a_paragraph(library):
+    """A step marker mid-line renders as prose, not as a numbered step.
+
+    Three playbooks shipped this way: a re-wrap put "3." after the end of the
+    previous sentence on the same line, so six steps rendered as one run-on
+    paragraph with the prompts buried inside it.
+
+    The match has to start at a sentence end — "never Tier 3. Consumer
+    chatbots…" is ordinary prose, not a collapsed list, and an earlier
+    version of this test flagged nine of those.
+    """
+    collapsed = sorted(
+        (item.slug, match.group(0).strip()[:60])
+        for item in library
+        for match in re.finditer(r"[.!?:][ \t]+\d+\.[ \t]+[A-Z*\[\"]", item.body_md)
+    )
+    assert collapsed == []

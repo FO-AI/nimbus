@@ -5,7 +5,7 @@ title: PromptLab (University Library)
 summary: Free Library-run access to several leading AI models — GPT, Gemini, and
   Claude — for anyone with an Onyen. Useful when you want to compare models.
 tags: [promptlab, library, approved, models]
-related_slugs: [sensitive-data, copilot-chat]
+related_slugs: [sensitive-data, copilot-chat, learn-ai-at-unc, practice-annual-report-qa]
 published: true
 source:
   mode: link

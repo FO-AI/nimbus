@@ -138,8 +138,11 @@ prompt (resource catalog §4b).
 `app/tests/test_content_library.py` lints this directory as part of the normal
 test run: every `related_slugs` entry and internal body link must resolve, every
 imported item must carry its licence and attribution, every linked item must name
-its publisher, and every prompt must have copyable text, a tool, and a link to
-`sensitive-data`.
+its publisher, every `practice` item must name the document it points at, every
+prompt must have copyable text, a real `tool_slug`, and links to both
+`sensitive-data` and `how-to-write-a-prompt`, every playbook must link
+`sensitive-data`, and a numbered list must not have been re-wrapped into a
+paragraph.
 
 Run `make content-sync` (or `python -m app.services.content_sync` from
 `apps/api`) to sync manually; it exits non-zero if any file is invalid, so it

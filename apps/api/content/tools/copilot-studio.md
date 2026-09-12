@@ -5,7 +5,7 @@ title: Microsoft Copilot Studio (custom agents)
 summary: Build a custom AI agent over your unit's own documents — for example a
   policy Q&A assistant. Available by request through the AI Acceleration Program.
 tags: [copilot, agents, copilot-studio, by-request, ai-acceleration]
-related_slugs: [sensitive-data, microsoft-365-copilot]
+related_slugs: [sensitive-data, microsoft-365-copilot, getting-a-tool-approved, software-vendor-risk-assessment]
 published: true
 source:
   mode: link
@@ -50,5 +50,7 @@ AI Usage Guidance permits, regardless of how the agent is built.
 
 Go through the [AI Acceleration Program](https://aiacceleration.unc.edu/).
 If the agent will touch data from a vendor system or anything above Tier 2,
-it also needs the [risk assessment path](/guides/sensitive-data) — ISO
-review and Data Governance Oversight Group approval — before it goes live.
+it also needs the full approval path —
+[getting an AI tool approved for your unit](/guides/getting-a-tool-approved)
+sets out who reviews it, in what order, and what to have ready before you
+start.

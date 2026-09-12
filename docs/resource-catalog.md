@@ -10,11 +10,13 @@ Scope: UNC-Chapel Hill resources only, filtered to what Finance & Operations sta
 | **Practice** | Public UNC document used as safe, Tier 0 material inside a playbook exercise. |
 | **Import** | Openly licensed prompt library (§4a only). Prompts are copied, re-voiced for UNC, and carry attribution in frontmatter. |
 
-> **Import status (2026-09-08).** Sprint 1 of §7 is done, on the priorities set
-> in the catalog review: tools imported in link mode, guidance deprioritized,
-> prompts fully imported with the schema reshaped. See
-> `docs/resource-catalog-import-log.md` for exactly what landed, what was
-> screened out and why, and what is still open.
+> **Import status (2026-09-11). The catalog is fully imported.** Sprint 1
+> (2026-09-08) took tools and prompts; sprint 2 took the guidance §2
+> deprioritized then, the remaining §3a playbooks, the §3d practice material,
+> the §4c in-house prompts, and the §5 training page. Every numbered item in
+> §7 is now closed. See `docs/resource-catalog-import-log.md` for what landed
+> in each pass, what was screened out and why, and the one item that remains
+> open because it needs somebody outside Nimbus to act (§6.1).
 
 ---
 
@@ -147,17 +149,29 @@ Prompt topics to author for the library where the imports leave gaps, by F&O dep
 
 ## 6. Confirm before publishing
 
-1. ~~**PromptLab data tier**~~ — **resolved 2026-09-08: Tier 1 and 2**, following the Library compare page over ai.unc.edu/tools, since the Library runs the service. Recorded in `content/tools/promptlab.md`; the Provost page is still unreconciled.
-2. **Copilot tier wording**: ITS says "no Tier 3 / PHI"; ai.unc.edu says "Tier 1 & 2". Use one phrasing everywhere: "Tier 1 and 2; never Tier 3."
-3. **No numbered University GenAI policy exists**; governance is the Provost's Staff Generative AI Usage Guidance. Nimbus should say so rather than imply a policy.
-4. **Public records**: prompts, outputs, and Zoom AI summaries are public records — include in the sensitive-data guidance page, not only in the Zoom tool entry.
-5. **Existing content**: `microsoft-365-copilot.md` uses `its-copilot@unc.edu` and "low or moderate sensitivity". Replace with the ITS contact on https://its.unc.edu/ai/copilot/ and the Tier vocabulary; split into two entries (Copilot Chat vs licensed M365 Copilot) since access differs.
-6. **Adobe Firefly** is listed by ITS but has little F&O use; include for completeness or omit.
+All six are settled. Only §6.1 has anything left to do, and that is a request to another office rather than a change here.
 
-## 7. Suggested first import sprint
+1. ~~**PromptLab data tier**~~ — **resolved 2026-09-08: Tier 1 and 2**, following the Library compare page over ai.unc.edu/tools, since the Library runs the service. Recorded in `content/tools/promptlab.md`. **Still open externally:** the Provost's tools page prints Tier 0–1, so a member of staff who checks it sees something different from what Nimbus says. Worth asking that the two be reconciled. Note Nimbus took the *more permissive* reading — if the Provost's page turns out to be current, the ceiling comes down and the 16 prompts suggesting PromptLab need rechecking.
+2. ~~**Copilot tier wording**~~ — **resolved.** "Tier 1 and 2; never Tier 3" is the only phrasing used, in tool entries, guidance, and prompt warnings.
+3. ~~**No numbered University GenAI policy exists**~~ — **resolved.** `content/guidance/staff-ai-usage-guidance.md` states plainly that there is no numbered policy and that the Provost's guidance is the governance.
+4. ~~**Public records**~~ — **resolved.** In `sensitive-data.md`, in the Zoom tool entry, in the Teams playbook, and now with its own page over the School of Government's analysis (`ai-and-public-records`).
+5. ~~**Existing content**~~ — **resolved 2026-09-08.** Split into `copilot-chat` and `microsoft-365-copilot`; the invented contact replaced with the ITS Help Portal route; "low or moderate sensitivity" gone.
+6. ~~**Adobe Firefly**~~ — **resolved 2026-09-08:** included, and the entry says plainly that F&O use is narrow.
 
-1. Tools: six entries from §1, each with `related_slugs: [sensitive-data]`.
-2. Guidance: rewrite `sensitive-data.md` around Tiers 0–3, the Staff GenAI Usage Guidance prohibitions, public records, and the ISO→DGOG intake path; add "Getting an AI tool approved for your unit" and "How to write a prompt" (CLEAR).
-3. Playbooks: one per Copilot app from §3a using the scenario-page step pattern, with the two §3d documents as practice material.
-4. Prompts: import ~35 screened prompts from the three §4a libraries (Copilot repo first, then UK hub, then Wharton), re-voiced for UNC with attribution; author the §4c gaps in-house; link Prompt Gallery and CLEAR from each.
-5. Training: a single "Learn" page pointing to §5, with the two ITS-recommended LinkedIn Learning courses first.
+## 7. Import sprints — complete
+
+1. ~~Tools: six entries from §1, each with `related_slugs: [sensitive-data]`.~~ **Done, sprint 1.**
+2. ~~Guidance: rewrite `sensitive-data.md` around Tiers 0–3 … add "Getting an AI tool approved for your unit" and "How to write a prompt" (CLEAR).~~ **Done.** `sensitive-data.md` rewritten and `how-to-write-a-prompt` added in sprint 1; `getting-a-tool-approved` plus the eleven §2 link entries in sprint 2. Guidance went 1 → 15 entries.
+3. ~~Playbooks: one per Copilot app from §3a … with the two §3d documents as practice material.~~ **Done, sprint 2.** Teams, PowerPoint, and Pages/Notebooks/Loop join the existing Excel, Word, and Outlook playbooks; the Budget Book and the ACFR are now `mode: practice` exercises. Playbooks went 3 → 8.
+4. ~~Prompts: import ~35 screened prompts from the three §4a libraries … author the §4c gaps in-house; link Prompt Gallery and CLEAR from each.~~ **Done.** 54 imported in sprint 1 (Prompt Gallery and CLEAR linked from every prompt, enforced by the library lint); the eight §4c in-house prompts authored in sprint 2. Prompts went 6 → 68.
+5. ~~Training: a single "Learn" page pointing to §5, with the two ITS-recommended LinkedIn Learning courses first.~~ **Done, sprint 2** — `content/guidance/learn-ai-at-unc.md`.
+
+### A note on §3a and import mode
+
+§3a marks the Copilot how-tos "Link", but the Nimbus playbooks are kept as
+`mode: original` with the Microsoft page linked from the body instead. A
+`link` source block renders "This page summarizes guidance published by
+Microsoft. Where the two differ, the original is correct" — which is wrong for
+a page carrying UNC's own tier rules and public-records warnings. Microsoft is
+the authority on where the button is, not on what a UNC employee may put into
+it. The outbound link is what §3a was protecting, and every playbook has one.

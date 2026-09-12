@@ -5,7 +5,7 @@ title: Zoom AI Companion
 summary: Meeting summaries and action items inside Zoom, off by default. Anything
   it produces is a public record — tell participants before you turn it on.
 tags: [zoom, meetings, transcription, public-records, its]
-related_slugs: [sensitive-data, meeting-notes-to-actions]
+related_slugs: [sensitive-data, meeting-notes-to-actions, ai-and-public-records, copilot-teams-meeting-recap]
 published: true
 source:
   mode: link
@@ -37,9 +37,11 @@ wants to be the person typing instead of participating.
 **Tell the participants.** Summaries and transcripts are generated from what
 everyone in the meeting says, and people should know before they speak.
 
-**Assume it is a public record.** Under G.S. 132-1, an AI-generated meeting
-summary created on a University account is a public record like any other
-document — subject to retention rules and to release on request. That
+**Assume it is a public record** — see
+[AI and the Public Records Act](/guides/ai-and-public-records). Under
+G.S. 132-1, an AI-generated meeting summary created on a University account is
+a public record like any other document — subject to retention rules and to
+release on request. That
 changes what belongs in the meeting, not just what belongs in the notes. Do
 not enable it for conversations about personnel matters, contract
 negotiations still under seal, or anything you would not want read back
