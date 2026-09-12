@@ -91,6 +91,6 @@ test("both desktop headers expose navigation without disclosure buttons", async 
     "aria-current",
     "page",
   );
-  await expect(page.getByRole("link", { name: /^Usage/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Activity/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });

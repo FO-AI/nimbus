@@ -54,7 +54,7 @@ test("ask a grounded question and get citations", async ({ page }) => {
 
 test("insights reflects the activity above", async ({ page }) => {
   await page.goto("/insights");
-  await expect(page.getByRole("heading", { name: "Usage" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Activity" })).toBeVisible();
   await expect(page.getByText("Published guides")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Projects by status" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Most copied/ })).toBeVisible();

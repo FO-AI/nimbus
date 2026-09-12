@@ -3,13 +3,47 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { nimbusNavigationItems } from "@/components/AppNavBar";
-import { ResponsiveNavBar } from "@/components/ResponsiveNavBar";
+import { ResponsiveNavBar, type ResponsiveNavItem } from "@/components/ResponsiveNavBar";
 
 const navigation = vi.hoisted(() => ({ pathname: "/home" }));
 
 vi.mock("next/navigation", () => ({
   usePathname: () => navigation.pathname,
 }));
+
+/** A grouped bar, for the dropdown behaviour Nimbus's own flat bar does not use. */
+const groupedNavigationItems: ResponsiveNavItem[] = [
+  { href: "/home", label: "Home", match: "exact" },
+  {
+    label: "Resources",
+    items: [
+      {
+        href: "/guides",
+        label: "Guides",
+        match: "prefix",
+        description: "How to do a task with AI",
+      },
+      {
+        href: "/prompts",
+        label: "Prompts",
+        match: "prefix",
+        description: "Ready-made instructions",
+      },
+    ],
+  },
+];
+
+function GroupedNav() {
+  return (
+    <ResponsiveNavBar
+      ariaLabel="Grouped navigation"
+      brand={<a href="/home">Test brand</a>}
+      items={groupedNavigationItems}
+      desktopBreakpoint="lg"
+      renderAuthActions={() => null}
+    />
+  );
+}
 
 function TestNav({ onAction = vi.fn() }: { onAction?: () => void }) {
   return (
@@ -102,17 +136,30 @@ describe("ResponsiveNavBar", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("lists Guides and Prompts as described sub-items of a Resources group in the stacked panel", () => {
-    render(<TestNav />);
+  it("lists a group's items as described sub-items in the stacked panel", () => {
+    render(<GroupedNav />);
 
     const group = screen.getByRole("group", { name: "Resources" });
     expect(within(group).getByRole("link", { name: /^Guides/ })).toHaveTextContent(
-      "How to do a task with AI, what's allowed, and which tools are approved",
+      "How to do a task with AI",
     );
     expect(within(group).getByRole("link", { name: /^Prompts/ })).toHaveTextContent(
-      "Ready-made instructions you can copy into an AI tool",
+      "Ready-made instructions",
     );
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
+  it("gives every Nimbus destination a description, so no label is a bare word", () => {
+    render(<TestNav />);
+
+    for (const item of nimbusNavigationItems) {
+      if ("items" in item) continue;
+      expect(item.description, `${item.label} has no description`).toBeTruthy();
+      expect(screen.getByRole("link", { name: new RegExp(`^${item.label}`) })).toHaveAttribute(
+        "title",
+        item.description,
+      );
+    }
   });
 
   it.each([
@@ -121,10 +168,10 @@ describe("ResponsiveNavBar", () => {
     ["/guides/budget-variance", /^Guides/],
     ["/prompts", /^Prompts/],
     ["/prompts/month-end", /^Prompts/],
-    ["/projects", /^Projects/],
-    ["/projects/42", /^Projects/],
-    ["/ask", /^Ask Nimbus/],
-    ["/insights", /^Usage/],
+    ["/projects", /^AI projects/],
+    ["/projects/42", /^AI projects/],
+    ["/ask", /^Ask/],
+    ["/insights", /^Activity/],
     ["/profile", /^Profile/],
   ])("marks %s as the %s page", (pathname, label) => {
     navigation.pathname = pathname;
@@ -145,13 +192,12 @@ describe("ResponsiveNavBar", () => {
       render(<TestNav />);
 
       expect(screen.queryByRole("link", { current: "page" })).not.toBeInTheDocument();
-      expect(resourcesTrigger()).not.toHaveAttribute("data-active");
     },
   );
 
   describe("Resources dropdown", () => {
     it("is a closed menu button by default", () => {
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       const trigger = resourcesTrigger();
       expect(trigger).toHaveAttribute("aria-haspopup", "menu");
@@ -161,7 +207,7 @@ describe("ResponsiveNavBar", () => {
 
     it("toggles on click and lists described menu items", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       await user.click(resourcesTrigger());
 
@@ -171,10 +217,8 @@ describe("ResponsiveNavBar", () => {
       expect(trigger).toHaveAttribute("aria-controls", menu.id);
       const items = within(menu).getAllByRole("menuitem");
       expect(items.map((item) => item.getAttribute("href"))).toEqual(["/guides", "/prompts"]);
-      expect(items[0]).toHaveTextContent(
-        "How to do a task with AI, what's allowed, and which tools are approved",
-      );
-      expect(items[1]).toHaveTextContent("Ready-made instructions you can copy into an AI tool");
+      expect(items[0]).toHaveTextContent("How to do a task with AI");
+      expect(items[1]).toHaveTextContent("Ready-made instructions");
 
       await user.click(trigger);
       expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -183,7 +227,7 @@ describe("ResponsiveNavBar", () => {
 
     it("opens on hover and closes once the pointer leaves", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       await user.hover(resourcesTrigger());
       expect(screen.getByRole("menu")).toBeInTheDocument();
@@ -194,7 +238,7 @@ describe("ResponsiveNavBar", () => {
 
     it("opens with Enter, moves with arrow keys, and Escape returns focus to the trigger", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       resourcesTrigger().focus();
       await user.keyboard("{Enter}");
@@ -221,7 +265,7 @@ describe("ResponsiveNavBar", () => {
 
     it("opens with Space and ArrowDown, and ArrowUp lands on the last item", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       resourcesTrigger().focus();
       await user.keyboard(" ");
@@ -235,7 +279,7 @@ describe("ResponsiveNavBar", () => {
 
     it("closes when focus tabs out of the menu", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       resourcesTrigger().focus();
       await user.keyboard("{Enter}");
@@ -248,7 +292,7 @@ describe("ResponsiveNavBar", () => {
 
     it("closes on an outside click", async () => {
       const user = userEvent.setup();
-      render(<TestNav />);
+      render(<GroupedNav />);
 
       await user.click(resourcesTrigger());
       expect(screen.getByRole("menu")).toBeInTheDocument();
@@ -262,7 +306,7 @@ describe("ResponsiveNavBar", () => {
       async (pathname) => {
         navigation.pathname = pathname;
         const user = userEvent.setup();
-        render(<TestNav />);
+        render(<GroupedNav />);
 
         const trigger = resourcesTrigger();
         expect(trigger).toHaveAttribute("data-active", "true");
