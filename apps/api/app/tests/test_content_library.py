@@ -209,20 +209,33 @@ def test_every_playbook_links_the_data_guidance(library):
     assert missing == []
 
 
-def test_numbered_steps_are_not_collapsed_into_a_paragraph(library):
-    """A step marker mid-line renders as prose, not as a numbered step.
+# Markdown that only works at the start of a line: a step marker, a bullet, a
+# heading. Each pattern requires a sentence end before it, so ordinary prose
+# ("never Tier 3. Consumer chatbots…") is not mistaken for a collapsed list —
+# an earlier version without that anchor flagged nine such false positives.
+_COLLAPSED_BLOCK_RES = (
+    re.compile(r"[.!?:][ \t]+\d+\.[ \t]+[A-Z*\[\"]"),   # 1. numbered step
+    re.compile(r"[.!?:][ \t]+[-*][ \t]+[A-Z\[]"),        # - bullet
+    re.compile(r"[.!?:][ \t]+#{1,4}[ \t]+[A-Z]"),        # ## heading
+)
 
-    Three playbooks shipped this way: a re-wrap put "3." after the end of the
-    previous sentence on the same line, so six steps rendered as one run-on
-    paragraph with the prompts buried inside it.
 
-    The match has to start at a sentence end — "never Tier 3. Consumer
-    chatbots…" is ordinary prose, not a collapsed list, and an earlier
-    version of this test flagged nine of those.
+def test_block_markdown_is_not_collapsed_into_a_paragraph(library):
+    """A step, bullet, or heading marker mid-line renders as literal text.
+
+    Two separate re-wraps shipped this way. Three playbooks had a numbered
+    list flattened — "…click inside your table. 2. Open Copilot" — so six
+    steps rendered as one run-on paragraph with the example prompts buried in
+    it. Appending the CLEAR link in the §4b pass flattened a prompt's whole
+    closing section, leaving a visible "## How to adapt it -" mid-sentence.
+
+    Both were invisible in review because the frontmatter and the links were
+    all still valid; only the rendered page was wrong.
     """
     collapsed = sorted(
         (item.slug, match.group(0).strip()[:60])
         for item in library
-        for match in re.finditer(r"[.!?:][ \t]+\d+\.[ \t]+[A-Z*\[\"]", item.body_md)
+        for pattern in _COLLAPSED_BLOCK_RES
+        for match in pattern.finditer(item.body_md)
     )
     assert collapsed == []

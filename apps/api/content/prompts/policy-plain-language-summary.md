@@ -34,15 +34,17 @@ attributes:
 When announcing a new or revised policy and you need the staff-facing
 summary for an email, intranet page, or team meeting.
 
+## How to adapt it
+
+- Only paste policies that are already internal-public. For drafts still
+  under review, check with the policy owner first.
+- New to prompting, or not getting what you need?
+  [How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
+  framework and the Microsoft Prompt Gallery.
+
 ## What to check
 
 - Quoted deadlines and effective dates against the original — these must be
   exact.
 - The obligations list with the policy owner before publishing; a summary
   that omits an obligation is worse than no summary.
-
-Only paste policies that are already internal-public. For drafts under
-review, check with the policy owner first. ## How to adapt it - New to
-prompting, or not getting what you need?
-[How to write a prompt](/guides/how-to-write-a-prompt) covers the CLEAR
-framework and the Microsoft Prompt Gallery.
