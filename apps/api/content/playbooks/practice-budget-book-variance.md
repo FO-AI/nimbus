@@ -7,7 +7,6 @@ summary: A hands-on exercise using UNC's published Annual Operating Budget Book
   University numbers without risking anything.
 tags: [practice, exercise, excel, word, budget, copilot, training]
 related_slugs: [copilot-excel-budget-variance, budget-variance-narrative, sensitive-data, learn-ai-at-unc]
-featured: true
 published: true
 source:
   mode: practice
@@ -36,7 +35,7 @@ minutes end to end.
 ## Prerequisites
 
 - A Microsoft 365 Copilot license for the Excel and Word steps
-  ([Copilot Chat](/guides/copilot-chat) alone covers steps 1 and 2)
+  ([Copilot Chat](/guides/copilot-chat) alone covers steps 1 to 3)
 - The budget book PDF, downloaded from the link above
   (index: [budget.unc.edu/budget-book](https://budget.unc.edu/budget-book/))
 

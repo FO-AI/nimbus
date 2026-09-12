@@ -36,9 +36,11 @@ attributes:
     terms to look up.
 ---
 
-> **Tier 1 documents only.** Vendor-confidential terms, anything under an NDA,
-> and anything marked confidential are Tier 2 and do not go into a general
-> chat. See [what data can I put into an AI tool](/guides/sensitive-data).
+> **Standard, non-confidential documents only.** Vendor-confidential terms and
+> anything under an NDA are Tier 2, which an approved tool can take — but the
+> agreement itself may forbid disclosing the text, and an external obligation
+> overrides the tier. Check the document before you paste it. See
+> [what data can I put into an AI tool](/guides/sensitive-data).
 
 ## When to use this
 
@@ -49,9 +51,11 @@ service — the documents that are not confidential and are still hard to read.
 
 ## How to adapt it
 
-- **Check the tier before you paste.** A signed agreement with negotiated
-  pricing is Tier 2. A standard terms document published on a vendor's
-  website is not. If you are unsure, that means don't.
+- **Check the obligation, not just the tier.** A standard terms document
+  published on a vendor's website is Tier 1 and fine. A signed agreement with
+  negotiated pricing is Tier 2 — an approved tool can hold that, but a
+  confidentiality clause in the agreement can still forbid it. The contract
+  outranks the classification. If you are unsure, that means don't.
 - One clause at a time. Pasting a whole agreement produces a summary, which
   is exactly the level of detail that causes the misunderstanding you are
   trying to avoid.

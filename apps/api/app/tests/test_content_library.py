@@ -210,13 +210,20 @@ def test_every_playbook_links_the_data_guidance(library):
 
 
 # Markdown that only works at the start of a line: a step marker, a bullet, a
-# heading. Each pattern requires a sentence end before it, so ordinary prose
-# ("never Tier 3. Consumer chatbots…") is not mistaken for a collapsed list —
-# an earlier version without that anchor flagged nine such false positives.
+# heading.
+#
+# Steps and bullets need a sentence end before them, because a digit or a dash
+# mid-sentence is usually just prose — "never Tier 3. Consumer chatbots…" is
+# not a collapsed list, and an early version without that anchor flagged nine
+# such false positives. The anchor is why they only catch a block flattened
+# onto the end of a *sentence*, not onto a line that ran out of room.
+#
+# A heading marker needs no anchor: "##" surrounded by spaces mid-line is
+# never prose, so this one catches a flattened heading wherever it landed.
 _COLLAPSED_BLOCK_RES = (
     re.compile(r"[.!?:][ \t]+\d+\.[ \t]+[A-Z*\[\"]"),   # 1. numbered step
     re.compile(r"[.!?:][ \t]+[-*][ \t]+[A-Z\[]"),        # - bullet
-    re.compile(r"[.!?:][ \t]+#{1,4}[ \t]+[A-Z]"),        # ## heading
+    re.compile(r"\S[ \t]+#{1,6}[ \t]+\S"),               # ## heading
 )
 
 
@@ -239,3 +246,26 @@ def test_block_markdown_is_not_collapsed_into_a_paragraph(library):
         for match in pattern.finditer(item.body_md)
     )
     assert collapsed == []
+
+
+def test_prompt_text_is_a_block_scalar(library):
+    """The copyable prompt lives in `attributes.prompt`, which the lint above
+    never sees — it reads `body_md` only.
+
+    `prompt: |` preserves newlines. Written as a plain scalar instead, PyYAML
+    folds them, and the numbered steps inside the prompt reach the Copy button
+    as one line — the same collapse the body lint exists to catch, in the one
+    field the reader actually pastes.
+
+    This checks the raw frontmatter rather than the parsed value on purpose:
+    by the time folding has happened the newlines are gone, so the parsed text
+    no longer carries evidence that it was ever a list.
+    """
+    block_scalar = re.compile(r"^\s*prompt:\s*[|>]", re.MULTILINE)
+    folded = sorted(
+        item.slug
+        for item in library
+        if item.kind == "prompt"
+        and not block_scalar.search((CONTENT_DIR / item.source_path).read_text())
+    )
+    assert folded == []

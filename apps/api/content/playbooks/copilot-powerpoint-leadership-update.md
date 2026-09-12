@@ -10,8 +10,9 @@ related_slugs: [microsoft-365-copilot, sensitive-data, copilot-word-report-first
 published: true
 ---
 
-> **Before you start:** if your source document contains personnel detail or
-> anything above Tier 2, deal with that before Copilot reads it — see
+> **Before you start:** Tier 1 and 2; never Tier 3. Copilot reads the whole
+> source document, so anything Tier 3 in it — bank details, an SSN, PHI — has
+> to come out of the file first, not just out of the slides. See
 > [what data can I put into an AI tool](/guides/sensitive-data).
 
 ## What you'll do

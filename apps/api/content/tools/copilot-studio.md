@@ -49,8 +49,9 @@ AI Usage Guidance permits, regardless of how the agent is built.
 ## How to request one
 
 Go through the [AI Acceleration Program](https://aiacceleration.unc.edu/).
-If the agent will touch data from a vendor system or anything above Tier 2,
-it also needs the full approval path —
+If the agent will hold Tier 2 material — personnel or student records,
+vendor-confidential documents — or pull from a vendor system, it also needs
+the full approval path —
 [getting an AI tool approved for your unit](/guides/getting-a-tool-approved)
 sets out who reviews it, in what order, and what to have ready before you
 start.

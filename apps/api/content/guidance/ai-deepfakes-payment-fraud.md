@@ -6,7 +6,6 @@ summary: Voice cloning and executive impersonation are now cheap. The controls
   that still work are procedural, and they belong in the teams that move money.
 tags: [security, fraud, accounts-payable, payroll, travel, its]
 related_slugs: [sensitive-data, ai-data-privacy, staff-ai-usage-guidance]
-featured: true
 published: true
 source:
   mode: link

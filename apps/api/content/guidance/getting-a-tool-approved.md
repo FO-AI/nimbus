@@ -7,7 +7,6 @@ summary: The path from "we want to try this" to a tool your unit can actually
   answer.
 tags: [approval, procurement, risk-assessment, iso, dgog, governance]
 related_slugs: [sensitive-data, software-vendor-risk-assessment, staff-ai-usage-guidance, copilot-studio]
-featured: true
 published: true
 ---
 
@@ -20,7 +19,8 @@ published: true
   documents
 
 The last one has its own front door (the AI Acceleration Program) but still
-lands on this path if it touches data above Tier 1.
+lands on this path if the agent will hold Tier 2 material — personnel or
+student records, vendor-confidential documents — or pull from a vendor system.
 
 ## Step 0 — check whether you need a new tool at all
 
@@ -45,9 +45,14 @@ data flow — where data goes, how it is secured, whether the vendor trains on
 it, what the contract says. See
 [software and vendor risk assessment](/guides/software-vendor-risk-assessment).
 
-**4. Data Governance Oversight Group.** Required where sensitive data is
-involved. DGOG approval is what makes a Tier 2 use legitimate; no individual
-can authorize it on their own.
+**4. Data Governance Oversight Group.** Required where the new tool will hold
+sensitive data. DGOG approval is what puts Tier 2 data into a tool that does
+not already carry that rating; no individual can authorize it on their own.
+
+This step is about approving the *tool*. It does not apply to the tools
+already in the registry — Copilot is approved for Tier 1 and 2, so using it
+within that rating needs no further sign-off. See
+[the tier table](/guides/sensitive-data).
 
 **5. Procurement.** Once it is approved, the purchase follows the normal path.
 
