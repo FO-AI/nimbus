@@ -15,6 +15,7 @@ import {
   EmptyState,
   Field,
   FilterChip,
+  FilterGroup,
   Input,
   PageHeader,
   Select,
@@ -98,11 +99,12 @@ function PromptsLibrary() {
         description="Reusable prompts you can copy, adapt, and paste into approved AI tools. Preview a prompt to read it first, or open it for usage notes, examples, and what to double-check in the output."
       />
 
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-sm">
+      <div className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-4">
         <Input
           className="max-w-md"
-          aria-label="Search prompts"
-          placeholder="Search prompts…"
+          type="search"
+          aria-label="Search prompts by title or summary"
+          placeholder="Search prompts by title or summary…"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -111,7 +113,7 @@ function PromptsLibrary() {
         />
 
         {departments.length > 0 ? (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by department">
+          <FilterGroup label="Team" hint="Who the prompt was written for">
             <FilterChip
               type="button"
               active={department === ALL}
@@ -129,7 +131,7 @@ function PromptsLibrary() {
                 {departmentLabel(d)}
               </FilterChip>
             ))}
-          </div>
+          </FilterGroup>
         ) : null}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:max-w-2xl">
@@ -192,14 +194,16 @@ function PromptsLibrary() {
                 return (
                 <Card
                   key={item.slug}
-                  className="relative flex min-h-64 flex-col gap-3 transition hover:-translate-y-0.5 hover:border-carolina hover:shadow-md"
+                  className="relative flex flex-col gap-2.5"
                 >
                   <div className="flex flex-wrap gap-2">
                     {itemDepartment ? (
                       <Badge variant="primary">{departmentLabel(itemDepartment)}</Badge>
                     ) : null}
                     <SourceBadge source={item.source} />
-                    {item.featured ? <Badge variant="featured">Featured</Badge> : null}
+                    {item.featured ? <Badge variant="featured" title="Picked out by the AI team as a good place to start">
+                      Featured
+                    </Badge> : null}
                   </div>
                   <h2 className="text-lg">
                     {/* Stretched link: the whole card opens the prompt, but the

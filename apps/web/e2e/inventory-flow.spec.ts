@@ -10,10 +10,10 @@ test("inventory, list, and archive an existing project", async ({ page }) => {
 
   await test.step("inventory an existing project", async () => {
     await page.goto("/projects");
-    await page.getByRole("link", { name: "Inventory existing project" }).click();
+    await page.getByRole("link", { name: "Add an existing project" }).click();
 
     await expect(
-      page.getByRole("heading", { name: "Inventory an existing project" }),
+      page.getByRole("heading", { name: "Add an existing project" }),
     ).toBeVisible();
     await page.getByLabel(/Project name/).fill(projectName);
     await page
@@ -28,7 +28,7 @@ test("inventory, list, and archive an existing project", async ({ page }) => {
     await page.goto("/projects");
     const row = page.getByRole("row", { name: new RegExp(projectName) });
     await expect(row).toBeVisible();
-    await expect(row.getByText("Inventoried", { exact: true })).toBeVisible();
+    await expect(row.getByText("AI team", { exact: true })).toBeVisible();
   });
 
   await test.step("archive the project from its detail page", async () => {

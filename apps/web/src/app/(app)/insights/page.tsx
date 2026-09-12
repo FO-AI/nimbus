@@ -81,8 +81,8 @@ export default function InsightsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Insights"
-        description="How Nimbus is being used: published content, the project pipeline, and recent activity. Counts only — nothing here is tracked per person."
+        title="Usage"
+        description="How much Nimbus is being used: what's in the library, where AI projects stand, and recent activity. These are totals only — nothing here is tracked against an individual person."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">

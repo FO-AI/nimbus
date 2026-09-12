@@ -22,10 +22,10 @@ test.describe("Resources navigation", () => {
     // Each item carries the one-line description that makes the group legible.
     const menu = page.getByRole("menu", { name: "Resources" });
     await expect(menu.getByRole("menuitem", { name: /^Guides/ })).toContainText(
-      "Playbooks, guidance, and the tool registry",
+      "How to do a task with AI, what's allowed, and which tools are approved",
     );
     await expect(menu.getByRole("menuitem", { name: /^Prompts/ })).toContainText(
-      "Copy-paste prompts for everyday work",
+      "Ready-made instructions you can copy into an AI tool",
     );
 
     await page.getByRole("heading", { level: 1 }).click();
@@ -97,11 +97,11 @@ test("guide filters live in the URL and survive a back-navigation", async ({ pag
   await expect(page).toHaveURL(/\?kind=tool$/);
 
   // The 30-plus tag list is collapsed to the most common few behind a disclosure.
-  const tagFilters = page.getByRole("group", { name: "Filter by tag" });
+  const tagFilters = page.getByRole("group", { name: "Topic" });
   const tagChips = tagFilters.locator("button[aria-pressed]");
   await expect(tagChips).toHaveCount(8);
 
-  const disclosure = tagFilters.getByRole("button", { name: /^(More|Fewer) tags/ });
+  const disclosure = tagFilters.getByRole("button", { name: /^Show (all \d+ topics|fewer topics)/ });
   await expect(disclosure).toHaveAttribute("aria-expanded", "false");
   await disclosure.click();
   await expect(disclosure).toHaveAttribute("aria-expanded", "true");
@@ -120,7 +120,7 @@ test("guide filters live in the URL and survive a back-navigation", async ({ pag
 test("prompt filters survive a back-navigation and can be cleared", async ({ page }) => {
   await page.goto("/prompts");
 
-  const departmentFilters = page.getByRole("group", { name: "Filter by department" });
+  const departmentFilters = page.getByRole("group", { name: "Team" });
   await departmentFilters.getByRole("button").nth(1).click();
   await expect(page).toHaveURL(/\?department=/);
   const filteredCount = await page.getByText(/ prompts? of /).textContent();

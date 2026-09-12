@@ -2,7 +2,7 @@ import type { ProjectStatus } from "@/types";
 
 import { Badge } from "@/components/ui";
 
-const LABELS: Record<ProjectStatus, string> = {
+export const STATUS_LABELS: Record<ProjectStatus, string> = {
   proposed: "Proposed",
   idea: "Idea",
   pilot: "Pilot",
@@ -10,6 +10,17 @@ const LABELS: Record<ProjectStatus, string> = {
   paused: "Paused",
   done: "Done",
   rejected: "Rejected",
+};
+
+/** What each stage actually means, for hover on any status pill. */
+export const STATUS_HINTS: Record<ProjectStatus, string> = {
+  proposed: "Submitted by staff, waiting to be reviewed",
+  idea: "Reviewed and worth doing, but not started yet",
+  pilot: "Being trialled with a small group",
+  active: "In use day to day",
+  paused: "Stopped for now, may restart later",
+  done: "Finished and handed over",
+  rejected: "Reviewed and not going ahead",
 };
 
 export function StatusPill({ status }: { status: ProjectStatus }) {
@@ -24,5 +35,9 @@ export function StatusPill({ status }: { status: ProjectStatus }) {
             ? "danger"
             : "default";
 
-  return <Badge variant={variant}>{LABELS[status] ?? status}</Badge>;
+  return (
+    <Badge variant={variant} title={STATUS_HINTS[status]}>
+      {STATUS_LABELS[status] ?? status}
+    </Badge>
+  );
 }

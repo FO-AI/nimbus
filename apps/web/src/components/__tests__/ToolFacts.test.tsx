@@ -35,7 +35,7 @@ describe("ToolFacts", () => {
       }),
     );
 
-    expect(screen.getByText("approved")).toBeInTheDocument();
+    expect(screen.getByText("Approved")).toBeInTheDocument();
     expect(screen.getByText("Tier 1 and 2; never Tier 3")).toBeInTheDocument();
     expect(screen.getByText("Anyone with an active Onyen")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Open the tool/ })).toHaveAttribute(

@@ -23,7 +23,7 @@ describe("ErrorState", () => {
     const onRetry = vi.fn();
     render(<ErrorState error={new Error("nope")} onRetry={onRetry} />);
 
-    await userEvent.click(screen.getByRole("button", { name: /retry/i }));
+    await userEvent.click(screen.getByRole("button", { name: /try again/i }));
     expect(onRetry).toHaveBeenCalledOnce();
   });
 });

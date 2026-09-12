@@ -21,7 +21,7 @@ export function PublicNavBar() {
       desktopBreakpoint="md"
       brand={
         <Link href="/" className="flex items-center gap-3 text-navy hover:text-navy">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carolina text-sm font-bold text-navy shadow-sm">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carolina text-sm font-bold text-navy">
             F
           </span>
           <span className="text-lg font-semibold tracking-normal">FOAI</span>

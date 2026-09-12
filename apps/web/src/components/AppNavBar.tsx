@@ -6,8 +6,12 @@ import { ResponsiveNavBar, type ResponsiveNavItem } from "@/components/Responsiv
 import { Button } from "@/components/ui";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
+// Every destination carries a one-line description. Grouped items show it under
+// the label in the dropdown; top-level items show it on hover (and under the
+// label in the mobile panel), so no item in the bar is a bare word you have to
+// click to understand.
 export const nimbusNavigationItems: ResponsiveNavItem[] = [
-  { href: "/home", label: "Home", match: "exact" },
+  { href: "/home", label: "Home", match: "exact", description: "Start here" },
   {
     label: "Resources",
     items: [
@@ -15,20 +19,40 @@ export const nimbusNavigationItems: ResponsiveNavItem[] = [
         href: "/guides",
         label: "Guides",
         match: "prefix",
-        description: "Playbooks, guidance, and the tool registry",
+        description: "How to do a task with AI, what's allowed, and which tools are approved",
       },
       {
         href: "/prompts",
         label: "Prompts",
         match: "prefix",
-        description: "Copy-paste prompts for everyday work",
+        description: "Ready-made instructions you can copy into an AI tool",
       },
     ],
   },
-  { href: "/projects", label: "Projects", match: "prefix" },
-  { href: "/ask", label: "Ask", match: "exact" },
-  { href: "/insights", label: "Insights", match: "exact" },
-  { href: "/profile", label: "Profile", match: "exact" },
+  {
+    href: "/projects",
+    label: "Projects",
+    match: "prefix",
+    description: "What Finance & Operations is already doing with AI",
+  },
+  {
+    href: "/ask",
+    label: "Ask Nimbus",
+    match: "exact",
+    description: "Ask a question and get an answer with links to where it came from",
+  },
+  {
+    href: "/insights",
+    label: "Usage",
+    match: "exact",
+    description: "How much Nimbus is being used — counts only, never per person",
+  },
+  {
+    href: "/profile",
+    label: "Profile",
+    match: "exact",
+    description: "Your account and what you can do in Nimbus",
+  },
 ];
 
 export function AppNavBar() {
@@ -40,7 +64,7 @@ export function AppNavBar() {
       desktopBreakpoint="lg"
       brand={
         <Link href="/home" className="flex items-center gap-3 text-navy hover:text-navy">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carolina text-sm font-bold text-navy shadow-sm">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carolina text-sm font-bold text-navy">
             N
           </span>
           <span className="text-lg font-semibold tracking-normal">Nimbus</span>

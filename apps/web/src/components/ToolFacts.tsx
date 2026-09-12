@@ -18,6 +18,21 @@ function statusVariant(status: string) {
  * registry's most load-bearing field (the data tier) invisible to the person
  * deciding whether to paste something in.
  */
+/** Frontmatter ships these as slugs; "under-review" was rendering literally. */
+const TOOL_STATUS_LABELS: Record<string, string> = {
+  approved: "Approved",
+  pilot: "In pilot",
+  "under-review": "Under review",
+  retired: "Retired",
+};
+
+const TOOL_STATUS_HINTS: Record<string, string> = {
+  approved: "Cleared for Finance & Operations use, within the data rules below",
+  pilot: "Being trialled with a small group — check before relying on it",
+  "under-review": "Not yet cleared for use; the review is still in progress",
+  retired: "No longer supported. Do not start anything new with this tool.",
+};
+
 export function ToolFacts({ item }: { item: ContentDetail }) {
   const status = attr(item, "status");
   const access = attr(item, "access");
@@ -41,11 +56,15 @@ export function ToolFacts({ item }: { item: ContentDetail }) {
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
             Tool registry
           </span>
-          {status ? <Badge variant={statusVariant(status)}>{status}</Badge> : null}
+          {status ? (
+            <Badge variant={statusVariant(status)} title={TOOL_STATUS_HINTS[status]}>
+              {TOOL_STATUS_LABELS[status] ?? status}
+            </Badge>
+          ) : null}
         </div>
         {url ? (
           <ButtonLink href={url} target="_blank" rel="noreferrer noopener" size="sm">
-            Open the tool ↗
+            Open the tool ↗<span className="sr-only"> (opens in a new tab)</span>
           </ButtonLink>
         ) : null}
       </div>

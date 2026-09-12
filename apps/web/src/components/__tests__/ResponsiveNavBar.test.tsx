@@ -107,25 +107,25 @@ describe("ResponsiveNavBar", () => {
 
     const group = screen.getByRole("group", { name: "Resources" });
     expect(within(group).getByRole("link", { name: /^Guides/ })).toHaveTextContent(
-      "Playbooks, guidance, and the tool registry",
+      "How to do a task with AI, what's allowed, and which tools are approved",
     );
     expect(within(group).getByRole("link", { name: /^Prompts/ })).toHaveTextContent(
-      "Copy-paste prompts for everyday work",
+      "Ready-made instructions you can copy into an AI tool",
     );
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
   it.each([
-    ["/home", /^Home$/],
+    ["/home", /^Home/],
     ["/guides", /^Guides/],
     ["/guides/budget-variance", /^Guides/],
     ["/prompts", /^Prompts/],
     ["/prompts/month-end", /^Prompts/],
-    ["/projects", /^Projects$/],
-    ["/projects/42", /^Projects$/],
-    ["/ask", /^Ask$/],
-    ["/insights", /^Insights$/],
-    ["/profile", /^Profile$/],
+    ["/projects", /^Projects/],
+    ["/projects/42", /^Projects/],
+    ["/ask", /^Ask Nimbus/],
+    ["/insights", /^Usage/],
+    ["/profile", /^Profile/],
   ])("marks %s as the %s page", (pathname, label) => {
     navigation.pathname = pathname;
     render(<TestNav />);
@@ -171,8 +171,10 @@ describe("ResponsiveNavBar", () => {
       expect(trigger).toHaveAttribute("aria-controls", menu.id);
       const items = within(menu).getAllByRole("menuitem");
       expect(items.map((item) => item.getAttribute("href"))).toEqual(["/guides", "/prompts"]);
-      expect(items[0]).toHaveTextContent("Playbooks, guidance, and the tool registry");
-      expect(items[1]).toHaveTextContent("Copy-paste prompts for everyday work");
+      expect(items[0]).toHaveTextContent(
+        "How to do a task with AI, what's allowed, and which tools are approved",
+      );
+      expect(items[1]).toHaveTextContent("Ready-made instructions you can copy into an AI tool");
 
       await user.click(trigger);
       expect(trigger).toHaveAttribute("aria-expanded", "false");

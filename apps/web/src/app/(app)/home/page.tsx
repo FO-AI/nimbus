@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Badge, ButtonLink, Card, CardLink, EmptyState, PageHeader } from "@/components/ui";
@@ -17,66 +19,113 @@ const KIND_LABEL: Record<string, string> = {
   prompt: "Prompt",
 };
 
+/** What each content type actually is — the badges alone never said. */
+const KIND_HINT: Record<string, string> = {
+  playbook: "A step-by-step walkthrough of a specific task",
+  guidance: "University rules and policy, explained in plain language",
+  tool: "An approved AI tool: what it does and who can use it",
+  prompt: "Ready-made instructions you can copy into an AI tool",
+};
+
+/** Enough to show the shape of the library without becoming the whole library. */
+const FEATURED_LIMIT = 6;
+
 export default function HomePage() {
   const { items, loading, error, reload } = useContentList();
   const featured = items.filter((i) => i.featured);
+  const shown = featured.slice(0, FEATURED_LIMIT);
 
   return (
     <div className="space-y-8">
       <PageHeader
         eyebrow="UNC Finance & Operations"
-        title="AI enablement hub"
-        description="How-to guides, reusable prompts, and approved AI tools for Finance & Operations staff."
+        title="AI for Finance & Operations"
+        description="Everything staff need to use AI well at work: how-to guides, ready-made prompts, the tools you're approved to use, and what other teams are already doing."
       />
-      <Card className="flex flex-col gap-4 border-carolina/25 bg-surface sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg">Have a question?</h2>
-          <p className="mt-1 text-sm text-muted">
-            Ask the assistant from the guides, prompts, and project inventory, with sources cited.
-          </p>
-        </div>
-        <ButtonLink href="/ask">Ask Nimbus</ButtonLink>
-      </Card>
 
+      {/* Three destinations, then the two things you can do. Previously two
+          full-width call-to-action banners bracketed the destinations, which
+          buried the actual library under repeated prompting. */}
       <div className="grid gap-4 md:grid-cols-3">
         <CardLink href="/guides">
           <h2 className="text-lg">Guides</h2>
-          <p className="text-sm text-muted">Step-by-step playbooks and acceptable-use guidance.</p>
+          <p className="text-sm text-muted">
+            How to do a task with AI, what the University allows, and which tools are approved.
+          </p>
         </CardLink>
         <CardLink href="/prompts">
           <h2 className="text-lg">Prompt library</h2>
-          <p className="text-sm text-muted">Copy-paste prompts for everyday Finance &amp; Ops work.</p>
+          <p className="text-sm text-muted">
+            Ready-made instructions you can copy straight into an AI tool.
+          </p>
         </CardLink>
         <CardLink href="/projects">
-          <h2 className="text-lg">Project inventory</h2>
-          <p className="text-sm text-muted">AI projects and pilots across F&amp;O: status, owners, value.</p>
+          <h2 className="text-lg">AI projects</h2>
+          <p className="text-sm text-muted">
+            What other Finance &amp; Operations teams are already doing with AI.
+          </p>
         </CardLink>
       </div>
 
-      <Card className="flex flex-col gap-4 border-carolina/25 bg-gradient-to-br from-cloud to-surface sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg">Have an AI idea for your team?</h2>
-          <p className="mt-1 text-sm text-muted">
-            Propose a use case in two minutes — it goes straight to the inventory for review.
-          </p>
-        </div>
-        <ButtonLink href="/propose">Propose an AI use case</ButtonLink>
-      </Card>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card className="flex flex-col gap-3 border-carolina/30">
+          <div>
+            <h2 className="text-lg">Have a question?</h2>
+            <p className="mt-1 text-sm text-muted">
+              Ask in your own words. Every answer links to the page it came from, so you can check
+              it before you act on it.
+            </p>
+          </div>
+          <div className="mt-auto pt-1">
+            <ButtonLink href="/ask">Ask Nimbus</ButtonLink>
+          </div>
+        </Card>
+        <Card className="flex flex-col gap-3 border-carolina/30">
+          <div>
+            <h2 className="text-lg">Have an idea for your team?</h2>
+            <p className="mt-1 text-sm text-muted">
+              Tell us where AI might help. It takes about two minutes, and the AI team reviews every
+              suggestion.
+            </p>
+          </div>
+          <div className="mt-auto pt-1">
+            <ButtonLink variant="secondary" href="/propose">
+              Suggest an idea
+            </ButtonLink>
+          </div>
+        </Card>
+      </div>
 
       <section className="space-y-4">
-        <h2>Featured</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h2>Start with these</h2>
+          <Link className="text-sm font-medium" href="/guides">
+            Browse all guides →
+          </Link>
+        </div>
         {loading ? (
           <LoadingSpinner label="Loading…" />
         ) : error ? (
           <ErrorState error={error} onRetry={reload} />
-        ) : featured.length === 0 ? (
-          <EmptyState title="Nothing featured yet." />
+        ) : shown.length === 0 ? (
+          <EmptyState
+            title="Nothing highlighted yet"
+            action={
+              <ButtonLink variant="secondary" href="/guides">
+                Browse all guides
+              </ButtonLink>
+            }
+          >
+            Nothing has been picked out as a starting point yet — the full library is still there.
+          </EmptyState>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {featured.map((item) => (
+            {shown.map((item) => (
               <CardLink key={item.slug} href={itemHref(item)}>
                 <div>
-                  <Badge variant="primary">{KIND_LABEL[item.kind] ?? item.kind}</Badge>
+                  <Badge variant="primary" title={KIND_HINT[item.kind]}>
+                    {KIND_LABEL[item.kind] ?? item.kind}
+                  </Badge>
                 </div>
                 <h2 className="text-lg">{item.title}</h2>
                 <p className="text-sm text-muted">{item.summary}</p>

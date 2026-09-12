@@ -111,10 +111,24 @@ export function SourceNote({ source }: { source: SourceRef }) {
   );
 }
 
-/** Compact provenance marker for list cards. */
+/**
+ * Compact provenance marker for list cards. The badge word alone ("Adapted",
+ * "Practice") explained nothing until you opened the page and found the full
+ * source note, so each one now carries its explanation as a tooltip.
+ */
 export function SourceBadge({ source }: { source: SourceRef | null }) {
   if (!source) return null;
-  if (source.mode === "link") return <Badge>Links out</Badge>;
-  if (source.mode === "practice") return <Badge>Practice</Badge>;
-  return <Badge>Adapted</Badge>;
+  if (source.mode === "link")
+    return (
+      <Badge title="A short summary here; the full material lives on another website">
+        Links out
+      </Badge>
+    );
+  if (source.mode === "practice")
+    return (
+      <Badge title="A hands-on exercise using real, public University data">Practice</Badge>
+    );
+  return (
+    <Badge title="Based on an outside source, rewritten for Finance & Operations">Adapted</Badge>
+  );
 }

@@ -4,6 +4,7 @@ import { ConsoleSurface } from "@/components/ConsoleSurface";
 import { Badge, Button, ButtonLink, Card } from "@/components/ui";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useSignedInRedirect } from "@/lib/auth/useSignedInRedirect";
+import { SUPPORT_EMAIL } from "@/lib/config";
 
 const journeyStages = [
   {
@@ -214,7 +215,7 @@ function Contact() {
             <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-carolina">
               Email
             </p>
-            <p className="mt-1 text-lg font-semibold text-white">fo-ai-team@unc.edu</p>
+            <p className="mt-1 text-lg font-semibold text-white">{SUPPORT_EMAIL}</p>
             <p className="mt-4 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-carolina">
               Department
             </p>

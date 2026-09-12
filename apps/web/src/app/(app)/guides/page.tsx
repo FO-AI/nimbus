@@ -11,18 +11,28 @@ import {
   CardLink,
   EmptyState,
   FilterChip,
+  FilterGroup,
   Input,
   PageHeader,
 } from "@/components/ui";
 import { useContentList } from "@/lib/api/useContent";
+import { tagLabel } from "@/lib/contentAttributes";
 import { useQueryFilters } from "@/lib/useQueryFilters";
 import type { ContentKind } from "@/types";
 
-const KIND_FILTERS: { label: string; kind: ContentKind | null }[] = [
-  { label: "All", kind: null },
-  { label: "Playbooks", kind: "playbook" },
-  { label: "Guidance", kind: "guidance" },
-  { label: "Tools", kind: "tool" },
+const KIND_FILTERS: { label: string; kind: ContentKind | null; hint: string }[] = [
+  { label: "All", kind: null, hint: "Every guide, rule, and tool page" },
+  {
+    label: "Playbooks",
+    kind: "playbook",
+    hint: "Step-by-step walkthroughs of a specific task",
+  },
+  {
+    label: "Guidance",
+    kind: "guidance",
+    hint: "University rules and policy explained in plain language",
+  },
+  { label: "Tools", kind: "tool", hint: "An approved AI tool: what it does and who can use it" },
 ];
 
 const KIND_LABEL: Record<string, string> = {
@@ -30,6 +40,14 @@ const KIND_LABEL: Record<string, string> = {
   guidance: "Guidance",
   tool: "Tool",
   prompt: "Prompt",
+};
+
+/** The badge word alone never said what these types are. */
+const KIND_HINT: Record<string, string> = {
+  playbook: "A step-by-step walkthrough of a specific task",
+  guidance: "University rules and policy, explained in plain language",
+  tool: "An approved AI tool: what it does and who can use it",
+  prompt: "Ready-made instructions you can copy into an AI tool",
 };
 
 /** Enough tags to be useful at a glance without becoming a wall. */
@@ -103,26 +121,15 @@ function GuidesLibrary() {
     <div className="space-y-6">
       <PageHeader
         title="Guides"
-        description="Step-by-step playbooks, acceptable-use guidance, and the AI tool registry."
+        description="Three kinds of page: playbooks walk you through a task step by step, guidance explains what the University allows, and tool pages cover each approved AI tool and who can use it."
       />
 
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-sm">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by kind">
-          {KIND_FILTERS.map((f) => (
-            <FilterChip
-              key={f.label}
-              type="button"
-              active={kind === f.kind}
-              onClick={() => setFilters({ kind: f.kind })}
-            >
-              {f.label}
-            </FilterChip>
-          ))}
-        </div>
+      <div className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-4">
         <Input
           className="max-w-md"
-          aria-label="Search guides"
-          placeholder="Search guides…"
+          type="search"
+          aria-label="Search guides by title or summary"
+          placeholder="Search guides by title or summary…"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -130,39 +137,49 @@ function GuidesLibrary() {
           }}
         />
 
+        <FilterGroup label="Type" hint="What kind of page this is">
+          {KIND_FILTERS.map((f) => (
+            <FilterChip
+              key={f.label}
+              type="button"
+              active={kind === f.kind}
+              title={f.hint}
+              onClick={() => setFilters({ kind: f.kind })}
+            >
+              {f.label}
+            </FilterChip>
+          ))}
+        </FilterGroup>
+
         {tags.length > 0 ? (
-          <div className="flex flex-col gap-2" role="group" aria-label="Filter by tag">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
-              Filter by tag
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {primaryTags.map((t) => (
-                <TagChip key={t} tag={t} active={tag === t} onSelect={selectTag} />
-              ))}
-              {pinnedTag ? (
-                <TagChip tag={pinnedTag} active onSelect={selectTag} />
-              ) : null}
-              {moreTags.length > 0 ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  type="button"
-                  aria-expanded={showAllTags}
-                  aria-controls={allTagsId}
-                  onClick={() => setShowAllTags((v) => !v)}
-                >
-                  {showAllTags ? "Fewer tags" : `More tags (${moreTags.length})`}
-                </Button>
-              ) : null}
-            </div>
+          <FilterGroup label="Topic" hint="Pick one to narrow the list">
+            {primaryTags.map((t) => (
+              <TagChip key={t} tag={t} active={tag === t} onSelect={selectTag} />
+            ))}
+            {pinnedTag ? <TagChip tag={pinnedTag} active onSelect={selectTag} /> : null}
+            {moreTags.length > 0 ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                aria-expanded={showAllTags}
+                aria-controls={allTagsId}
+                onClick={() => setShowAllTags((v) => !v)}
+              >
+                {showAllTags ? "Show fewer topics" : `Show all ${tags.length} topics`}
+              </Button>
+            ) : null}
             {showAllTags && moreTags.length > 0 ? (
-              <div id={allTagsId} className="flex flex-wrap gap-2 border-t border-border pt-2">
+              <div
+                id={allTagsId}
+                className="mt-1 flex w-full flex-wrap gap-2 border-t border-border-subtle pt-3"
+              >
                 {moreTags.map((t) => (
                   <TagChip key={t} tag={t} active={tag === t} onSelect={selectTag} />
                 ))}
               </div>
             ) : null}
-          </div>
+          </FilterGroup>
         ) : null}
       </div>
 
@@ -200,9 +217,13 @@ function GuidesLibrary() {
               {visible.map((item) => (
                 <CardLink key={item.slug} href={`/guides/${item.slug}`}>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="primary">{KIND_LABEL[item.kind] ?? item.kind}</Badge>
+                    <Badge variant="primary" title={KIND_HINT[item.kind]}>
+                      {KIND_LABEL[item.kind] ?? item.kind}
+                    </Badge>
                     <SourceBadge source={item.source} />
-                    {item.featured ? <Badge variant="featured">Featured</Badge> : null}
+                    {item.featured ? <Badge variant="featured" title="Picked out by the AI team as a good place to start">
+                      Featured
+                    </Badge> : null}
                   </div>
                   <h2 className="text-lg">{item.title}</h2>
                   <p className="text-sm text-muted">{item.summary}</p>
@@ -231,9 +252,10 @@ function TagChip({
       type="button"
       active={active}
       aria-pressed={active}
+      title={active ? `Remove the ${tagLabel(tag)} filter` : `Show only ${tagLabel(tag)} guides`}
       onClick={() => onSelect(active ? null : tag)}
     >
-      {tag}
+      {tagLabel(tag)}
     </FilterChip>
   );
 }
