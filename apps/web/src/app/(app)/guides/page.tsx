@@ -17,38 +17,23 @@ import {
 } from "@/components/ui";
 import { useContentList } from "@/lib/api/useContent";
 import { tagLabel } from "@/lib/contentAttributes";
+import { KIND_FILTER_LABEL, KIND_HINT, KIND_LABEL } from "@/lib/contentKind";
 import { useQueryFilters } from "@/lib/useQueryFilters";
 import type { ContentKind } from "@/types";
 
+// Guides holds three of the four kinds; prompts have their own page. Labels
+// and hints come from the shared map so the chip, the badge on the card, and
+// the badge on the detail page cannot say three different things.
+const GUIDE_KINDS: ContentKind[] = ["playbook", "guidance", "tool"];
+
 const KIND_FILTERS: { label: string; kind: ContentKind | null; hint: string }[] = [
   { label: "All", kind: null, hint: "Every guide, rule, and tool page" },
-  {
-    label: "Playbooks",
-    kind: "playbook",
-    hint: "Step-by-step walkthroughs of a specific task",
-  },
-  {
-    label: "Guidance",
-    kind: "guidance",
-    hint: "University rules and policy explained in plain language",
-  },
-  { label: "Tools", kind: "tool", hint: "An approved AI tool: what it does and who can use it" },
+  ...GUIDE_KINDS.map((kind) => ({
+    label: KIND_FILTER_LABEL[kind],
+    kind,
+    hint: KIND_HINT[kind],
+  })),
 ];
-
-const KIND_LABEL: Record<string, string> = {
-  playbook: "Playbook",
-  guidance: "Guidance",
-  tool: "Tool",
-  prompt: "Prompt",
-};
-
-/** The badge word alone never said what these types are. */
-const KIND_HINT: Record<string, string> = {
-  playbook: "A step-by-step walkthrough of a specific task",
-  guidance: "University rules and policy, explained in plain language",
-  tool: "An approved AI tool: what it does and who can use it",
-  prompt: "Ready-made instructions you can copy into an AI tool",
-};
 
 /** Enough tags to be useful at a glance without becoming a wall. */
 const VISIBLE_TAG_COUNT = 8;
@@ -218,7 +203,7 @@ function GuidesLibrary() {
                 <CardLink key={item.slug} href={`/guides/${item.slug}`}>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="primary" title={KIND_HINT[item.kind]}>
-                      {KIND_LABEL[item.kind] ?? item.kind}
+                      {KIND_LABEL[item.kind]}
                     </Badge>
                     <SourceBadge source={item.source} />
                     {item.featured ? <Badge variant="featured" title="Picked out by the AI team as a good place to start">
@@ -251,7 +236,6 @@ function TagChip({
     <FilterChip
       type="button"
       active={active}
-      aria-pressed={active}
       title={active ? `Remove the ${tagLabel(tag)} filter` : `Show only ${tagLabel(tag)} guides`}
       onClick={() => onSelect(active ? null : tag)}
     >

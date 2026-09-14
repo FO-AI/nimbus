@@ -226,9 +226,9 @@ function Contact() {
         </div>
 
         <div>
-          <h2 className="text-2xl text-white sm:text-3xl">Propose an AI use case?</h2>
+          <h2 className="text-2xl text-white sm:text-3xl">Got an idea for your team?</h2>
           <p className="mt-3 text-base leading-7 text-cloud">
-            Please sign in to Nimbus and use the “Propose an AI use case” button.
+            Please sign in to Nimbus and use the “Suggest an idea” button.
           </p>
         </div>
       </div>

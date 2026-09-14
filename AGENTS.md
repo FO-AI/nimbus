@@ -102,11 +102,15 @@ differ in two places (`/insights` is "Activity", `/projects` is "AI projects").
 mapped from its stored value and documented in `docs/ui-vocabulary.md`, with the reasoning in
 `docs/adr/0005-plain-language-ui-vocabulary.md`. The audience is non-technical Finance &
 Operations staff, so no raw enum, slug, or identifier may reach a page (`under-review`, `its`,
-`inventoried` are stored values, never displayed ones), and no label stands without a one-line
-explanation on hover or beside it. **When you add a user-facing label, add the map in code and
-the row in `docs/ui-vocabulary.md`.** Display-label maps are exported where more than one place
-renders them — `STATUS_LABELS`/`STATUS_HINTS` in `components/StatusPill.tsx`, `tagLabel()` in
-`lib/contentAttributes.ts` — so filters, pills, and admin dropdowns cannot drift apart.
+`approved by request` are stored values, never displayed ones), and no label stands without a
+one-line explanation on hover or beside it. **When you add a user-facing label, add the map in
+code and the row in `docs/ui-vocabulary.md`.** Display-label maps are exported where more than
+one place renders them — `STATUS_LABELS`/`STATUS_HINTS` in `components/StatusPill.tsx`,
+`SOURCE_LABELS`/`SOURCE_HINTS` in `lib/projectSource.ts`, `KIND_LABEL`/`KIND_HINT`/
+`CITATION_LABEL` in `lib/contentKind.ts`, `tagLabel()` in `lib/contentAttributes.ts` — so
+filters, pills, badges, and admin dropdowns cannot drift apart.
+The tool-status map is closed and `apps/api/app/tests/test_content_library.py` fails the build
+on a shipped status it cannot label.
 
 ## Project structure
 

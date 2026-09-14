@@ -11,7 +11,7 @@ import { SourceNote, sourceNoteSlot } from "@/components/SourceNote";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
 import { useContentDetail } from "@/lib/api/useContent";
-import { attr } from "@/lib/contentAttributes";
+import { attr, tagLabel } from "@/lib/contentAttributes";
 import type { RelatedItem } from "@/types";
 
 function relatedHref(item: RelatedItem): string {
@@ -53,9 +53,7 @@ export default function PromptDetailPage() {
           )
         ) : null}
         {item.tags.map((t) => (
-          <Badge key={t}>
-            {t}
-          </Badge>
+          <Badge key={t}>{tagLabel(t)}</Badge>
         ))}
       </div>
 

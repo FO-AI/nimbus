@@ -21,6 +21,8 @@ class Citation(BaseModel):
 class AskResponse(BaseModel):
     answer: str
     citations: list[Citation]
-    # False when retrieval found nothing and the LLM was never called.
+    # True only when the answer cites at least one of the retrieved sources.
+    # False covers both "retrieval found nothing" and "the model answered
+    # without leaning on what we gave it"; the client warns on both.
     grounded: bool = True
     model: str | None = None

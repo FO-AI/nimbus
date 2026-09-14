@@ -11,16 +11,15 @@ function statusVariant(status: string) {
 }
 
 /**
- * The registry facts for a `kind: tool` page — status, who can use it, what
- * data it accepts, and who owns it.
- *
- * These live in `attributes` and had no rendering, which made the tool
- * registry's most load-bearing field (the data tier) invisible to the person
- * deciding whether to paste something in.
+ * Frontmatter ships these as slugs; "under-review" was rendering literally.
+ * The set is closed and `test_tool_status_is_one_the_ui_can_label` in
+ * `apps/api/app/tests/test_content_library.py` fails the build on a status
+ * with no entry here — an unmapped one used to reach readers as a raw slug
+ * with no tooltip, which is exactly what this map exists to prevent.
  */
-/** Frontmatter ships these as slugs; "under-review" was rendering literally. */
 const TOOL_STATUS_LABELS: Record<string, string> = {
   approved: "Approved",
+  "approved by request": "Approved on request",
   pilot: "In pilot",
   "under-review": "Under review",
   retired: "Retired",
@@ -28,11 +27,26 @@ const TOOL_STATUS_LABELS: Record<string, string> = {
 
 const TOOL_STATUS_HINTS: Record<string, string> = {
   approved: "Cleared for Finance & Operations use, within the data rules below",
+  "approved by request":
+    "Cleared for use, but you have to ask for access before you can start",
   pilot: "Being trialled with a small group — check before relying on it",
   "under-review": "Not yet cleared for use; the review is still in progress",
   retired: "No longer supported. Do not start anything new with this tool.",
 };
 
+/** Belt and braces for a status that slips past the library lint. */
+const UNKNOWN_STATUS_LABEL = "Status not confirmed";
+const UNKNOWN_STATUS_HINT =
+  "This tool's status has not been recorded. Check with the Finance & Operations AI team before using it.";
+
+/**
+ * The registry facts for a `kind: tool` page — status, who can use it, what
+ * data it accepts, and who owns it.
+ *
+ * These live in `attributes` and had no rendering, which made the tool
+ * registry's most load-bearing field (the data tier) invisible to the person
+ * deciding whether to paste something in.
+ */
 export function ToolFacts({ item }: { item: ContentDetail }) {
   const status = attr(item, "status");
   const access = attr(item, "access");
@@ -57,8 +71,11 @@ export function ToolFacts({ item }: { item: ContentDetail }) {
             Tool registry
           </span>
           {status ? (
-            <Badge variant={statusVariant(status)} title={TOOL_STATUS_HINTS[status]}>
-              {TOOL_STATUS_LABELS[status] ?? status}
+            <Badge
+              variant={TOOL_STATUS_LABELS[status] ? statusVariant(status) : "warning"}
+              title={TOOL_STATUS_HINTS[status] ?? UNKNOWN_STATUS_HINT}
+            >
+              {TOOL_STATUS_LABELS[status] ?? UNKNOWN_STATUS_LABEL}
             </Badge>
           ) : null}
         </div>

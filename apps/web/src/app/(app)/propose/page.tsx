@@ -60,15 +60,15 @@ export default function ProposePage() {
   if (submitted) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Thanks — proposal submitted" />
+        <PageHeader title="Thanks — your idea is in" />
         <Card className="space-y-5">
           <p>
-            <strong>{submitted.name}</strong> is now in the inventory as{" "}
-            <Badge variant="warning">Proposed</Badge> and will be reviewed by an admin.
-            You can follow its status on the projects page.
+            <strong>{submitted.name}</strong> is now on the AI projects list at stage{" "}
+            <Badge variant="warning">Proposed</Badge> and will be reviewed by the Finance &amp;
+            Operations AI team. You can follow it on the AI projects page.
           </p>
           <div className="flex flex-wrap gap-2">
-            <ButtonLink href={`/projects/${submitted.id}`}>View your proposal</ButtonLink>
+            <ButtonLink href={`/projects/${submitted.id}`}>View your idea</ButtonLink>
             <ButtonLink variant="secondary" href="/projects">
               All projects
             </ButtonLink>
@@ -117,7 +117,7 @@ export default function ProposePage() {
               onChange={(e) => setSummary(e.target.value)}
             />
           </Field>
-          <Field label="What would it save you? (optional)">
+          <Field label="Business value (optional)">
             <Textarea
               rows={2}
               placeholder="Time saved, errors avoided, faster turnaround…"
@@ -145,7 +145,7 @@ export default function ProposePage() {
 
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Submitting…" : "Submit proposal"}
+              {submitting ? "Submitting…" : "Submit idea"}
             </Button>
           </div>
         </form>

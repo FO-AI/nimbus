@@ -17,12 +17,9 @@ interface ErrorStateProps {
  * "Correlation ID:" that means nothing to a non-technical reader.
  */
 export function ErrorState({ error, onRetry, retryLabel = "Try again", hint }: ErrorStateProps) {
-  const message =
-    error instanceof ApiError
-      ? error.message
-      : error instanceof Error
-        ? error.message
-        : "Something went wrong.";
+  // The box already leads with "Something went wrong." An unknown throw has no
+  // message worth adding, so it contributes nothing rather than repeating it.
+  const message = error instanceof Error ? error.message : "";
   const correlationId = error instanceof ApiError ? error.correlationId : undefined;
 
   return (
@@ -30,7 +27,8 @@ export function ErrorState({ error, onRetry, retryLabel = "Try again", hint }: E
       className="rounded-xl border border-danger/20 bg-danger-bg px-4 py-3 text-sm text-danger"
       role="alert"
     >
-      <strong className="font-semibold">Something went wrong.</strong> {message}
+      <strong className="font-semibold">Something went wrong.</strong>
+      {message ? ` ${message}` : null}
       {hint ? <p className="mt-1 text-danger/85">{hint}</p> : null}
       {correlationId ? (
         <p className="mt-2 text-xs text-danger/75">

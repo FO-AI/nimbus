@@ -6,6 +6,7 @@ AIProvider constrained to that context, and every response carries citations.
 """
 from __future__ import annotations
 
+import re
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -47,6 +48,11 @@ FALLBACK_ANSWER = (
 
 _MAX_CONTEXT_CHARS_PER_SOURCE = 2400
 
+# The system prompt asks for inline [1], [2] markers against the numbered
+# context blocks. That marker is the only evidence we have that the answer
+# actually rests on what we retrieved.
+_CITATION_MARKER_RE = re.compile(r"\[(\d{1,2})\]")
+
 
 def ai_provider(settings: Annotated[Settings, Depends(get_settings)]) -> AIProvider:
     return get_ai_provider(settings)
@@ -73,6 +79,25 @@ def build_grounded_prompt(question: str, sources: list[RetrievedSource]) -> str:
     ]
     context = "\n\n---\n\n".join(blocks)
     return f"Context sources:\n\n{context}\n\n---\n\nQuestion: {question}"
+
+
+def cited_source_indexes(answer: str, source_count: int) -> list[int]:
+    """The 1-based context numbers the answer actually cites, in order.
+
+    Retrieval returning something is not the same as the answer resting on
+    it: the model can ignore the context and answer from its own weights.
+    `grounded` used to mean only "retrieval was non-empty", so it was True
+    for every generated answer and the ungrounded warning could never fire
+    on the case that needs it — a confident answer with nothing behind it.
+    """
+    seen: set[int] = set()
+    ordered: list[int] = []
+    for match in _CITATION_MARKER_RE.findall(answer):
+        index = int(match)
+        if 1 <= index <= source_count and index not in seen:
+            seen.add(index)
+            ordered.append(index)
+    return ordered
 
 
 def _citations(sources: list[RetrievedSource]) -> list[Citation]:
@@ -106,7 +131,12 @@ async def ask(
 
     if not sources:
         # Nothing relevant: don't burn an LLM call to say "I don't know".
-        record_event(db, action="ask.completed", actor=user, detail="grounded=false")
+        record_event(
+            db,
+            action="ask.completed",
+            actor=user,
+            detail=f"provider={provider.name} sources=0 cited=0 grounded=false",
+        )
         return AskResponse(answer=FALLBACK_ANSWER, citations=[], grounded=False)
 
     result = await provider.chat(
@@ -115,15 +145,25 @@ async def ask(
             ChatMessage(role="user", content=build_grounded_prompt(payload.question, sources)),
         ]
     )
+    cited = cited_source_indexes(result.content, len(sources))
+    grounded = bool(cited)
+
     record_event(
         db,
         action="ask.completed",
         actor=user,
-        detail=f"provider={provider.name} sources={len(sources)}",
+        detail=(
+            f"provider={provider.name} sources={len(sources)} "
+            f"cited={len(cited)} grounded={str(grounded).lower()}"
+        ),
     )
+    # Every retrieved source is still cited: narrowing the list to the ones the
+    # answer happened to mark would hide pages the reader may well want. What
+    # changes is how the client frames them — "where this answer came from"
+    # when grounded, "related pages you could check" when it is not.
     return AskResponse(
         answer=result.content,
         citations=_citations(sources),
-        grounded=True,
+        grounded=grounded,
         model=result.model,
     )

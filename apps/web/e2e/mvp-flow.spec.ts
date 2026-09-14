@@ -27,16 +27,14 @@ test("copy a prompt from the library", async ({ page, context }) => {
   await expect(page.getByRole("button", { name: /Copied/ }).first()).toBeVisible();
 });
 
-test("submit an AI use-case proposal", async ({ page }) => {
+test("suggest an AI idea", async ({ page }) => {
   await page.goto("/propose");
-  await page.getByLabel(/Name your idea/).fill("E2E test proposal");
+  await page.getByLabel(/Name your idea/).fill("E2E test idea");
   await page
     .getByLabel(/What problem would it solve/)
     .fill("Automated end-to-end verification of the intake flow.");
-  await page.getByRole("button", { name: "Submit proposal" }).click();
-  await expect(
-    page.getByRole("heading", { name: /proposal submitted/i }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Submit idea" }).click();
+  await expect(page.getByRole("heading", { name: /your idea is in/i })).toBeVisible();
 });
 
 test("ask a grounded question and get citations", async ({ page }) => {
@@ -56,6 +54,6 @@ test("insights reflects the activity above", async ({ page }) => {
   await page.goto("/insights");
   await expect(page.getByRole("heading", { name: "Activity" })).toBeVisible();
   await expect(page.getByText("Published guides")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Projects by status" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Projects by stage" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Most copied/ })).toBeVisible();
 });

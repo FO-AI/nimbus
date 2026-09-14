@@ -9,6 +9,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { STATUS_LABELS, StatusPill } from "@/components/StatusPill";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { SOURCE_HINTS, SOURCE_LABELS } from "@/lib/projectSource";
 import type { MeResponse, Project, ProjectStatus, ProjectWritePayload } from "@/types";
 
 const STATUSES: ProjectStatus[] = [
@@ -193,8 +194,11 @@ export default function ProjectDetailPage() {
 
       <div className="-mt-4 flex flex-wrap gap-2">
         <StatusPill status={project.status} />
-        <Badge variant={project.source === "inventoried" ? "primary" : "default"}>
-          {project.source === "inventoried" ? "Inventoried" : "Proposal"}
+        <Badge
+          variant={project.source === "inventoried" ? "primary" : "default"}
+          title={SOURCE_HINTS[project.source]}
+        >
+          {SOURCE_LABELS[project.source]}
         </Badge>
         {project.archivedAt ? <Badge variant="warning">Archived</Badge> : null}
         {project.department ? <Badge>{project.department}</Badge> : null}
@@ -280,7 +284,7 @@ export default function ProjectDetailPage() {
               />
             </Field>
 
-            <Field label="Expected value">
+            <Field label="Business value">
               <Textarea
                 rows={2}
                 placeholder="Time saved, errors avoided, faster turnaround…"
@@ -317,9 +321,11 @@ export default function ProjectDetailPage() {
             </Field>
 
             <Field
-              label={`Review notes ${
-                form.status === "rejected" ? "(required when rejecting)" : ""
-              }`}
+              label={
+                form.status === "rejected"
+                  ? "Review notes (required when rejecting)"
+                  : "Review notes"
+              }
             >
               <Textarea
                 rows={2}
@@ -367,7 +373,7 @@ export default function ProjectDetailPage() {
               <dd>{project.nextSteps || "—"}</dd>
               {project.triageNote ? (
                 <>
-                  <DetailTerm>Triage note</DetailTerm>
+                  <DetailTerm>Review notes</DetailTerm>
                   <dd>{project.triageNote}</dd>
                 </>
               ) : null}

@@ -8,6 +8,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
 import { Button, Card, FilterChip, Input, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { CITATION_LABEL, CITATION_LABEL_FALLBACK } from "@/lib/contentKind";
 import type { Citation } from "@/types";
 
 interface Turn {
@@ -23,15 +24,6 @@ const STARTER_QUESTIONS = [
   "What data can I put into an approved AI tool?",
   "Is there a prompt for drafting a vendor email?",
 ];
-
-/** Citations render the kind verbatim otherwise — "(playbook)", "(project)". */
-const CITATION_LABEL: Record<string, string> = {
-  playbook: "Playbook",
-  guidance: "Guidance",
-  tool: "Tool page",
-  prompt: "Prompt",
-  project: "AI project",
-};
 
 /** Short enough to allow "PTO?", long enough to reject a stray keystroke. */
 const MIN_QUESTION_LENGTH = 3;
@@ -128,23 +120,26 @@ export default function AskPage() {
                   <div className="whitespace-pre-wrap">{turn.content}</div>
                 )}
                 {turn.role === "assistant" && turn.grounded === false ? (
-                  // The API tells us when an answer is not backed by anything in
-                  // the library. Hiding that made an unsupported answer look
-                  // exactly like a cited one, on a page whose whole promise is
-                  // that answers are cited.
+                  // The API sets grounded=false when the answer cites none of
+                  // the pages behind it — whether retrieval came back empty or
+                  // the model answered from somewhere else. Hiding that made an
+                  // unsupported answer look exactly like a cited one, on a page
+                  // whose whole promise is that answers are cited.
                   <p className="mt-3 flex gap-2 rounded-lg border border-warning/30 bg-warning-bg px-3 py-2 text-xs text-warning">
                     <span aria-hidden="true">⚠</span>
                     <span>
-                      Nimbus could not find this in the library, so this answer is not backed by a
-                      Nimbus page. Please check with the Finance &amp; Operations AI team before
-                      acting on it.
+                      This answer is not backed by a Nimbus page — Nimbus could not tie it to
+                      anything in the library. Please check with the Finance &amp; Operations AI
+                      team before acting on it.
                     </span>
                   </p>
                 ) : null}
                 {turn.citations && turn.citations.length > 0 ? (
                   <div className="mt-3 flex flex-col gap-2">
                     <p className="text-xs font-semibold text-muted">
-                      Where this answer came from
+                      {turn.grounded === false
+                        ? "Related pages you could check"
+                        : "Where this answer came from"}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {turn.citations.map((c) => (
@@ -155,7 +150,7 @@ export default function AskPage() {
                         >
                           {c.title}
                           <span className="ml-1 font-normal text-muted">
-                            {CITATION_LABEL[c.kind] ?? c.kind}
+                            {CITATION_LABEL[c.kind] ?? CITATION_LABEL_FALLBACK}
                           </span>
                         </Link>
                       ))}
@@ -191,7 +186,7 @@ export default function AskPage() {
             ? "Looking through the Nimbus library…"
             : canAsk
               ? "Answers cite the Nimbus pages they came from."
-              : "Type your question above, then select Ask."}
+              : `Type at least ${MIN_QUESTION_LENGTH} characters above, then select Ask.`}
         </p>
         <p className="mt-1 text-xs text-muted">
           Nimbus answers from the guides, prompts, and AI projects on this site, and links to the

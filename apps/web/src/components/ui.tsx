@@ -132,6 +132,12 @@ export function Badge({
   );
 }
 
+/**
+ * A toggle chip. `active` is a pressed state, not just a colour: without
+ * `aria-pressed` a screen reader hears seven identical buttons and no way to
+ * tell which filter is on. Chips used as plain actions (the /ask starter
+ * questions) pass no `active` and stay ordinary buttons.
+ */
 export function FilterChip({
   active,
   className,
@@ -139,6 +145,7 @@ export function FilterChip({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (
     <button
+      aria-pressed={active}
       className={cn(
         "inline-flex min-h-8 items-center rounded-lg border px-3 py-1 text-sm font-medium transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2",

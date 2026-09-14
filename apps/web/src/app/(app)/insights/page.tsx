@@ -71,7 +71,7 @@ export default function InsightsPage() {
     })();
   }, [load]);
 
-  if (loading) return <LoadingSpinner label="Loading insights..." />;
+  if (loading) return <LoadingSpinner label="Loading activity…" />;
   if (error || !summary) return <ErrorState error={error} onRetry={load} />;
 
   const windowLabel = `last ${summary.windowDays} days`;
@@ -88,7 +88,7 @@ export default function InsightsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatTile label="Published guides" value={summary.publishedGuides} />
         <StatTile label="Prompts in the library" value={summary.publishedPrompts} />
-        <StatTile label="New proposals" value={summary.intakesLast30d} hint={windowLabel} />
+        <StatTile label="Ideas submitted" value={summary.intakesLast30d} hint={windowLabel} />
         <StatTile label="Prompt copies" value={summary.copiesLast30d} hint={windowLabel} />
         <StatTile label="Questions asked" value={summary.asksLast30d} hint={windowLabel} />
       </div>
@@ -96,14 +96,14 @@ export default function InsightsPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="text-lg">Projects by status</h2>
+            <h2 className="text-lg">Projects by stage</h2>
             <Link className="text-sm font-medium text-navy underline decoration-carolina/40" href="/projects">
-              View inventory
+              AI projects
             </Link>
           </div>
           {summary.projectsTotal === 0 ? (
             <EmptyState title="No projects yet.">
-              Proposals submitted via “Propose an AI use case” land here.
+              Ideas submitted via “Suggest an idea” land here.
             </EmptyState>
           ) : (
             <ul className="space-y-3">

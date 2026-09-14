@@ -44,6 +44,22 @@ describe("ToolFacts", () => {
     );
   });
 
+  it("labels a status the library actually ships", () => {
+    // copilot-studio.md carries `status: approved by request`, which had no
+    // entry and reached the reader as the raw stored string.
+    render(ToolFacts({ item: tool({ status: "approved by request", data_tier: "Tier 2" }) }));
+
+    expect(screen.getByText("Approved on request")).toBeInTheDocument();
+    expect(screen.queryByText("approved by request")).not.toBeInTheDocument();
+  });
+
+  it("never prints an unmapped status back at the reader", () => {
+    render(ToolFacts({ item: tool({ status: "sort-of-ok", data_tier: "Tier 2" }) }));
+
+    expect(screen.getByText("Status not confirmed")).toBeInTheDocument();
+    expect(screen.queryByText("sort-of-ok")).not.toBeInTheDocument();
+  });
+
   it("renders nothing when a page carries no registry attributes", () => {
     const { container } = render(ToolFacts({ item: tool({}) }));
     expect(container).toBeEmptyDOMElement();

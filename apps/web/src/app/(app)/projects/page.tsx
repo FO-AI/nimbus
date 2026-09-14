@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { StatusPill } from "@/components/StatusPill";
+import { STATUS_HINTS, STATUS_LABELS, StatusPill } from "@/components/StatusPill";
 import {
   Badge,
   Button,
@@ -18,33 +18,44 @@ import {
   PageHeader,
 } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { SOURCE_HINTS, SOURCE_LABELS } from "@/lib/projectSource";
 import type { MeResponse, Project, ProjectSource, ProjectStatus } from "@/types";
 
-const STATUS_FILTERS: { label: string; status: ProjectStatus | null; hint: string }[] = [
-  { label: "All", status: null, hint: "Every project, at any stage" },
-  { label: "Proposed", status: "proposed", hint: "Submitted by staff, waiting to be reviewed" },
-  { label: "Idea", status: "idea", hint: "Reviewed and worth doing, but not started yet" },
-  { label: "Pilot", status: "pilot", hint: "Being trialled with a small group" },
-  { label: "Active", status: "active", hint: "In use day to day" },
-  { label: "Paused", status: "paused", hint: "Stopped for now, may restart later" },
-  { label: "Done", status: "done", hint: "Finished and handed over" },
-  { label: "Rejected", status: "rejected", hint: "Reviewed and not going ahead" },
+const STAGE_ORDER: ProjectStatus[] = [
+  "proposed",
+  "idea",
+  "pilot",
+  "active",
+  "paused",
+  "done",
+  "rejected",
 ];
 
-// "Inventoried" was insider shorthand for "the AI team entered this themselves".
-// The labels now say who put the project here, which is the thing a reader
-// actually wants to know.
+// Derived, not retyped: these chips, the status pills in the table, and the
+// admin edit dropdown must say the same words, and a second copy of the
+// wording is how they drift apart.
+const STATUS_FILTERS: { label: string; status: ProjectStatus | null; hint: string }[] = [
+  { label: "All", status: null, hint: "Every project, at any stage" },
+  ...STAGE_ORDER.map((status) => ({
+    label: STATUS_LABELS[status],
+    status,
+    hint: STATUS_HINTS[status],
+  })),
+];
+
+// The badge word is what a reader sees on the row, so the chip uses the same
+// word and the hint carries the explanation.
 const SOURCE_FILTERS: { label: string; source: ProjectSource | null; hint: string }[] = [
   { label: "Any", source: null, hint: "However the project got onto this list" },
   {
-    label: "Submitted by staff",
+    label: SOURCE_LABELS.proposed,
     source: "proposed",
-    hint: "Someone proposed this through the Suggest an idea form",
+    hint: SOURCE_HINTS.proposed,
   },
   {
-    label: "Added by the AI team",
+    label: SOURCE_LABELS.inventoried,
     source: "inventoried",
-    hint: "Recorded directly by the Finance & Operations AI team",
+    hint: SOURCE_HINTS.inventoried,
   },
 ];
 
@@ -115,14 +126,27 @@ export default function ProjectsPage() {
     );
   }, [projects, status, department, source, search]);
 
-  const filtered =
-    status !== null || department !== null || source !== null || search.trim() !== "";
+  // The archived toggle changes what the request asks for, so it is a filter
+  // like any other and "Clear filters" has to reset it — it used to leave the
+  // list narrowed and the box ticked.
+  const hasActiveFilters =
+    status !== null ||
+    department !== null ||
+    source !== null ||
+    search.trim() !== "" ||
+    showArchived;
+
+  // Only the filters applied in the browser narrow the loaded list; the
+  // archived toggle re-fetches, so it changes both sides of "N of M" and
+  // saying "12 of 12" would be noise.
+  const narrowed = visible.length !== projects.length;
 
   const clearFilters = () => {
     setStatus(null);
     setDepartment(null);
     setSource(null);
     setSearch("");
+    setShowArchived(false);
   };
 
   return (
@@ -169,7 +193,7 @@ export default function ProjectsPage() {
           ))}
         </FilterGroup>
 
-        <FilterGroup label="How it got here" hint="Staff suggestion, or added by the AI team">
+        <FilterGroup label="How it got here" hint="A proposal from staff, or already in the inventory">
           {SOURCE_FILTERS.map((f) => (
             <FilterChip
               key={f.label}
@@ -189,7 +213,6 @@ export default function ProjectsPage() {
               <FilterChip
                 key={d}
                 type="button"
-                aria-pressed={department === d}
                 active={department === d}
                 title={department === d ? `Remove the ${d} filter` : `Show only ${d} projects`}
                 onClick={() => setDepartment(department === d ? null : d)}
@@ -220,30 +243,44 @@ export default function ProjectsPage() {
       ) : error ? (
         <ErrorState error={error} onRetry={load} />
       ) : visible.length === 0 ? (
-        <EmptyState
-          title="No projects match your filters"
-          action={
-            <Button variant="secondary" type="button" onClick={clearFilters}>
-              Clear filters
-            </Button>
-          }
-        >
-          <p>
-            Try clearing the filters above, or{" "}
-            <Link className="font-medium" href="/propose">
-              suggest an idea of your own
-            </Link>
-            .
-          </p>
-        </EmptyState>
+        // An unfiltered empty list is a new install, not a bad search: offering
+        // "Clear filters" there is a button that does nothing.
+        hasActiveFilters ? (
+          <EmptyState
+            title="No projects match your filters"
+            action={
+              <Button variant="secondary" type="button" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            }
+          >
+            <p>
+              Try clearing the filters above, or{" "}
+              <Link className="font-medium" href="/propose">
+                suggest an idea of your own
+              </Link>
+              .
+            </p>
+          </EmptyState>
+        ) : (
+          <EmptyState
+            title="No projects yet"
+            action={<ButtonLink href="/propose">Suggest an idea</ButtonLink>}
+          >
+            <p>
+              Nothing has been added to the register yet. Suggest the first one — it takes about
+              two minutes.
+            </p>
+          </EmptyState>
+        )
       ) : (
         <>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="text-sm text-muted" aria-live="polite">
             {visible.length} {visible.length === 1 ? "project" : "projects"}
-            {filtered ? ` of ${projects.length}` : ""}
+            {narrowed ? ` of ${projects.length}` : ""}
           </p>
-          {filtered ? (
+          {hasActiveFilters ? (
             <Button variant="ghost" size="sm" type="button" onClick={clearFilters}>
               Clear filters
             </Button>
@@ -277,13 +314,9 @@ export default function ProjectsPage() {
                     <Badge
                       className="ml-2"
                       variant={p.source === "inventoried" ? "primary" : "default"}
-                      title={
-                        p.source === "inventoried"
-                          ? "Recorded directly by the Finance & Operations AI team"
-                          : "Proposed by a member of staff"
-                      }
+                      title={SOURCE_HINTS[p.source]}
                     >
-                      {p.source === "inventoried" ? "AI team" : "Staff idea"}
+                      {SOURCE_LABELS[p.source]}
                     </Badge>
                     {p.archivedAt ? (
                       <Badge

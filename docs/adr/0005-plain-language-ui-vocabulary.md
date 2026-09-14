@@ -10,10 +10,10 @@ interface had grown from the inside out: labels were the names the code uses,
 on the assumption that a reader shares the authors' context. A walkthrough of
 every page against that reader found the same failure repeatedly.
 
-**Internal vocabulary reached the surface.** "Inventoried", "Needs triage",
-"Edit / triage", "Strategic category", "Correlation ID", and a field labelled
-"Subject" showing an Entra object GUID. Each is precise to whoever wrote it and
-opaque to whoever reads it.
+**Internal vocabulary reached the surface.** "Needs triage", "Edit / triage",
+"Strategic category", "Correlation ID", and a field labelled "Subject" showing
+an Entra object GUID. Each is precise to whoever wrote it and opaque to whoever
+reads it.
 
 **Raw stored values were printed verbatim.** Tool status rendered as
 `under-review`, hyphen and all. The admin edit dropdowns listed `proposed`,
@@ -43,7 +43,8 @@ on the page whose entire promise is that answers are cited.
 location in code live in [`docs/ui-vocabulary.md`](../ui-vocabulary.md), under
 four rules: name things by what they do for the reader; never let a label stand
 without a one-line explanation; never print a raw enum, slug or identifier; and
-keep the nav label, the page heading, and the links pointing there identical.
+build the nav label, the page heading, and the links pointing there on the same
+noun.
 
 **Display labels are mapped, and the maps are exported.** `STATUS_LABELS` and
 `STATUS_HINTS` come out of `StatusPill` so the filter chips, the pills, and the
@@ -61,6 +62,14 @@ two can change independently.
 
 **`/insights` is labelled "Activity", not "Usage"**, because "Usage" collided
 with "AI projects" — both read as *what is being used*.
+
+**"Proposal" and "Inventoried" stay** as the two `ProjectSource` badges. This
+pass first replaced them with "Staff idea" and "AI team", which reads as though
+the AI team thought the work up; the projects it records come from teams across
+Finance & Operations and the team only writes them down. Review reverted the
+rename on that basis, and the two words now live in `lib/projectSource.ts` with
+their explanations, exported so the list, the filters, the detail page, and the
+confirmation screen cannot disagree — which, before this, they did.
 
 **`/guides` stays "Guides", not "How-tos"**, because the section holds
 playbooks, University rules, and approved-tool pages; "How-tos" would name only

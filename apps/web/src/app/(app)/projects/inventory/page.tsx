@@ -17,6 +17,7 @@ import {
   Textarea,
 } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { SOURCE_HINTS, SOURCE_LABELS } from "@/lib/projectSource";
 import type { MeResponse, Project, ProjectStatus } from "@/types";
 import { STATUS_LABELS } from "@/components/StatusPill";
 
@@ -105,7 +106,7 @@ export default function InventoryProjectPage() {
   if (meLoaded && !me?.isAdmin) {
     return (
       <EmptyState title="Admin access required" action={<ButtonLink href="/projects">All projects</ButtonLink>}>
-        <p>Only admins can inventory existing projects.</p>
+        <p>Only admins can add an existing project to the inventory.</p>
       </EmptyState>
     );
   }
@@ -113,12 +114,14 @@ export default function InventoryProjectPage() {
   if (submitted) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Project added to the registry" />
+        <PageHeader title="Project added" />
         <Card className="space-y-5">
           <p>
-            <strong>{submitted.name}</strong> is now in the inventory as{" "}
-            <Badge variant="primary">Inventoried</Badge> and visible to everyone across Finance
-            &amp; Operations.
+            <strong>{submitted.name}</strong> is now on the AI projects list, badged{" "}
+            <Badge variant="primary" title={SOURCE_HINTS.inventoried}>
+              {SOURCE_LABELS.inventoried}
+            </Badge>{" "}
+            and visible to everyone across Finance &amp; Operations.
           </p>
           <div className="flex flex-wrap gap-2">
             <ButtonLink href={`/projects/${submitted.id}`}>View project</ButtonLink>
@@ -135,7 +138,7 @@ export default function InventoryProjectPage() {
     <div className="space-y-6">
       <PageHeader
         title="Add an existing project"
-        description="Add a project that's already underway (or finished) so it shows up in the registry — ownership, status, and timeline included."
+        description="Add a project that's already underway (or finished) so it shows up on the AI projects list — ownership, stage, and timeline included."
       />
 
       <Card className="max-w-2xl">
@@ -255,7 +258,7 @@ export default function InventoryProjectPage() {
 
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Adding…" : "Add to registry"}
+              {submitting ? "Adding…" : "Add to the inventory"}
             </Button>
             <ButtonLink variant="secondary" href="/projects">
               Cancel

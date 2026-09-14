@@ -6,26 +6,12 @@ import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Badge, ButtonLink, Card, CardLink, EmptyState, PageHeader } from "@/components/ui";
 import { useContentList } from "@/lib/api/useContent";
+import { KIND_HINT, KIND_LABEL } from "@/lib/contentKind";
 import type { ContentSummary } from "@/types";
 
 function itemHref(item: ContentSummary): string {
   return item.kind === "prompt" ? `/prompts/${item.slug}` : `/guides/${item.slug}`;
 }
-
-const KIND_LABEL: Record<string, string> = {
-  playbook: "Playbook",
-  guidance: "Guidance",
-  tool: "Tool",
-  prompt: "Prompt",
-};
-
-/** What each content type actually is — the badges alone never said. */
-const KIND_HINT: Record<string, string> = {
-  playbook: "A step-by-step walkthrough of a specific task",
-  guidance: "University rules and policy, explained in plain language",
-  tool: "An approved AI tool: what it does and who can use it",
-  prompt: "Ready-made instructions you can copy into an AI tool",
-};
 
 /** Enough to show the shape of the library without becoming the whole library. */
 const FEATURED_LIMIT = 6;
@@ -129,7 +115,7 @@ export default function HomePage() {
               <CardLink key={item.slug} href={itemHref(item)}>
                 <div>
                   <Badge variant="primary" title={KIND_HINT[item.kind]}>
-                    {KIND_LABEL[item.kind] ?? item.kind}
+                    {KIND_LABEL[item.kind]}
                   </Badge>
                 </div>
                 <h2 className="text-lg">{item.title}</h2>
