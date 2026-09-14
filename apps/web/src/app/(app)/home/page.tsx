@@ -99,9 +99,14 @@ export default function HomePage() {
       <section className="space-y-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2>Start with these</h2>
-          <Link className="text-sm font-medium" href="/guides">
-            Browse all guides →
-          </Link>
+          <div className="flex gap-3">
+            <Link className="text-sm font-medium" href="/guides">
+              Browse all guides →
+            </Link>
+            <Link className="text-sm font-medium" href="/prompts">
+              Browse all prompts →
+            </Link>
+          </div>
         </div>
         {loading ? (
           <LoadingSpinner label="Loading…" />
