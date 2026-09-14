@@ -5,7 +5,7 @@ title: Adobe Firefly (Creative Cloud)
 summary: Image generation trained on licensed and public-domain content, inside
   the UNC Creative Cloud subscription. Limited Finance & Operations use.
 tags: [adobe, images, creative-cloud, approved]
-related_slugs: [sensitive-data]
+related_slugs: [sensitive-data, ai-and-digital-accessibility, staff-ai-usage-guidance]
 published: true
 source:
   mode: link

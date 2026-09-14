@@ -5,7 +5,8 @@ title: What data can I put into an AI tool?
 summary: Plain-language version of UNC's data rules — the Tier 0–3
   classification, what's fine to paste into an approved tool, and what never is.
 tags: [data-classification, privacy, ferpa, acceptable-use, tiers, public-records]
-related_slugs: [copilot-chat, microsoft-365-copilot, promptlab]
+related_slugs: [copilot-chat, microsoft-365-copilot, promptlab, staff-ai-usage-guidance,
+  information-classification-standard, getting-a-tool-approved, ai-and-public-records]
 featured: true
 published: true
 ---
@@ -67,6 +68,9 @@ on an AI feature in a system you already use, it goes through the University
 Data Assistance form → Information Security Office review → the Data
 Governance Oversight Group. Start with your unit's Senior IT contact. Do not
 buy first.
+
+The full path, with what each reviewer asks for, is in
+[getting an AI tool approved for your unit](/guides/getting-a-tool-approved).
 
 ## The 10-second test
 

@@ -1,9 +1,10 @@
 """Lint the shipped content library under `apps/api/content/`.
 
-The library is hand-authored markdown — 70-odd files after the resource
-catalog import — so the failure modes are editorial, not logical: a typo in a
-`related_slugs` entry, a body link to a page that was renamed, an imported
-prompt whose licence line was dropped. The sync reports per-file schema
+The library is hand-authored markdown — nearly a hundred files once the
+resource catalog was fully imported — so the failure modes are editorial, not
+logical: a typo in a `related_slugs` entry, a body link to a page that was
+renamed, an imported prompt whose licence line was dropped, a re-wrap that
+turns a numbered list into a paragraph. The sync reports per-file schema
 errors; these tests cover the cross-file invariants it cannot see.
 """
 from __future__ import annotations
@@ -178,3 +179,93 @@ def test_prompt_departments_use_the_documented_vocabulary(library):
         }
     )
     assert unexpected == []
+
+
+def test_practice_material_names_the_document(library):
+    """`mode: practice` renders "Open the document" without a title.
+
+    Practice items exist to send a reader to a specific public document; an
+    untitled link tells them nothing about what they are about to download.
+    """
+    untitled = sorted(
+        item.slug
+        for item in library
+        if item.source.get("mode") == "practice" and not item.source.get("title")
+    )
+    assert untitled == []
+
+
+def test_every_playbook_links_the_data_guidance(library):
+    """A playbook walks somebody through putting real data into a tool.
+
+    The tier rules have to be one click away from that, the same way they are
+    from every prompt.
+    """
+    missing = sorted(
+        i.slug
+        for i in library
+        if i.kind == "playbook" and "sensitive-data" not in i.related_slugs
+    )
+    assert missing == []
+
+
+# Markdown that only works at the start of a line: a step marker, a bullet, a
+# heading.
+#
+# Steps and bullets need a sentence end before them, because a digit or a dash
+# mid-sentence is usually just prose — "never Tier 3. Consumer chatbots…" is
+# not a collapsed list, and an early version without that anchor flagged nine
+# such false positives. The anchor is why they only catch a block flattened
+# onto the end of a *sentence*, not onto a line that ran out of room.
+#
+# A heading marker needs no anchor: "##" surrounded by spaces mid-line is
+# never prose, so this one catches a flattened heading wherever it landed.
+_COLLAPSED_BLOCK_RES = (
+    re.compile(r"[.!?:][ \t]+\d+\.[ \t]+[A-Z*\[\"]"),   # 1. numbered step
+    re.compile(r"[.!?:][ \t]+[-*][ \t]+[A-Z\[]"),        # - bullet
+    re.compile(r"\S[ \t]+#{1,6}[ \t]+\S"),               # ## heading
+)
+
+
+def test_block_markdown_is_not_collapsed_into_a_paragraph(library):
+    """A step, bullet, or heading marker mid-line renders as literal text.
+
+    Two separate re-wraps shipped this way. Three playbooks had a numbered
+    list flattened — "…click inside your table. 2. Open Copilot" — so six
+    steps rendered as one run-on paragraph with the example prompts buried in
+    it. Appending the CLEAR link in the §4b pass flattened a prompt's whole
+    closing section, leaving a visible "## How to adapt it -" mid-sentence.
+
+    Both were invisible in review because the frontmatter and the links were
+    all still valid; only the rendered page was wrong.
+    """
+    collapsed = sorted(
+        (item.slug, match.group(0).strip()[:60])
+        for item in library
+        for pattern in _COLLAPSED_BLOCK_RES
+        for match in pattern.finditer(item.body_md)
+    )
+    assert collapsed == []
+
+
+def test_prompt_text_is_a_block_scalar(library):
+    """The copyable prompt lives in `attributes.prompt`, which the lint above
+    never sees — it reads `body_md` only.
+
+    `prompt: |` preserves newlines. Written as a plain scalar instead, PyYAML
+    folds them, and the numbered steps inside the prompt reach the Copy button
+    as one line — the same collapse the body lint exists to catch, in the one
+    field the reader actually pastes.
+
+    This checks the raw frontmatter rather than the parsed value on purpose:
+    by the time folding has happened the newlines are gone, so the parsed text
+    no longer carries evidence that it was ever a list.
+    """
+    block_scalar = re.compile(r"^\s*prompt:\s*[|>]", re.MULTILINE)
+    folded = sorted(
+        item.slug
+        for item in library
+        if item.kind == "prompt"
+        and not block_scalar.search((CONTENT_DIR / item.source_path).read_text())
+    )
+    assert folded == []

@@ -5,7 +5,9 @@ title: Microsoft 365 Copilot (licensed, inside the Office apps)
 summary: The paid Copilot license that works inside Word, Excel, Outlook, Teams,
   and PowerPoint and can read your own files. Requested through your unit's IT.
 tags: [copilot, microsoft-365, excel, word, outlook, licensed, its]
-related_slugs: [sensitive-data, copilot-chat, copilot-excel-budget-variance]
+related_slugs: [sensitive-data, copilot-chat, copilot-excel-budget-variance, copilot-data-privacy,
+  learn-ai-at-unc, copilot-teams-meeting-recap, copilot-powerpoint-leadership-update,
+  copilot-pages-shared-notes]
 featured: true
 published: true
 source:
