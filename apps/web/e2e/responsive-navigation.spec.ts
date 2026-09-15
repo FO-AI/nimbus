@@ -48,7 +48,10 @@ test("Nimbus navigation works at 390px and resets across the lg breakpoint", asy
   const toggle = page.locator('nav[aria-label="Nimbus navigation"] button[aria-controls]');
   await expect(toggle).toBeVisible();
   await toggle.click();
-  await expect(page.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("link", { name: /^Home/ })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
   await expectNoHorizontalOverflow(page);
 
   await page.setViewportSize({ width: 1100, height: 800 });
@@ -84,7 +87,10 @@ test("both desktop headers expose navigation without disclosure buttons", async 
 
   await page.goto("/home");
   await expect(page.getByRole("button", { name: "Open Nimbus navigation" })).toBeHidden();
-  await expect(page.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
-  await expect(page.getByRole("link", { name: "Insights" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Home/ })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(page.getByRole("link", { name: /^Activity/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });

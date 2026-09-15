@@ -129,6 +129,21 @@ def test_tools_declare_status_and_data_tier(library):
     assert incomplete == []
 
 
+# Mirrors TOOL_STATUS_LABELS in apps/web/src/components/ToolFacts.tsx and the
+# tool-status table in docs/ui-vocabulary.md. A status with no display label
+# reaches the reader as a raw slug, so a new one has to be added in all three.
+TOOL_STATUSES = {"approved", "approved by request", "pilot", "under-review", "retired"}
+
+
+def test_tool_status_is_one_the_ui_can_label(library):
+    unknown = sorted(
+        (i.slug, str(i.attributes.get("status")))
+        for i in library
+        if i.kind == "tool" and str(i.attributes.get("status")) not in TOOL_STATUSES
+    )
+    assert unknown == []
+
+
 def test_every_prompt_links_the_prompting_guidance(library):
     """§4b: every prompt page must reach the CLEAR framework in one click."""
     missing = sorted(

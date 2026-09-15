@@ -4,9 +4,10 @@ import { expect, test } from "@playwright/test";
 // disabled (see playwright.config.ts webServer env), so no Entra config is needed.
 test("home loads", async ({ page }) => {
   await page.goto("/home");
-  await expect(page.getByRole("heading", { name: "AI enablement hub" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Ask Nimbus" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Propose an AI use case" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI for Finance & Operations" })).toBeVisible();
+  const main = page.getByRole("main");
+  await expect(main.getByRole("link", { name: "Ask Nimbus" })).toBeVisible();
+  await expect(main.getByRole("link", { name: "Suggest an idea" })).toBeVisible();
 });
 
 // The redirect had unit coverage only. Auth is disabled here, so the dev
@@ -14,7 +15,7 @@ test("home loads", async ({ page }) => {
 test("the landing page sends a signed-in visitor into the app", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL(/\/home$/);
-  await expect(page.getByRole("heading", { name: "AI enablement hub" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI for Finance & Operations" })).toBeVisible();
 });
 
 test("public FOAI landing is still reachable with ?stay=1", async ({ page }) => {

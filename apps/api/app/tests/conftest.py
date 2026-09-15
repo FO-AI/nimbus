@@ -27,9 +27,12 @@ from app.db.session import get_db
 from app.main import app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def _engine():
-    # A single shared in-memory database for the whole test session.
+    # One in-memory database per test. It was shared for the whole session,
+    # which made every test that writes a row a possible cause of a failure
+    # somewhere else — test_insights asserts exact totals, so /ask's audit
+    # rows silently inflated its counts.
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},

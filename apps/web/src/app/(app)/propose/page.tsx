@@ -11,6 +11,7 @@ import {
   Field,
   Input,
   PageHeader,
+  RequiredLabel,
   Select,
   Textarea,
 } from "@/components/ui";
@@ -59,15 +60,15 @@ export default function ProposePage() {
   if (submitted) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Thanks — proposal submitted" />
+        <PageHeader title="Thanks — your idea is in" />
         <Card className="space-y-5">
           <p>
-            <strong>{submitted.name}</strong> is now in the inventory as{" "}
-            <Badge variant="warning">Proposed</Badge> and will be reviewed by an admin.
-            You can follow its status on the projects page.
+            <strong>{submitted.name}</strong> is now on the AI projects list at stage{" "}
+            <Badge variant="warning">Proposed</Badge> and will be reviewed by the Finance &amp;
+            Operations AI team. You can follow it on the AI projects page.
           </p>
           <div className="flex flex-wrap gap-2">
-            <ButtonLink href={`/projects/${submitted.id}`}>View your proposal</ButtonLink>
+            <ButtonLink href={`/projects/${submitted.id}`}>View your idea</ButtonLink>
             <ButtonLink variant="secondary" href="/projects">
               All projects
             </ButtonLink>
@@ -80,18 +81,18 @@ export default function ProposePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Propose an AI use case"
-        description="Have an idea where AI could help your team — or already experimenting? Tell us about it. Proposals go into the project inventory for review; no idea is too small."
+        title="Suggest an AI idea"
+        description="Where could AI save your team time? Tell us about it — it takes about two minutes. The Finance & Operations AI team reads every suggestion and will follow up with you. No idea is too small, and nothing here commits you to anything."
       />
 
-      <Card>
+      <Card className="max-w-2xl">
         <form className="space-y-5" onSubmit={onSubmit}>
-          <Field label="Name your idea *">
+          <Field label={<RequiredLabel>Name your idea</RequiredLabel>}>
             <Input
               required
               minLength={3}
               maxLength={256}
-              placeholder="e.g. AI-assisted invoice triage"
+              placeholder="e.g. Summarising travel reimbursement requests"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -106,7 +107,7 @@ export default function ProposePage() {
               ))}
             </Select>
           </Field>
-          <Field label="What problem would it solve? *">
+          <Field label={<RequiredLabel>What problem would it solve?</RequiredLabel>}>
             <Textarea
               required
               minLength={10}
@@ -116,7 +117,7 @@ export default function ProposePage() {
               onChange={(e) => setSummary(e.target.value)}
             />
           </Field>
-          <Field label="Expected value">
+          <Field label="Business value (optional)">
             <Textarea
               rows={2}
               placeholder="Time saved, errors avoided, faster turnaround…"
@@ -124,14 +125,14 @@ export default function ProposePage() {
               onChange={(e) => setBusinessValue(e.target.value)}
             />
           </Field>
-          <Field label="Tools involved">
+          <Field label="Tools involved (optional)">
             <Input
               placeholder="e.g. Microsoft 365 Copilot, Excel (comma-separated)"
               value={tools}
               onChange={(e) => setTools(e.target.value)}
             />
           </Field>
-          <Field label="Risks or concerns">
+          <Field label="Risks or concerns (optional)">
             <Textarea
               rows={2}
               placeholder="Sensitive data? Accuracy requirements? Anything to watch."
@@ -144,7 +145,7 @@ export default function ProposePage() {
 
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Submitting…" : "Submit proposal"}
+              {submitting ? "Submitting…" : "Submit idea"}
             </Button>
           </div>
         </form>

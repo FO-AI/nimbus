@@ -88,7 +88,7 @@ describe("PromptsPage", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "Tool" }), "Excel");
     await waitFor(() => expect(window.location.search).toBe("?department=Procurement&tool=Excel"));
 
-    await user.type(screen.getByRole("textbox", { name: "Search prompts" }), "bids");
+    await user.type(screen.getByRole("searchbox", { name: "Search prompts by title or summary" }), "bids");
     await waitFor(() => expect(window.location.search).toContain("q=bids"));
     expect(await screen.findByText("1 prompt of 3")).toBeInTheDocument();
   });

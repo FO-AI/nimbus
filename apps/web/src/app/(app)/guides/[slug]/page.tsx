@@ -10,6 +10,7 @@ import { SourceNote, sourceNoteSlot } from "@/components/SourceNote";
 import { ToolFacts } from "@/components/ToolFacts";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useContentDetail } from "@/lib/api/useContent";
+import { tagLabel } from "@/lib/contentAttributes";
 import type { RelatedItem } from "@/types";
 
 function relatedHref(item: RelatedItem): string {
@@ -40,9 +41,7 @@ export default function GuideDetailPage() {
       {item.tags.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {item.tags.map((t) => (
-            <Badge key={t}>
-              {t}
-            </Badge>
+            <Badge key={t}>{tagLabel(t)}</Badge>
           ))}
         </div>
       ) : null}

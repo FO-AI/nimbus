@@ -136,7 +136,7 @@ function ResponsiveNavBarContent({
           ref={toggleRef}
           type="button"
           className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface text-navy shadow-sm transition-colors",
+            "flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface text-navy transition-colors",
             "hover:border-carolina hover:bg-cloud",
             focusRing,
             styles.toggle,
@@ -207,8 +207,12 @@ function NavLink({
     <Link
       href={item.href}
       aria-current={active ? "page" : undefined}
+      // The description doubles as the hover tooltip on desktop, where a
+      // horizontal bar has no room to print it, and as visible sub-text in the
+      // stacked mobile panel, where it does.
+      title={item.description}
       className={cn(
-        "flex min-h-11 w-full items-center rounded-lg px-3 py-2 text-navy",
+        "flex min-h-11 w-full flex-col justify-center rounded-lg px-3 py-2 text-navy",
         focusRing,
         active ? "border border-carolina/35 bg-cloud" : "hover:bg-cloud",
         styles.link,
@@ -216,7 +220,12 @@ function NavLink({
       )}
       onClick={onNavigate}
     >
-      {item.label}
+      <span>{item.label}</span>
+      {item.description ? (
+        <span className={cn("text-xs font-normal text-muted", styles.mobileOnly)}>
+          {item.description}
+        </span>
+      ) : null}
     </Link>
   );
 }

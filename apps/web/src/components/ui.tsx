@@ -16,14 +16,13 @@ type ButtonVariant = "primary" | "secondary" | "ghost" | "success";
 type ButtonSize = "sm" | "md";
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary:
-    "border-carolina bg-carolina text-navy shadow-sm hover:bg-[#3f8fc5] focus-visible:ring-carolina",
+  primary: "border-carolina bg-carolina text-navy hover:border-[#3f8fc5] hover:bg-[#3f8fc5] focus-visible:ring-carolina",
   secondary:
-    "border-border bg-surface text-navy shadow-sm hover:border-carolina hover:bg-cloud focus-visible:ring-carolina",
+    "border-border bg-surface text-navy hover:border-carolina hover:bg-cloud focus-visible:ring-carolina",
   ghost:
     "border-transparent bg-transparent text-navy hover:bg-cloud focus-visible:ring-carolina",
   success:
-    "border-success bg-success text-white shadow-sm hover:bg-[#05603a] focus-visible:ring-success",
+    "border-success bg-success text-white hover:border-[#05603a] hover:bg-[#05603a] focus-visible:ring-success",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
@@ -43,7 +42,9 @@ export function buttonClassName({
   return cn(
     "inline-flex items-center justify-center gap-2 rounded-lg border font-semibold transition-colors",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-    "disabled:pointer-events-none disabled:opacity-55",
+    // A dimmed brand colour reads as "broken", not "unavailable". Disabled
+    // buttons drop to neutral grey so the state is unmistakable.
+    "disabled:pointer-events-none disabled:border-border disabled:bg-fog disabled:text-muted",
     buttonVariants[variant],
     buttonSizes[size],
     className,
@@ -78,7 +79,7 @@ export function ButtonLink({
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-xl border border-border bg-surface p-5 shadow-sm", className)}
+      className={cn("rounded-xl border border-border bg-surface p-5", className)}
       {...props}
     />
   );
@@ -91,8 +92,11 @@ export function CardLink({
   return (
     <Link
       className={cn(
-        "group flex min-h-40 flex-col gap-3 rounded-xl border border-border bg-surface p-5 text-foreground shadow-sm transition",
-        "hover:-translate-y-0.5 hover:border-carolina hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2",
+        // No fixed min-height: cards size to their content instead of padding
+        // short ones out with dead space. Hover is a colour change, not a lift.
+        "group flex flex-col gap-2.5 rounded-xl border border-border bg-surface p-5 text-foreground transition-colors",
+        "hover:border-carolina hover:bg-cloud/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2",
         className,
       )}
       {...props}
@@ -119,7 +123,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium",
+        "inline-flex items-center rounded-sm border px-2 py-0.5 text-xs font-medium",
         badgeVariants[variant],
         className,
       )}
@@ -128,6 +132,12 @@ export function Badge({
   );
 }
 
+/**
+ * A toggle chip. `active` is a pressed state, not just a colour: without
+ * `aria-pressed` a screen reader hears seven identical buttons and no way to
+ * tell which filter is on. Chips used as plain actions (the /ask starter
+ * questions) pass no `active` and stay ordinary buttons.
+ */
 export function FilterChip({
   active,
   className,
@@ -135,8 +145,9 @@ export function FilterChip({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (
     <button
+      aria-pressed={active}
       className={cn(
-        "inline-flex min-h-8 items-center rounded-full border px-3 py-1 text-sm font-medium transition-colors",
+        "inline-flex min-h-8 items-center rounded-lg border px-3 py-1 text-sm font-medium transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2",
         active
           ? "border-carolina bg-carolina text-navy"
@@ -148,8 +159,35 @@ export function FilterChip({
   );
 }
 
+/**
+ * A row of filter chips under a visible label. Filter rows used to carry only
+ * an `aria-label`, so a sighted user faced two or three undifferentiated rows
+ * of chips with no way to tell which axis each one filtered on.
+ */
+export function FilterGroup({
+  label,
+  hint,
+  children,
+  className,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-col gap-2", className)} role="group" aria-label={label}>
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{label}</span>
+        {hint ? <span className="text-xs text-muted/80">{hint}</span> : null}
+      </div>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+}
+
 const controlClassName =
-  "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-xs outline-none transition placeholder:text-muted/70 focus:border-carolina focus:ring-2 focus:ring-carolina/25 disabled:cursor-not-allowed disabled:bg-fog/40 disabled:opacity-70";
+  "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted/70 focus:border-carolina focus:ring-2 focus:ring-carolina/25 disabled:cursor-not-allowed disabled:bg-fog/40 disabled:opacity-70";
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   function Input({ className, ...props }, ref) {
@@ -189,6 +227,23 @@ export function Field({
       <span>{label}</span>
       {children}
     </label>
+  );
+}
+
+/**
+ * A bare `*` after a label assumes the reader knows the convention. This spells
+ * it out for sighted users on hover and for screen readers always, while
+ * keeping the asterisk that people who do know the convention scan for.
+ */
+export function RequiredLabel({ children }: { children: ReactNode }) {
+  return (
+    <>
+      {children}{" "}
+      <span className="font-normal text-danger" title="This one is required">
+        <span aria-hidden="true">*</span>
+        <span className="sr-only">(required)</span>
+      </span>
+    </>
   );
 }
 

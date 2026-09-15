@@ -12,11 +12,14 @@ import {
   Field,
   Input,
   PageHeader,
+  RequiredLabel,
   Select,
   Textarea,
 } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { SOURCE_HINTS, SOURCE_LABELS } from "@/lib/projectSource";
 import type { MeResponse, Project, ProjectStatus } from "@/types";
+import { STATUS_LABELS } from "@/components/StatusPill";
 
 const DEPARTMENTS = ["Finance", "Procurement", "Operations", "Other"];
 // Lifecycle statuses that make sense for work that already exists.
@@ -103,7 +106,7 @@ export default function InventoryProjectPage() {
   if (meLoaded && !me?.isAdmin) {
     return (
       <EmptyState title="Admin access required" action={<ButtonLink href="/projects">All projects</ButtonLink>}>
-        <p>Only admins can inventory existing projects.</p>
+        <p>Only admins can add an existing project to the inventory.</p>
       </EmptyState>
     );
   }
@@ -111,12 +114,14 @@ export default function InventoryProjectPage() {
   if (submitted) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Project added to the registry" />
+        <PageHeader title="Project added" />
         <Card className="space-y-5">
           <p>
-            <strong>{submitted.name}</strong> is now in the inventory as{" "}
-            <Badge variant="primary">Inventoried</Badge> and visible to everyone across Finance
-            &amp; Operations.
+            <strong>{submitted.name}</strong> is now on the AI projects list, badged{" "}
+            <Badge variant="primary" title={SOURCE_HINTS.inventoried}>
+              {SOURCE_LABELS.inventoried}
+            </Badge>{" "}
+            and visible to everyone across Finance &amp; Operations.
           </p>
           <div className="flex flex-wrap gap-2">
             <ButtonLink href={`/projects/${submitted.id}`}>View project</ButtonLink>
@@ -132,13 +137,13 @@ export default function InventoryProjectPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Inventory an existing project"
-        description="Add a project that's already underway (or finished) so it shows up in the registry — ownership, status, and timeline included."
+        title="Add an existing project"
+        description="Add a project that's already underway (or finished) so it shows up on the AI projects list — ownership, stage, and timeline included."
       />
 
-      <Card>
+      <Card className="max-w-2xl">
         <form className="space-y-5" onSubmit={onSubmit}>
-          <Field label="Project name *">
+          <Field label={<RequiredLabel>Project name</RequiredLabel>}>
             <Input
               required
               minLength={3}
@@ -158,16 +163,16 @@ export default function InventoryProjectPage() {
               ))}
             </Select>
           </Field>
-          <Field label="Status">
+          <Field label="Stage">
             <Select value={status} onChange={(e) => setStatus(e.target.value as ProjectStatus)}>
               {STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {STATUS_LABELS[s] ?? s}
                 </option>
               ))}
             </Select>
           </Field>
-          <Field label="What is this project? *">
+          <Field label={<RequiredLabel>What is this project?</RequiredLabel>}>
             <Textarea
               required
               minLength={10}
@@ -199,7 +204,7 @@ export default function InventoryProjectPage() {
               onChange={(e) => setStakeholders(e.target.value)}
             />
           </Field>
-          <Field label="Strategic category">
+          <Field label="Type of work">
             <Input
               maxLength={128}
               placeholder="e.g. automation, analytics, service improvement"
@@ -253,7 +258,7 @@ export default function InventoryProjectPage() {
 
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Adding…" : "Add to registry"}
+              {submitting ? "Adding…" : "Add to the inventory"}
             </Button>
             <ButtonLink variant="secondary" href="/projects">
               Cancel

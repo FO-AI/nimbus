@@ -35,13 +35,29 @@ describe("ToolFacts", () => {
       }),
     );
 
-    expect(screen.getByText("approved")).toBeInTheDocument();
+    expect(screen.getByText("Approved")).toBeInTheDocument();
     expect(screen.getByText("Tier 1 and 2; never Tier 3")).toBeInTheDocument();
     expect(screen.getByText("Anyone with an active Onyen")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Open the tool/ })).toHaveAttribute(
       "href",
       "https://m365.cloud.microsoft/chat/",
     );
+  });
+
+  it("labels a status the library actually ships", () => {
+    // copilot-studio.md carries `status: approved by request`, which had no
+    // entry and reached the reader as the raw stored string.
+    render(ToolFacts({ item: tool({ status: "approved by request", data_tier: "Tier 2" }) }));
+
+    expect(screen.getByText("Approved on request")).toBeInTheDocument();
+    expect(screen.queryByText("approved by request")).not.toBeInTheDocument();
+  });
+
+  it("never prints an unmapped status back at the reader", () => {
+    render(ToolFacts({ item: tool({ status: "sort-of-ok", data_tier: "Tier 2" }) }));
+
+    expect(screen.getByText("Status not confirmed")).toBeInTheDocument();
+    expect(screen.queryByText("sort-of-ok")).not.toBeInTheDocument();
   });
 
   it("renders nothing when a page carries no registry attributes", () => {

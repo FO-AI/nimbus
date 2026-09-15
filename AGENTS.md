@@ -11,14 +11,14 @@ retrieval-grounded assistant with citations, and leadership usage metrics. Stack
 **Azure AI Foundry** for AI, **Azure PostgreSQL** (SQLAlchemy + Alembic, pgvector for retrieval),
 deployed to **Azure Container Apps**. Generated from the `ai-tool-starter` template.
 
-| Surface | Route(s) | Backed by |
+| Surface (nav label) | Route(s) | Backed by |
 | --- | --- | --- |
 | Home (browse-first) | `/` | featured `content_items` |
 | Guides / prompt library | `/guides`, `/prompts` (+ `[slug]`) | `GET /api/v1/content` |
-| Project inventory | `/projects` (+ `inventory`, `[id]`) | `GET/POST/PATCH /api/v1/projects` |
-| Propose an AI use case (intake) | `/propose` | `POST /api/v1/projects/intake` |
+| AI projects | `/projects` (+ `inventory`, `[id]`) | `GET/POST/PATCH /api/v1/projects` |
+| Suggest an idea (intake) | `/propose` | `POST /api/v1/projects/intake` |
 | Ask (RAG with citations) | `/ask` | `POST /api/v1/ask` + pgvector `content_chunks` |
-| Insights (usage metrics) | `/insights` | `GET /api/v1/insights/summary` |
+| Activity (usage metrics) | `/insights` | `GET /api/v1/insights/summary` |
 
 ## Architecture
 
@@ -94,7 +94,23 @@ importing the package. When changing an API schema, update all three by hand unt
 `organization/`; `(app)/` for `home`, `ask`, `guides`, `prompts`, `projects`, `propose`,
 `insights`, `profile`, each behind its own `layout.tsx`. The root layout wraps everything in
 `AuthProvider` (MSAL, `lib/auth/AuthProvider.tsx` + `msalConfig.ts`) plus an
-`AuthDisabledBanner` shown when auth is off.
+`AuthDisabledBanner` shown when auth is off. The nav bar is flat — all seven destinations at
+top level, defined once in `components/AppNavBar.tsx`; note that the route name and the label
+differ in two places (`/insights` is "Activity", `/projects` is "AI projects").
+
+**User-facing wording is a closed vocabulary**: every label, badge, and status a reader sees is
+mapped from its stored value and documented in `docs/ui-vocabulary.md`, with the reasoning in
+`docs/adr/0005-plain-language-ui-vocabulary.md`. The audience is non-technical Finance &
+Operations staff, so no raw enum, slug, or identifier may reach a page (`under-review`, `its`,
+`approved by request` are stored values, never displayed ones), and no label stands without a
+one-line explanation on hover or beside it. **When you add a user-facing label, add the map in
+code and the row in `docs/ui-vocabulary.md`.** Display-label maps are exported where more than
+one place renders them — `STATUS_LABELS`/`STATUS_HINTS` in `components/StatusPill.tsx`,
+`SOURCE_LABELS`/`SOURCE_HINTS` in `lib/projectSource.ts`, `KIND_LABEL`/`KIND_HINT`/
+`CITATION_LABEL` in `lib/contentKind.ts`, `tagLabel()` in `lib/contentAttributes.ts` — so
+filters, pills, badges, and admin dropdowns cannot drift apart.
+The tool-status map is closed and `apps/api/app/tests/test_content_library.py` fails the build
+on a shipped status it cannot label.
 
 ## Project structure
 

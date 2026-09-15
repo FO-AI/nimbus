@@ -30,6 +30,8 @@ function guide(
 
 // Ten distinct tags, so the top-eight cut and the "More tags" disclosure both bite.
 const RARE_TAG = "records-retention";
+/** What the UI prints for RARE_TAG — chips show a readable label, not the slug. */
+const RARE_TAG_LABEL = "Records retention";
 const items: ContentSummary[] = [
   guide("excel-variance", "playbook", "Budget variance in Excel", ["excel", "copilot", "finance"]),
   guide("inbox-triage", "playbook", "Inbox triage", ["outlook", "copilot", "email"]),
@@ -72,7 +74,7 @@ describe("GuidesPage", () => {
     expect(screen.getByRole("link", { name: /Sensitive data/ })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Inbox triage/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Guidance" })).toHaveClass("bg-carolina");
-    expect(screen.getByRole("button", { name: "policy" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Policy" })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("writes each filter to the query string so Back returns to the filtered list", async () => {
@@ -82,11 +84,11 @@ describe("GuidesPage", () => {
     await user.click(screen.getByRole("button", { name: "Playbooks" }));
     await waitFor(() => expect(window.location.search).toBe("?kind=playbook"));
 
-    await user.click(screen.getByRole("button", { name: "copilot" }));
+    await user.click(screen.getByRole("button", { name: "Copilot" }));
     await waitFor(() => expect(window.location.search).toBe("?kind=playbook&tag=copilot"));
     expect(await screen.findByText("2 guides of 6")).toBeInTheDocument();
 
-    await user.type(screen.getByRole("textbox", { name: "Search guides" }), "inbox");
+    await user.type(screen.getByRole("searchbox", { name: "Search guides by title or summary" }), "inbox");
     await waitFor(() => expect(window.location.search).toContain("q=inbox"));
     expect(await screen.findByText("1 guide of 6")).toBeInTheDocument();
   });
@@ -95,10 +97,10 @@ describe("GuidesPage", () => {
     const user = userEvent.setup();
     await renderGuides();
 
-    await user.click(screen.getByRole("button", { name: "copilot" }));
+    await user.click(screen.getByRole("button", { name: "Copilot" }));
     await waitFor(() => expect(window.location.search).toBe("?tag=copilot"));
 
-    await user.click(screen.getByRole("button", { name: "copilot" }));
+    await user.click(screen.getByRole("button", { name: "Copilot" }));
     await waitFor(() => expect(window.location.search).toBe(""));
   });
 
@@ -111,32 +113,32 @@ describe("GuidesPage", () => {
 
     await waitFor(() => expect(window.location.search).toBe(""));
     expect(await screen.findByText("6 guides")).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: "Search guides" })).toHaveValue("");
+    expect(screen.getByRole("searchbox", { name: "Search guides by title or summary" })).toHaveValue("");
   });
 
   it("shows only the most common tags until the disclosure is opened", async () => {
     const user = userEvent.setup();
     await renderGuides();
 
-    const tagFilters = screen.getByRole("group", { name: "Filter by tag" });
+    const tagFilters = screen.getByRole("group", { name: "Topic" });
     expect(within(tagFilters).getAllByRole("button", { pressed: false })).toHaveLength(8);
-    expect(within(tagFilters).queryByRole("button", { name: RARE_TAG })).not.toBeInTheDocument();
+    expect(within(tagFilters).queryByRole("button", { name: RARE_TAG_LABEL })).not.toBeInTheDocument();
 
-    const disclosure = screen.getByRole("button", { name: /More tags/ });
+    const disclosure = screen.getByRole("button", { name: /Show all \d+ topics/ });
     expect(disclosure).toHaveAttribute("aria-expanded", "false");
     await user.click(disclosure);
 
     expect(disclosure).toHaveAttribute("aria-expanded", "true");
-    expect(within(tagFilters).getByRole("button", { name: RARE_TAG })).toBeInTheDocument();
+    expect(within(tagFilters).getByRole("button", { name: RARE_TAG_LABEL })).toBeInTheDocument();
   });
 
   it("keeps an uncommon tag visible when it arrives from the URL", async () => {
     setUrl(`/guides?tag=${RARE_TAG}`);
     render(<GuidesPage />);
 
-    const chip = await screen.findByRole("button", { name: RARE_TAG });
+    const chip = await screen.findByRole("button", { name: RARE_TAG_LABEL });
     expect(chip).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: /More tags/ })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /Show all \d+ topics/ })).toHaveAttribute(
       "aria-expanded",
       "false",
     );
@@ -147,6 +149,6 @@ describe("GuidesPage", () => {
     render(<GuidesPage />);
 
     expect(await screen.findByText("6 guides")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "retired-tag" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Retired tag" })).not.toBeInTheDocument();
   });
 });

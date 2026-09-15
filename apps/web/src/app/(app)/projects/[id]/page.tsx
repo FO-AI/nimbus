@@ -6,9 +6,10 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { StatusPill } from "@/components/StatusPill";
+import { STATUS_LABELS, StatusPill } from "@/components/StatusPill";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { SOURCE_HINTS, SOURCE_LABELS } from "@/lib/projectSource";
 import type { MeResponse, Project, ProjectStatus, ProjectWritePayload } from "@/types";
 
 const STATUSES: ProjectStatus[] = [
@@ -162,12 +163,17 @@ export default function ProjectDetailPage() {
           me?.isAdmin && !editing ? (
             <div className="flex flex-wrap gap-2">
               <Button variant="secondary" type="button" onClick={() => startEditing(project)}>
-                Edit / triage
+                Edit / review
               </Button>
               <Button
                 variant="secondary"
                 type="button"
                 disabled={acting}
+                title={
+                  project.archivedAt
+                    ? "Put this project back on the default list"
+                    : "Hide this project from the default list. Nothing is deleted and you can restore it at any time."
+                }
                 onClick={() => void toggleArchive(project)}
               >
                 {project.archivedAt ? "Unarchive" : "Archive"}
@@ -188,8 +194,11 @@ export default function ProjectDetailPage() {
 
       <div className="-mt-4 flex flex-wrap gap-2">
         <StatusPill status={project.status} />
-        <Badge variant={project.source === "inventoried" ? "primary" : "default"}>
-          {project.source === "inventoried" ? "Inventoried" : "Proposal"}
+        <Badge
+          variant={project.source === "inventoried" ? "primary" : "default"}
+          title={SOURCE_HINTS[project.source]}
+        >
+          {SOURCE_LABELS[project.source]}
         </Badge>
         {project.archivedAt ? <Badge variant="warning">Archived</Badge> : null}
         {project.department ? <Badge>{project.department}</Badge> : null}
@@ -202,16 +211,16 @@ export default function ProjectDetailPage() {
       {actionError ? <ErrorState error={actionError} /> : null}
 
       {editing ? (
-        <Card>
+        <Card className="max-w-2xl">
           <form className="space-y-5" onSubmit={save}>
-            <Field label="Status">
+            <Field label="Stage">
               <Select
                 value={form.status}
                 onChange={(e) => set("status", e.target.value as ProjectStatus)}
               >
                 {STATUSES.map((status) => (
                   <option key={status} value={status}>
-                    {status}
+                    {STATUS_LABELS[status] ?? status}
                   </option>
                 ))}
               </Select>
@@ -225,7 +234,11 @@ export default function ProjectDetailPage() {
             </Field>
 
             <Field label="Sponsor">
-              <Input value={form.sponsor ?? ""} onChange={(e) => set("sponsor", e.target.value)} />
+              <Input
+                placeholder="The leader backing this work, e.g. a director or AVC"
+                value={form.sponsor ?? ""}
+                onChange={(e) => set("sponsor", e.target.value)}
+              />
             </Field>
 
             <Field label="Stakeholders (comma-separated)">
@@ -235,8 +248,9 @@ export default function ProjectDetailPage() {
               />
             </Field>
 
-            <Field label="Strategic category">
+            <Field label="Type of work">
               <Input
+                placeholder="e.g. automation, analytics, service improvement"
                 maxLength={128}
                 value={form.strategicCategory ?? ""}
                 onChange={(e) => set("strategicCategory", e.target.value)}
@@ -264,6 +278,7 @@ export default function ProjectDetailPage() {
             <Field label="Summary">
               <Textarea
                 rows={3}
+                placeholder="What it does, who it serves, and where it stands today."
                 value={form.summary ?? ""}
                 onChange={(e) => set("summary", e.target.value)}
               />
@@ -272,6 +287,7 @@ export default function ProjectDetailPage() {
             <Field label="Business value">
               <Textarea
                 rows={2}
+                placeholder="Time saved, errors avoided, faster turnaround…"
                 value={form.businessValue ?? ""}
                 onChange={(e) => set("businessValue", e.target.value)}
               />
@@ -280,6 +296,7 @@ export default function ProjectDetailPage() {
             <Field label="Risks">
               <Textarea
                 rows={2}
+                placeholder="Sensitive data? Accuracy requirements? Anything to watch."
                 value={form.risks ?? ""}
                 onChange={(e) => set("risks", e.target.value)}
               />
@@ -288,6 +305,7 @@ export default function ProjectDetailPage() {
             <Field label="Dependencies">
               <Textarea
                 rows={2}
+                placeholder="Other teams, systems, licences, or approvals this relies on"
                 value={form.dependencies ?? ""}
                 onChange={(e) => set("dependencies", e.target.value)}
               />
@@ -296,24 +314,33 @@ export default function ProjectDetailPage() {
             <Field label="Next steps">
               <Textarea
                 rows={2}
+                placeholder="What happens next, and who is doing it"
                 value={form.nextSteps ?? ""}
                 onChange={(e) => set("nextSteps", e.target.value)}
               />
             </Field>
 
             <Field
-              label={`Triage note ${
-                form.status === "rejected" ? "(required when rejecting)" : ""
-              }`}
+              label={
+                form.status === "rejected"
+                  ? "Review notes (required when rejecting)"
+                  : "Review notes"
+              }
             >
               <Textarea
                 rows={2}
+                placeholder="Why this decision was made. The person who submitted the idea can see this."
                 value={form.triageNote ?? ""}
                 onChange={(e) => set("triageNote", e.target.value)}
               />
             </Field>
 
-            {saveError ? <ErrorState error={saveError} /> : null}
+            {saveError ? (
+              <ErrorState
+                error={saveError}
+                hint="Nothing was saved. Your edits above are still here — fix the problem and select Save again."
+              />
+            ) : null}
 
             <div className="flex flex-wrap gap-2">
               <Button type="submit" disabled={saving}>
@@ -346,7 +373,7 @@ export default function ProjectDetailPage() {
               <dd>{project.nextSteps || "—"}</dd>
               {project.triageNote ? (
                 <>
-                  <DetailTerm>Triage note</DetailTerm>
+                  <DetailTerm>Review notes</DetailTerm>
                   <dd>{project.triageNote}</dd>
                 </>
               ) : null}

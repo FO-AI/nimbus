@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Editor registry flow over the mock stack (AUTH_MODE=disabled makes the dev
+// Editor inventory flow over the mock stack (AUTH_MODE=disabled makes the dev
 // principal an editor): inventory an existing project → see it badged in the
 // list → archive it from the detail page. One test, so the created project
 // can't get lost across workers.
@@ -10,21 +10,21 @@ test("inventory, list, and archive an existing project", async ({ page }) => {
 
   await test.step("inventory an existing project", async () => {
     await page.goto("/projects");
-    await page.getByRole("link", { name: "Inventory existing project" }).click();
+    await page.getByRole("link", { name: "Add an existing project" }).click();
 
     await expect(
-      page.getByRole("heading", { name: "Inventory an existing project" }),
+      page.getByRole("heading", { name: "Add an existing project" }),
     ).toBeVisible();
     await page.getByLabel(/Project name/).fill(projectName);
     await page
       .getByLabel(/What is this project/)
-      .fill("Already-running automation captured for registry visibility.");
-    await page.getByRole("button", { name: "Add to registry" }).click();
+      .fill("Already-running automation captured for inventory visibility.");
+    await page.getByRole("button", { name: "Add to the inventory" }).click();
 
-    await expect(page.getByRole("heading", { name: /added to the registry/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /project added/i })).toBeVisible();
   });
 
-  await test.step("registry list distinguishes inventoried projects", async () => {
+  await test.step("the list distinguishes inventoried projects", async () => {
     await page.goto("/projects");
     const row = page.getByRole("row", { name: new RegExp(projectName) });
     await expect(row).toBeVisible();

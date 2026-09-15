@@ -2,6 +2,11 @@
 
 Requires no network or credentials. It echoes a short, predictable response so
 tests can assert on it and developers can exercise the full request path.
+
+Note for `/ask`: the echo includes the head of the grounded prompt, which
+carries the `[1]` context marker, so a local answer always reads as grounded
+and the ungrounded warning cannot be triggered with `AI_PROVIDER=mock`. That
+path is covered by `app/tests/test_ask.py`, which stubs the provider.
 """
 from __future__ import annotations
 

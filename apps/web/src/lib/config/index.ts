@@ -18,6 +18,13 @@ function firstNonEmpty(...values: Array<string | undefined>): string {
   return "";
 }
 
+/**
+ * Where a user is told to go when something breaks or they need a human. It was
+ * previously hard-coded into the public landing page only, so error states had
+ * nowhere to point.
+ */
+export const SUPPORT_EMAIL = "fo-ai-team@unc.edu";
+
 export const config = {
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000",
   authDisabled: (process.env.NEXT_PUBLIC_AUTH_DISABLED ?? "false") === "true",

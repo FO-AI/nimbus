@@ -19,11 +19,17 @@ describe("ErrorState", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong.");
   });
 
+  it("does not say 'Something went wrong' twice", () => {
+    render(<ErrorState error={"boom"} />);
+    const text = screen.getByRole("alert").textContent ?? "";
+    expect(text.match(/Something went wrong/g)).toHaveLength(1);
+  });
+
   it("calls onRetry when the retry button is clicked", async () => {
     const onRetry = vi.fn();
     render(<ErrorState error={new Error("nope")} onRetry={onRetry} />);
 
-    await userEvent.click(screen.getByRole("button", { name: /retry/i }));
+    await userEvent.click(screen.getByRole("button", { name: /try again/i }));
     expect(onRetry).toHaveBeenCalledOnce();
   });
 });

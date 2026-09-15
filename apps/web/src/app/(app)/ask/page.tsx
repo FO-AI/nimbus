@@ -8,6 +8,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Markdown } from "@/components/Markdown";
 import { Button, Card, FilterChip, Input, PageHeader } from "@/components/ui";
 import { useApiClient } from "@/lib/api/useApiClient";
+import { CITATION_LABEL, CITATION_LABEL_FALLBACK } from "@/lib/contentKind";
 import type { Citation } from "@/types";
 
 interface Turn {
@@ -77,45 +78,30 @@ export default function AskPage() {
     <div className="space-y-6">
       <PageHeader
         title="Ask Nimbus"
-        description="Answers come only from what's in Nimbus: guides, prompts, and the project inventory, with sources cited."
+        description="Ask a question in your own words about AI at Finance & Operations. Every answer links to the page it came from, so you can check it before you act on it."
       />
 
       <Card>
-        <div className="mb-4 flex min-h-80 flex-col gap-3">
+        <div className="mb-4 flex flex-col gap-3">
           {turns.length === 0 ? (
-            <div className="grid gap-5 rounded-xl border border-dashed border-border bg-cloud/45 p-5 md:grid-cols-[1fr_1.2fr]">
-              <div className="space-y-3 text-sm">
-                <h2 className="text-base">What Nimbus can answer</h2>
-                <ul className="list-disc space-y-1.5 pl-5 text-muted">
-                  <li>How to do a task with an approved AI tool, using the step-by-step guides.</li>
-                  <li>Which reusable prompt fits the job you have in front of you.</li>
-                  <li>What AI projects and pilots are underway across Finance &amp; Operations.</li>
-                  <li>What is and isn&apos;t allowed under the acceptable-use guidance.</li>
-                </ul>
-                <p className="text-muted">
-                  Every answer links to the Nimbus pages it came from, so you can check the
-                  source before you act on it. Nimbus cannot see your files, email, or the web.
-                </p>
-              </div>
-              <div className="space-y-3">
-                <h2 className="text-base">Try one of these</h2>
-                <div
-                  className="flex flex-col items-start gap-2"
-                  role="group"
-                  aria-label="Example questions"
-                >
-                  {STARTER_QUESTIONS.map((q) => (
-                    <FilterChip
-                      key={q}
-                      type="button"
-                      className="max-w-full text-left"
-                      disabled={sending}
-                      onClick={() => void ask(q)}
-                    >
-                      {q}
-                    </FilterChip>
-                  ))}
-                </div>
+            <div className="space-y-3">
+              <h2 className="text-base">Not sure what to ask? Try one of these</h2>
+              <div
+                className="flex flex-col items-start gap-2"
+                role="group"
+                aria-label="Example questions"
+              >
+                {STARTER_QUESTIONS.map((q) => (
+                  <FilterChip
+                    key={q}
+                    type="button"
+                    className="max-w-full text-left"
+                    disabled={sending}
+                    onClick={() => void ask(q)}
+                  >
+                    {q}
+                  </FilterChip>
+                ))}
               </div>
             </div>
           ) : (
@@ -133,18 +119,42 @@ export default function AskPage() {
                 ) : (
                   <div className="whitespace-pre-wrap">{turn.content}</div>
                 )}
+                {turn.role === "assistant" && turn.grounded === false ? (
+                  // The API sets grounded=false when the answer cites none of
+                  // the pages behind it — whether retrieval came back empty or
+                  // the model answered from somewhere else. Hiding that made an
+                  // unsupported answer look exactly like a cited one, on a page
+                  // whose whole promise is that answers are cited.
+                  <p className="mt-3 flex gap-2 rounded-lg border border-warning/30 bg-warning-bg px-3 py-2 text-xs text-warning">
+                    <span aria-hidden="true">⚠</span>
+                    <span>
+                      This answer is not backed by a Nimbus page — Nimbus could not tie it to
+                      anything in the library. Please check with the Finance &amp; Operations AI
+                      team before acting on it.
+                    </span>
+                  </p>
+                ) : null}
                 {turn.citations && turn.citations.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {turn.citations.map((c) => (
-                      <Link
-                        key={`${c.sourceType}-${c.sourceKey}`}
-                        className="inline-flex items-center rounded-full border border-carolina/35 bg-surface px-2.5 py-1 text-xs font-medium text-navy transition hover:border-carolina hover:bg-cloud focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2"
-                        href={citationHref(c)}
-                      >
-                        {c.title}
-                        <span className="ml-1 text-muted">({c.kind})</span>
-                      </Link>
-                    ))}
+                  <div className="mt-3 flex flex-col gap-2">
+                    <p className="text-xs font-semibold text-muted">
+                      {turn.grounded === false
+                        ? "Related pages you could check"
+                        : "Where this answer came from"}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {turn.citations.map((c) => (
+                        <Link
+                          key={`${c.sourceType}-${c.sourceKey}`}
+                          className="inline-flex items-center rounded-lg border border-carolina/35 bg-surface px-2 py-1 text-xs font-medium text-navy transition hover:border-carolina hover:bg-cloud focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carolina focus-visible:ring-offset-2"
+                          href={citationHref(c)}
+                        >
+                          {c.title}
+                          <span className="ml-1 font-normal text-muted">
+                            {CITATION_LABEL[c.kind] ?? CITATION_LABEL_FALLBACK}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 ) : null}
               </div>
@@ -153,7 +163,9 @@ export default function AskPage() {
           {sending ? <LoadingSpinner label="Searching Nimbus..." /> : null}
         </div>
 
-        {error ? <ErrorState error={error} /> : null}
+        {error ? (
+          <ErrorState error={error} onRetry={() => setError(null)} retryLabel="Dismiss" />
+        ) : null}
 
         <form className="mt-4 flex flex-col gap-2 sm:flex-row" onSubmit={onSubmit}>
           <Input
@@ -174,7 +186,11 @@ export default function AskPage() {
             ? "Looking through the Nimbus library…"
             : canAsk
               ? "Answers cite the Nimbus pages they came from."
-              : `Type a question of at least ${MIN_QUESTION_LENGTH} characters to enable Ask.`}
+              : `Type at least ${MIN_QUESTION_LENGTH} characters above, then select Ask.`}
+        </p>
+        <p className="mt-1 text-xs text-muted">
+          Nimbus answers from the guides, prompts, and AI projects on this site, and links to the
+          page each answer came from. It cannot see your files, your email, or the web.
         </p>
       </Card>
     </div>

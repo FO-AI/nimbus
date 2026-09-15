@@ -1,64 +1,45 @@
 import { expect, test } from "@playwright/test";
 
-// Browse-and-copy UX over the mock stack: the Resources dropdown, the prompt
-// preview dialog, and filters that survive a back-navigation. These need a real
-// browser — the dialog's focus trap and the history round-trip have no jsdom
-// equivalent.
+// Browse-and-copy UX over the mock stack: the flat top-level navigation, the
+// prompt preview dialog, and filters that survive a back-navigation. These need
+// a real browser — the dialog's focus trap and the history round-trip have no
+// jsdom equivalent.
 
-test.describe("Resources navigation", () => {
+test.describe("Primary navigation", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/home");
   });
 
-  test("opens on hover and on click, and closes on an outside click", async ({ page }) => {
-    const trigger = page.getByRole("button", { name: "Resources" });
-    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+  test("reaches every destination in one click, with no dropdown in the way", async ({ page }) => {
+    const nav = page.getByRole("navigation", { name: "Nimbus navigation" });
+    // Guides and Prompts were previously nested under a "Resources" menu button.
+    await expect(nav.getByRole("button", { name: "Resources" })).toHaveCount(0);
 
-    await trigger.hover();
-    await expect(page.getByRole("menu", { name: "Resources" })).toBeVisible();
-    await expect(trigger).toHaveAttribute("aria-expanded", "true");
-
-    // Each item carries the one-line description that makes the group legible.
-    const menu = page.getByRole("menu", { name: "Resources" });
-    await expect(menu.getByRole("menuitem", { name: /^Guides/ })).toContainText(
-      "Playbooks, guidance, and the tool registry",
-    );
-    await expect(menu.getByRole("menuitem", { name: /^Prompts/ })).toContainText(
-      "Copy-paste prompts for everyday work",
+    await nav.getByRole("link", { name: /^Guides/ }).click();
+    await expect(page).toHaveURL(/\/guides$/);
+    await expect(nav.getByRole("link", { name: /^Guides/ })).toHaveAttribute(
+      "aria-current",
+      "page",
     );
 
-    await page.getByRole("heading", { level: 1 }).click();
-    await expect(menu).toBeHidden();
-
-    await trigger.click();
-    await expect(page.getByRole("menu", { name: "Resources" })).toBeVisible();
+    await nav.getByRole("link", { name: /^Prompts/ }).click();
+    await expect(page).toHaveURL(/\/prompts$/);
   });
 
-  test("is fully operable from the keyboard", async ({ page }) => {
-    const trigger = page.getByRole("button", { name: "Resources" });
-    await trigger.focus();
-    await page.keyboard.press("Enter");
+  test("explains every destination on hover, so no label is a bare word", async ({ page }) => {
+    const nav = page.getByRole("navigation", { name: "Nimbus navigation" });
 
-    const menu = page.getByRole("menu", { name: "Resources" });
-    await expect(menu).toBeVisible();
-    await expect(menu.getByRole("menuitem", { name: /^Guides/ })).toBeFocused();
-
-    await page.keyboard.press("ArrowDown");
-    await expect(menu.getByRole("menuitem", { name: /^Prompts/ })).toBeFocused();
-
-    await page.keyboard.press("Escape");
-    await expect(menu).toBeHidden();
-    await expect(trigger).toBeFocused();
-
-    await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/guides$/);
-    // The trigger reads as active for both routes underneath it.
-    await expect(page.getByRole("button", { name: "Resources" })).toHaveAttribute(
-      "data-active",
-      "true",
+    await expect(nav.getByRole("link", { name: /^Guides/ })).toHaveAttribute(
+      "title",
+      "How to do a task with AI, what's allowed, and which tools are approved",
     );
+    await expect(nav.getByRole("link", { name: /^Ask/ })).toHaveAttribute(
+      "title",
+      "Ask a question and get an answer with links to where it came from",
+    );
+    // The brand says what Nimbus is, on every page.
+    await expect(nav).toContainText("AI help for Finance & Operations");
   });
 });
 
@@ -97,11 +78,11 @@ test("guide filters live in the URL and survive a back-navigation", async ({ pag
   await expect(page).toHaveURL(/\?kind=tool$/);
 
   // The 30-plus tag list is collapsed to the most common few behind a disclosure.
-  const tagFilters = page.getByRole("group", { name: "Filter by tag" });
+  const tagFilters = page.getByRole("group", { name: "Topic" });
   const tagChips = tagFilters.locator("button[aria-pressed]");
   await expect(tagChips).toHaveCount(8);
 
-  const disclosure = tagFilters.getByRole("button", { name: /^(More|Fewer) tags/ });
+  const disclosure = tagFilters.getByRole("button", { name: /^Show (all \d+ topics|fewer topics)/ });
   await expect(disclosure).toHaveAttribute("aria-expanded", "false");
   await disclosure.click();
   await expect(disclosure).toHaveAttribute("aria-expanded", "true");
@@ -120,7 +101,7 @@ test("guide filters live in the URL and survive a back-navigation", async ({ pag
 test("prompt filters survive a back-navigation and can be cleared", async ({ page }) => {
   await page.goto("/prompts");
 
-  const departmentFilters = page.getByRole("group", { name: "Filter by department" });
+  const departmentFilters = page.getByRole("group", { name: "Team" });
   await departmentFilters.getByRole("button").nth(1).click();
   await expect(page).toHaveURL(/\?department=/);
   const filteredCount = await page.getByText(/ prompts? of /).textContent();
