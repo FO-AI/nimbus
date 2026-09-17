@@ -24,7 +24,7 @@ jobs:
            "run":"npm run lint && npm run typecheck && npm run test && npm run build"},
           {"name":"Backend","directory":"apps/api","python-version":"3.11",
            "install":"python -m pip install -e '.[dev]'",
-           "run":"ruff check app && pytest",
+           "run":"ruff check app && pytest && python ../../scripts/tests/test_deploy.py",
            "env":{"AI_PROVIDER":"mock","AUTH_MODE":"disabled"}}
         ]
       containers: >-
