@@ -9,7 +9,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # NEXT_PUBLIC_* values are inlined into the client bundle at BUILD time, so they
-# must be provided as build args in CI (see .github/workflows/deploy-dev.yml).
+# must be provided as build args when deploying (see scripts/deploy.sh).
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_AUTH_DISABLED=false
 ARG NEXT_PUBLIC_ENTRA_CLIENT_ID

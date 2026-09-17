@@ -191,15 +191,24 @@ Storage, App Insights). See [Deployment overview](#deployment-overview).
 - `infra/bicep/deploy/` — group-scoped entrypoints, one per service, for
   deploying into an **existing** resource group one service at a time.
 - `infra/bicep/main.bicep` — legacy all-in-one, subscription-scoped template
-  (creates the resource group itself); still used by CI.
+  (creates the resource group itself); available for manual provisioning.
 - `infra/scripts/` — `deploy-<service>.sh` wrappers around
   `az deployment group create`, one service per run.
 
 ## Deployment overview
 
-CI deployment is via GitHub Actions using **OIDC federation** (no stored Azure
-passwords) and the legacy all-in-one template. See
-[`.github/workflows/deploy-dev.yml`](.github/workflows/deploy-dev.yml).
+CI/CD uses two entry workflows:
+
+- [CI](.github/workflows/ci.yml) runs separate **Frontend** and **Backend** jobs
+  through the shared `reusable-ci.yml`. Commands live in
+  [`scripts/ci-frontend.sh`](scripts/ci-frontend.sh) and
+  [`scripts/ci-backend.sh`](scripts/ci-backend.sh). Both must pass before the
+  **Build Frontend** and **Build Backend** Docker jobs run.
+- [CD](.github/workflows/cd.yml) follows successful main CI and calls the shared
+  `reusable-azure-cd.yml`. It uses **OIDC federation** (no stored Azure passwords)
+  and [`scripts/deploy.sh`](scripts/deploy.sh) to update the existing dev apps.
+
+See [shared deployment](docs/shared-deployment.md) for configuration and recovery.
 
 Manual deployment is **per-service into a manually created resource group**:
 create the group once with `az group create`, then run one script per service

@@ -37,11 +37,11 @@ Operational procedures for Nimbus.
 
 ### Automated deploy
 
-After CI succeeds on `main`, or when **Deploy (dev)** is run manually, it:
+After CI succeeds on `main`, or when **CD** is run manually on `main`, it:
 
 1. Logs in to Azure via OIDC.
-2. Syncs `DEV_DATABASE_URL` and `AZURE_AI_FOUNDRY_API_KEY` to Key Vault.
-3. Uses ACR Tasks to build both images with the commit SHA as the tag.
+2. Uses ACR Tasks to build both images with the commit SHA as the tag.
+3. Syncs `DEV_DATABASE_URL` and `AZURE_AI_FOUNDRY_API_KEY` to Key Vault.
 4. Deploys new API and web Container App revisions and runs health checks.
 
 The workflow updates existing resources; it does not provision infrastructure.

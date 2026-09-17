@@ -1,4 +1,4 @@
-name: Deploy (dev)
+name: CD
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
-    uses: FO-AI/automation/.github/workflows/deploy-azure.yml@35d4c376f87a929c52af6eeac57a57d744404f10
+    uses: FO-AI/automation/.github/workflows/reusable-azure-cd.yml@ca80da79c114cce45ebb115d6a165298ed6ea00d
     with:
       environment: dev
       allow-manual: true

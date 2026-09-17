@@ -15,21 +15,21 @@ concurrency:
 
 jobs:
   ci:
-    uses: FO-AI/automation/.github/workflows/ci.yml@eade7454d79be6d296018a1ca1af09dbba43fe4e
+    uses: FO-AI/automation/.github/workflows/reusable-ci.yml@ca80da79c114cce45ebb115d6a165298ed6ea00d
     with:
       checks: >-
         [
           {"name":"Frontend","directory":"apps/web","node-version":"20",
            "install":"npm ci",
-           "run":"npm run lint && npm run typecheck && npm run test && npm run build"},
+           "run":"bash ../../scripts/ci-frontend.sh"},
           {"name":"Backend","directory":"apps/api","python-version":"3.11",
            "install":"python -m pip install -e '.[dev]'",
-           "run":"ruff check app && pytest && python ../../scripts/tests/test_deploy.py",
+           "run":"bash ../../scripts/ci-backend.sh",
            "env":{"AI_PROVIDER":"mock","AUTH_MODE":"disabled"}}
         ]
       containers: >-
         [
-          {"name":"API","context":"apps/api","file":"apps/api/Dockerfile"},
-          {"name":"Web","context":"apps/web","file":"apps/web/Dockerfile",
+          {"name":"Backend","context":"apps/api","file":"apps/api/Dockerfile"},
+          {"name":"Frontend","context":"apps/web","file":"apps/web/Dockerfile",
            "build-args":"NEXT_PUBLIC_API_BASE_URL=http://localhost:8000\nNEXT_PUBLIC_AUTH_DISABLED=false"}
         ]

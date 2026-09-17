@@ -122,7 +122,7 @@ prompts live in `apps/api/content/`. `apps/web/src/` — App Router pages in `ap
 scenarios in `apps/web/e2e/`. `packages/api-client/` — shared TS API types/client (see duplication
 note above). `infra/` — Bicep and deployment scripts (`infra/bicep/modules/` one module per
 service, `infra/bicep/deploy/` group-scoped per-service entrypoints, `infra/bicep/main.bicep`
-legacy all-in-one used by CI, `infra/scripts/deploy-<service>.sh` wrappers). `docs/` — design notes,
+legacy all-in-one provisioning, `infra/scripts/deploy-<service>.sh` wrappers). `docs/` — design notes,
 runbooks, and ADRs (`docs/adr/`).
 
 ## Build, test, and development commands
@@ -174,8 +174,10 @@ Copy `.env.example` to `.env` (backend) and `apps/web/.env.local.example` to
 
 ## Deployment
 
-CI deploys via GitHub Actions using OIDC federation (no stored Azure passwords) and the legacy
-all-in-one Bicep template (`.github/workflows/deploy-dev.yml`). Manual deployment is per-service
+`CI` (`.github/workflows/ci.yml`) runs separate frontend/backend checks and Docker builds through
+the shared reusable CI workflow. `CD` (`.github/workflows/cd.yml`) follows successful main CI,
+uses the shared Azure CD workflow for OIDC federation, and runs `scripts/deploy.sh` to update
+existing dev resources. Manual infrastructure deployment is per-service
 into a manually created resource group, run in dependency order (identity →
 observability/registry/storage/postgres → key-vault → container-apps-env → api/web apps); each
 `infra/scripts/deploy-<service>.sh` is idempotent. Full flow: `docs/runbook.md`.
