@@ -1,35 +1,95 @@
+# cd.yml triggers on `workflow_run` of this workflow by name; keep it `CI`.
 name: CI
 
 on:
+  pull_request:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  ci:
-    uses: FO-AI/automation/.github/workflows/ci.yml@eade7454d79be6d296018a1ca1af09dbba43fe4e
+  # Every check is `bash scripts/ci.sh <name>`. The script sets its own test-only
+  # environment, so nothing here has to. Reports as `checks / backend`, `checks / frontend`.
+  checks:
+    uses: FO-AI/automation/.github/workflows/ci.yml@v1
     with:
       checks: >-
-        [
-          {"name":"Frontend","directory":"apps/web","node-version":"20",
-           "install":"npm ci",
-           "run":"npm run lint && npm run typecheck && npm run test && npm run build"},
-          {"name":"Backend","directory":"apps/api","python-version":"3.11",
-           "install":"python -m pip install -e '.[dev]'",
-           "run":"ruff check app && pytest && python ../../scripts/tests/test_deploy.py",
-           "env":{"AI_PROVIDER":"mock","AUTH_MODE":"disabled"}}
-        ]
+        [{"name":"backend","directory":".","python-version":"3.11",
+          "install":"python -m pip install -e './apps/api[dev]'",
+          "run":"bash scripts/ci.sh backend"},
+         {"name":"frontend","directory":".","node-version":"20",
+          "install":"npm --prefix apps/web ci",
+          "run":"bash scripts/ci.sh frontend"}]
+      # PR-time "does it still build" check. Never pushes; `publish` does that on main,
+      # with the real NEXT_PUBLIC_* values. Placeholders are fine here.
       containers: >-
-        [
-          {"name":"API","context":"apps/api","file":"apps/api/Dockerfile"},
-          {"name":"Web","context":"apps/web","file":"apps/web/Dockerfile",
-           "build-args":"NEXT_PUBLIC_API_BASE_URL=http://localhost:8000\nNEXT_PUBLIC_AUTH_DISABLED=false"}
-        ]
+        [{"name":"api","context":"apps/api","file":"apps/api/Dockerfile"},
+         {"name":"web","context":"apps/web","file":"apps/web/Dockerfile",
+          "build-args":"NEXT_PUBLIC_API_BASE_URL=http://localhost:8000\nNEXT_PUBLIC_AUTH_DISABLED=false"}]
+
+  # The single required status check.
+  verify:
+    if: always()
+    needs: [checks]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Summarize required checks
+        env:
+          CHECKS_RESULT: ${{ needs.checks.result }}
+        run: |
+          {
+            echo "### CI verification"
+            echo ""
+            echo "| job | result |"
+            echo "|---|---|"
+            echo "| checks | $CHECKS_RESULT |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$CHECKS_RESULT" != "success" ]]; then
+            echo "::error::One or more required CI jobs did not succeed"
+            exit 1
+          fi
+
+  # Push to main only, and the only job in this workflow with cloud access.
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # No environment is declared, so the OIDC subject is the main-ref form:
+      #   repo:FO-AI@<org-id>/nimbus@<repo-id>:ref:refs/heads/main
+      # and only repo-level (and org-level) variables are readable here.
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # Builds run in ACR Tasks, so no ACR login or local Docker is needed.
+      - name: Build and publish images
+        env:
+          ACR_NAME: ${{ vars.ACR_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+          # Next.js inlines these at build time. None is a secret; all five are
+          # repository variables because this job cannot read the dev environment.
+          NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_ENTRA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_ENTRA_CLIENT_ID }}
+          NEXT_PUBLIC_ENTRA_TENANT_ID: ${{ vars.NEXT_PUBLIC_ENTRA_TENANT_ID }}
+          NEXT_PUBLIC_ENTRA_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_ENTRA_REDIRECT_URI }}
+          NEXT_PUBLIC_ENTRA_API_SCOPE: ${{ vars.NEXT_PUBLIC_ENTRA_API_SCOPE }}
+        run: bash scripts/publish.sh

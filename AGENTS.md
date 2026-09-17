@@ -174,11 +174,26 @@ Copy `.env.example` to `.env` (backend) and `apps/web/.env.local.example` to
 
 ## Deployment
 
-CI deploys via GitHub Actions using OIDC federation (no stored Azure passwords) and the legacy
-all-in-one Bicep template (`.github/workflows/deploy-dev.yml`). Manual deployment is per-service
-into a manually created resource group, run in dependency order (identity →
-observability/registry/storage/postgres → key-vault → container-apps-env → api/web apps); each
-`infra/scripts/deploy-<service>.sh` is idempotent. Full flow: `docs/runbook.md`.
+The pipeline follows the FO-AI repository script contract (three scripts, two thin caller
+workflows; see `docs/shared-deployment.md`). `CI` (`.github/workflows/ci.yml`) runs
+`scripts/ci.sh backend|frontend` through the shared FO-AI workflow and, on a `main` push only,
+`scripts/publish.sh`, which builds both images server-side with `az acr build` tagged with the
+commit SHA (the web build must pass every `NEXT_PUBLIC_*` as a `--build-arg`, since Next.js
+inlines them at build time; they come from repository variables). `CD`
+(`.github/workflows/cd.yml`) runs only after a successful `CI` run on `main` (or a manual
+`workflow_dispatch`), signs in with OIDC federation (no stored Azure passwords), and runs
+`scripts/cd.sh` against the *tested* commit: it resolves the digests published for that SHA,
+syncs secrets into Key Vault, and releases each service with `az containerapp update --image
+<registry>/nimbus-<svc>@sha256:… --set-env-vars ...`, i.e. a new Container Apps revision pinned
+by digest. It **provisions nothing** — no Bicep. Migrations and content seeding run from the API
+image's `CMD` at container start, and the script then polls `/health/ready` before reporting
+success.
+
+Infrastructure is provisioned separately and manually: per-service into a manually created
+resource group, run in dependency order (identity → observability/registry/storage/postgres →
+key-vault → container-apps-env → api/web apps); each `infra/scripts/deploy-<service>.sh` is
+idempotent. `infra/bicep/main.bicep` is a legacy all-in-one template that nothing in CI uses.
+Full flow: `docs/runbook.md`.
 
 ## Commit & pull request guidelines
 

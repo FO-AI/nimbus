@@ -37,12 +37,17 @@ Operational procedures for Nimbus.
 
 ### Automated deploy
 
-After CI succeeds on `main`, or when **Deploy (dev)** is run manually, it:
+On a push to `main`, `CI` runs `scripts/publish.sh`, which uses ACR Tasks to build
+both images with the commit SHA as the tag. Then `CD` (or **CD → Run workflow** on
+`main`) runs `scripts/cd.sh` inside the shared FO-AI wrapper, which:
 
 1. Logs in to Azure via OIDC.
-2. Syncs `DEV_DATABASE_URL` and `AZURE_AI_FOUNDRY_API_KEY` to Key Vault.
-3. Uses ACR Tasks to build both images with the commit SHA as the tag.
-4. Deploys new API and web Container App revisions and runs health checks.
+2. Resolves the digests published for that SHA.
+3. Syncs `DEV_DATABASE_URL` and `AZURE_AI_FOUNDRY_API_KEY` to Key Vault.
+4. Deploys new API and web Container App revisions **by digest** and runs health checks.
+
+The five `NEXT_PUBLIC_*` values baked into the web image come from repository
+variables, not the env-file secret; see `docs/shared-deployment.md`.
 
 The workflow updates existing resources; it does not provision infrastructure.
 The Azure web URL remains the default redirect until the `WEB_URL` environment
@@ -174,9 +179,16 @@ make reindex   # or restart the api; startup reindex rebuilds it
 
 ## Rotate secrets
 
-- **SQL admin password**: update the GitHub secret `SQL_ADMIN_PASSWORD`, then
-  re-run the deploy (Bicep updates the server and the Key Vault seed secret). Or
-  rotate directly with `az sql server update` and update Key Vault.
+- **Postgres admin password**: `SQL_ADMIN_PASSWORD` is a local environment
+  variable read by the manual scripts (and the `.bicepparam` files), *not* a
+  GitHub secret — the dev deploy workflow never touches it. Export the new value
+  and re-run `infra/scripts/deploy-postgres.sh` and
+  `infra/scripts/deploy-key-vault.sh`; Bicep updates the flexible server and the
+  Key Vault seed secret. Or rotate directly with
+  `az postgres flexible-server update --admin-password` and update Key Vault.
+  Either way, also update `DEV_DATABASE_URL` in `.env` and re-upload it
+  (`gh secret set API_ENV_FILE --env dev < .env`) — the connection string embeds
+  the password, and the deploy syncs it to the `database-url` Key Vault secret.
 - **Key Vault secrets**: `az keyvault secret set --vault-name <kv> --name <n>
   --value <v>`. Container Apps pick up new versions on the next revision; restart
   with `az containerapp revision restart` if needed.

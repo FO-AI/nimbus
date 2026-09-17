@@ -40,3 +40,4 @@ architecture-101.txt
 
 # Local per-service deployment state (contains resource names/endpoints)
 infra/scripts/.state/
+docs/auth-flow-handoff.md

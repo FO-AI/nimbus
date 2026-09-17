@@ -197,9 +197,11 @@ Storage, App Insights). See [Deployment overview](#deployment-overview).
 
 ## Deployment overview
 
-CI deployment is via GitHub Actions using **OIDC federation** (no stored Azure
-passwords) and the legacy all-in-one template. See
-[`.github/workflows/deploy-dev.yml`](.github/workflows/deploy-dev.yml).
+Continuous deployment is via GitHub Actions using **OIDC federation** (no stored
+Azure passwords). `CI` publishes both images on a `main` push (`scripts/publish.sh`);
+`CD` (`.github/workflows/cd.yml`) then promotes them by digest through the shared
+FO-AI wrapper (`scripts/cd.sh`). It provisions nothing. See
+[`docs/shared-deployment.md`](docs/shared-deployment.md).
 
 Manual deployment is **per-service into a manually created resource group**:
 create the group once with `az group create`, then run one script per service

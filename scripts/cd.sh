@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
-# Run from the Nimbus repository root after Azure OIDC login.
+# Promote the images scripts/publish.sh pushed for $IMAGE_TAG, by digest, then verify.
+# Runs inside the shared FO-AI deploy-azure wrapper, which has already checked out the
+# commit, rejected a stale main, and signed in to Azure. Never builds.
+#
+# Part of the FO-AI repository script contract (scripts/ci.sh, scripts/publish.sh,
+# scripts/cd.sh); see the FO-AI/automation README.
+#
+# From the wrapper: DEPLOY_SHA, IMAGE_TAG, GH_TOKEN, DEPLOYMENT_VARS_JSON,
+#                   API_ENV_FILE, WEB_ENV_FILE.
 set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 : "${RUNNER_TEMP:?RUNNER_TEMP is required}"
 : "${GITHUB_STEP_SUMMARY:?GITHUB_STEP_SUMMARY is required}"
@@ -8,6 +18,10 @@ set -euo pipefail
 : "${DEPLOY_SHA:?DEPLOY_SHA is required}"
 : "${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}"
 : "${GH_TOKEN:?GH_TOKEN is required for the final main-branch check}"
+if [[ ! "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]]; then
+  echo '::error::IMAGE_TAG must be a full commit SHA; publish.sh tags images by it'
+  exit 1
+fi
 # The shared job resolves vars after entering dev, so environment variables can
 # override repository variables. Explicit command environment overrides win.
 for name in RESOURCE_GROUP ACR_NAME KEY_VAULT_NAME API_APP_NAME WEB_APP_NAME API_URL AZURE_WEB_URL WEB_URL; do
@@ -82,36 +96,35 @@ echo "::group::Validate targets and configuration"
 )
 echo "::endgroup::"
 
-echo "::group::Build API image in ACR"
-(
-  az acr build \
-    --registry "$ACR_NAME" \
-    --image "nimbus-api:$IMAGE_TAG" \
-    apps/api
-)
+# Resolve the digests publish.sh pushed for this commit. The tag only says which build
+# to look up; each revision is created from the digest, so its image string is immutable
+# and a later re-push of the same tag cannot change what is running. Always read from
+# ACR: nothing in the environment may substitute a digest.
+echo "::group::Resolve published image digests"
+API_DIGEST=""
+WEB_DIGEST=""
+for service in api web; do
+  if ! digest="$(az acr repository show --name "$ACR_NAME" \
+      --image "nimbus-${service}:${IMAGE_TAG}" --query digest -o tsv)"; then
+    printf '::error::No image nimbus-%s:%s in %s; publish must succeed before deploy\n' \
+      "$service" "$IMAGE_TAG" "$ACR_NAME"
+    exit 1
+  fi
+  if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+    printf '::error::nimbus-%s:%s did not resolve to a sha256 digest (got %q)\n' \
+      "$service" "$IMAGE_TAG" "$digest"
+    exit 1
+  fi
+  printf 'nimbus-%s@%s\n' "$service" "$digest"
+  if [[ "$service" == api ]]; then API_DIGEST="$digest"; else WEB_DIGEST="$digest"; fi
+done
+API_IMAGE="$ACR_NAME.azurecr.io/nimbus-api@$API_DIGEST"
+WEB_IMAGE="$ACR_NAME.azurecr.io/nimbus-web@$WEB_DIGEST"
 echo "::endgroup::"
 
-echo "::group::Build web image in ACR"
-(
-  set -a
-  source "$RUNNER_TEMP/nimbus-web.env"
-  set +a
-
-  az acr build \
-    --registry "$ACR_NAME" \
-    --image "nimbus-web:$IMAGE_TAG" \
-    --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" \
-    --build-arg "NEXT_PUBLIC_AUTH_DISABLED=false" \
-    --build-arg "NEXT_PUBLIC_ENTRA_CLIENT_ID=$NEXT_PUBLIC_ENTRA_CLIENT_ID" \
-    --build-arg "NEXT_PUBLIC_ENTRA_TENANT_ID=$NEXT_PUBLIC_ENTRA_TENANT_ID" \
-    --build-arg "NEXT_PUBLIC_ENTRA_REDIRECT_URI=$WEB_URL" \
-    --build-arg "NEXT_PUBLIC_ENTRA_API_SCOPE=$NEXT_PUBLIC_ENTRA_API_SCOPE" \
-    apps/web
-)
-echo "::endgroup::"
-
-# Main may have advanced while ACR built the images. Recheck before changing
-# application secrets or running revisions; an API failure also stops the deploy.
+# Main may have advanced since the wrapper's check while CI published and we validated.
+# Recheck immediately before the first change to Azure (the Key Vault sync); a GitHub API
+# failure also stops the deploy.
 main_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
 if [[ "$DEPLOY_SHA" != "$main_sha" ]]; then
   printf '::error::Refusing stale deployment: %s is no longer main (%s).\n' "$DEPLOY_SHA" "$main_sha"
@@ -174,7 +187,7 @@ echo "::group::Deploy API revision"
   az containerapp update \
     --name "$API_APP_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --image "$ACR_NAME.azurecr.io/nimbus-api:$IMAGE_TAG" \
+    --image "$API_IMAGE" \
     --set-env-vars "${api_env[@]}" \
     --output none
 )
@@ -198,7 +211,7 @@ echo "::group::Deploy web revision"
   az containerapp update \
     --name "$WEB_APP_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --image "$ACR_NAME.azurecr.io/nimbus-web:$IMAGE_TAG" \
+    --image "$WEB_IMAGE" \
     --set-env-vars "${web_env[@]}" \
     --output none
 )
@@ -227,7 +240,9 @@ echo "::group::Deployment summary"
 (
   {
     echo "### Nimbus dev deployed"
-    echo "- Image tag: \`$IMAGE_TAG\`"
+    echo "- Commit: \`$DEPLOY_SHA\`"
+    echo "- API image: \`$API_IMAGE\`"
+    echo "- Web image: \`$WEB_IMAGE\`"
     echo "- Web: $WEB_URL"
     echo "- API: $API_URL"
   } >> "$GITHUB_STEP_SUMMARY"
