@@ -1,4 +1,4 @@
-// LEGACY all-in-one deployment for Nimbus (still used by CI: deploy-dev.yml).
+// LEGACY all-in-one infrastructure deployment for Nimbus (manual provisioning).
 //
 // Subscription-scoped: creates the resource group and all resources within it.
 //
